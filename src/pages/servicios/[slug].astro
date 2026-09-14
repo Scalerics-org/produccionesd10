@@ -1,0 +1,48 @@
+---
+import Base from '../../layouts/Base.astro';
+import { servicios } from '../../datos/servicios';
+import { trabajos } from '../../datos/trabajos';
+
+export function getStaticPaths() {
+  return servicios.map((servicio) => ({
+    params: { slug: servicio.slug },
+    props: { servicio },
+  }));
+}
+
+const { servicio } = Astro.props;
+const relacionados = trabajos.filter((trabajo) => trabajo.pilar === servicio.slug);
+---
+
+<Base titulo={servicio.nombre} descripcion={servicio.bajada}>
+  <section class="mx-auto max-w-4xl px-4 py-12">
+    <h1 class="font-titulo text-4xl font-black">{servicio.nombre}</h1>
+    <p class="text-gris mt-3 text-xl">{servicio.bajada}</p>
+    <p class="mt-6 max-w-2xl">{servicio.descripcion}</p>
+
+    <h2 class="font-titulo mt-10 text-xl font-black">Incluye</h2>
+    <ul class="text-gris mt-4 space-y-1">
+      {servicio.incluye.map((item) => <li>· {item}</li>)}
+    </ul>
+
+    {
+      relacionados.length > 0 && (
+        <>
+          <h2 class="font-titulo mt-10 text-xl font-black">Trabajos</h2>
+          <ul class="mt-4 space-y-2">
+            {relacionados.map((trabajo) => (
+              <li>
+                <a
+                  href={`/trabajos/${trabajo.slug}`}
+                  class="text-rojo-claro underline underline-offset-4"
+                >
+                  {trabajo.titulo}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </>
+      )
+    }
+  </section>
+</Base>

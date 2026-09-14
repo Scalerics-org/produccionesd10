@@ -1,0 +1,93 @@
+---
+import Base from '../layouts/Base.astro';
+import { metricas } from '../datos/empresa';
+import { servicios } from '../datos/servicios';
+import { trabajos } from '../datos/trabajos';
+
+const destacados = trabajos.filter((trabajo) => !trabajo.esPlaceholder).slice(0, 3);
+---
+
+<Base titulo="Inicio">
+  <!-- Hero. Cuando entre el reel: video de fondo con poster AVIF, y el poster
+       es el elemento LCP. El video arranca después del load y solo en desktop. -->
+  <section class="mx-auto max-w-6xl px-4 py-20">
+    <h1 class="font-titulo max-w-4xl text-5xl leading-[1.05] font-black sm:text-7xl">
+      Hacemos televisión, radio y eventos en Uruguay desde hace 16 años.
+    </h1>
+    <p class="text-gris mt-6 max-w-2xl text-lg">
+      Producimos <a
+        href="/trabajos/noche-d10"
+        class="text-hueso underline underline-offset-4">Noche D10</a
+      > todas las semanas. Ese mismo equipo produce eventos, contenido audiovisual y podcasts.
+    </p>
+    <p class="mt-8">
+      <a
+        href="/contacto"
+        class="bg-rojo hover:bg-rojo-claro inline-block px-6 py-3 font-semibold transition-colors"
+      >
+        Contanos tu proyecto
+      </a>
+    </p>
+  </section>
+
+  <section class="border-humo bg-carbon border-y">
+    <dl class="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:grid-cols-3">
+      {
+        metricas.map((metrica) => (
+          <div>
+            <dt class="sr-only">{metrica.detalle}</dt>
+            <dd>
+              <span class="font-titulo text-rojo-claro block text-5xl font-black">
+                {metrica.valor}
+              </span>
+              <span class="mt-1 block text-lg font-semibold">{metrica.unidad}</span>
+              <span class="text-gris mt-1 block text-sm">{metrica.detalle}</span>
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 py-16">
+    <h2 class="font-titulo text-3xl font-black">Qué hacemos</h2>
+    <ul class="mt-8 grid gap-6 sm:grid-cols-2">
+      {
+        servicios.map((servicio) => (
+          <li class="border-humo bg-carbon border p-6">
+            <h3 class="font-titulo text-xl font-black">
+              <a href={`/servicios/${servicio.slug}`} class="hover:text-rojo-claro">
+                {servicio.nombre}
+              </a>
+            </h3>
+            <p class="text-gris mt-2 text-sm">{servicio.bajada}</p>
+            <p class="mt-4 text-sm">{servicio.descripcion}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 py-16">
+    <h2 class="font-titulo text-3xl font-black">Trabajos</h2>
+    <ul class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        destacados.map((trabajo) => (
+          <li class="border-humo bg-carbon border p-6">
+            <h3 class="font-semibold">
+              <a href={`/trabajos/${trabajo.slug}`} class="hover:text-rojo-claro">
+                {trabajo.titulo}
+              </a>
+            </h3>
+            <p class="text-gris mt-2 text-sm">{trabajo.resumen}</p>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="mt-8">
+      <a href="/trabajos" class="text-rojo-claro underline underline-offset-4">
+        Ver todos los trabajos
+      </a>
+    </p>
+  </section>
+</Base>

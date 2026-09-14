@@ -1,0 +1,34 @@
+---
+import { navegacion, sitio } from '../datos/sitio';
+
+const rutaActual = Astro.url.pathname;
+---
+
+<header class="border-humo bg-negro/95 border-b backdrop-blur">
+  <nav class="mx-auto flex max-w-6xl flex-wrap items-center gap-6 px-4 py-4">
+    <a href="/" class="font-titulo text-xl font-black tracking-tight">
+      {sitio.nombre}
+    </a>
+    <ul class="flex flex-wrap gap-x-5 gap-y-2 text-sm">
+      {
+        navegacion.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              aria-current={rutaActual === item.href ? 'page' : undefined}
+              class="text-gris hover:text-hueso aria-[current=page]:text-hueso transition-colors"
+            >
+              {item.texto}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <a
+      href="/contacto"
+      class="bg-rojo hover:bg-rojo-claro ml-auto px-4 py-2 text-sm font-semibold transition-colors"
+    >
+      Pedir presupuesto
+    </a>
+  </nav>
+</header>

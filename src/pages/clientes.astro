@@ -1,0 +1,26 @@
+---
+import Base from '../layouts/Base.astro';
+import { clientes } from '../datos/trabajos';
+---
+
+<Base titulo="Clientes" descripcion="Marcas y organizaciones que confían en nosotros.">
+  <section class="mx-auto max-w-4xl px-4 py-12">
+    <h1 class="font-titulo text-4xl font-black">Clientes</h1>
+    {
+      clientes.length === 0 ? (
+        <p class="text-gris mt-6">
+          {/* TODO: logos y nombres pendientes del cliente. */}
+          Pendiente: el cliente todavía no nos pasó los logos.
+        </p>
+      ) : (
+        <ul class="mt-8 grid grid-cols-2 gap-6 sm:grid-cols-4">
+          {clientes.map((cliente) => (
+            <li class="border-humo grid place-items-center border p-6 text-sm">
+              {cliente.nombre}
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </section>
+</Base>

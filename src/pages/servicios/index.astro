@@ -1,0 +1,24 @@
+---
+import Base from '../../layouts/Base.astro';
+import { servicios } from '../../datos/servicios';
+---
+
+<Base titulo="Servicios" descripcion="Eventos, audiovisual, radio y TV, y podcasts.">
+  <section class="mx-auto max-w-4xl px-4 py-12">
+    <h1 class="font-titulo text-4xl font-black">Servicios</h1>
+    <ul class="mt-8 space-y-6">
+      {
+        servicios.map((servicio) => (
+          <li class="border-humo bg-carbon border p-6">
+            <h2 class="font-titulo text-2xl font-black">
+              <a href={`/servicios/${servicio.slug}`} class="hover:text-rojo-claro">
+                {servicio.nombre}
+              </a>
+            </h2>
+            <p class="text-gris mt-2">{servicio.bajada}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</Base>

@@ -1,0 +1,78 @@
+---
+import Base from '../layouts/Base.astro';
+import { servicios } from '../datos/servicios';
+---
+
+<Base titulo="Contacto" descripcion="Contanos tu proyecto y te pasamos un presupuesto.">
+  <section class="mx-auto max-w-2xl px-4 py-12">
+    <h1 class="font-titulo text-4xl font-black">Contanos tu proyecto</h1>
+    <p class="text-gris mt-3">Te respondemos con un presupuesto.</p>
+
+    {/* TODO: endpoint de Cloudflare pendiente. Validación nativa + honeypot. */}
+    <form class="mt-8 space-y-5" method="post" action="/api/contacto">
+      <p class="hidden" aria-hidden="true">
+        <label>
+          No completar
+          <input type="text" name="apellido2" tabindex="-1" autocomplete="off" />
+        </label>
+      </p>
+
+      <label class="block">
+        <span class="text-sm font-semibold">Nombre</span>
+        <input
+          type="text"
+          name="nombre"
+          required
+          class="border-humo bg-carbon mt-1 w-full border px-3 py-2"
+        />
+      </label>
+
+      <label class="block">
+        <span class="text-sm font-semibold">Empresa</span>
+        <input
+          type="text"
+          name="empresa"
+          class="border-humo bg-carbon mt-1 w-full border px-3 py-2"
+        />
+      </label>
+
+      <label class="block">
+        <span class="text-sm font-semibold">Email</span>
+        <input
+          type="email"
+          name="email"
+          required
+          class="border-humo bg-carbon mt-1 w-full border px-3 py-2"
+        />
+      </label>
+
+      <label class="block">
+        <span class="text-sm font-semibold">Tipo de proyecto</span>
+        <select name="tipo" class="border-humo bg-carbon mt-1 w-full border px-3 py-2">
+          {
+            servicios.map((servicio) => (
+              <option value={servicio.slug}>{servicio.nombre}</option>
+            ))
+          }
+          <option value="otro">Otro</option>
+        </select>
+      </label>
+
+      <label class="block">
+        <span class="text-sm font-semibold">Contanos</span>
+        <textarea
+          name="mensaje"
+          rows="5"
+          required
+          class="border-humo bg-carbon mt-1 w-full border px-3 py-2"></textarea>
+      </label>
+
+      <button
+        type="submit"
+        class="bg-rojo hover:bg-rojo-claro px-6 py-3 font-semibold transition-colors"
+      >
+        Enviar
+      </button>
+    </form>
+  </section>
+</Base>

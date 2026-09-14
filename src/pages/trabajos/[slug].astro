@@ -1,0 +1,22 @@
+---
+import Base from '../../layouts/Base.astro';
+import { trabajos } from '../../datos/trabajos';
+
+export function getStaticPaths() {
+  return trabajos.map((trabajo) => ({
+    params: { slug: trabajo.slug },
+    props: { trabajo },
+  }));
+}
+
+const { trabajo } = Astro.props;
+---
+
+<Base titulo={trabajo.titulo} descripcion={trabajo.resumen}>
+  <section class="mx-auto max-w-3xl px-4 py-12">
+    <h1 class="font-titulo text-4xl font-black">{trabajo.titulo}</h1>
+    {trabajo.cliente && <p class="text-gris mt-2">{trabajo.cliente}</p>}
+    <p class="mt-6">{trabajo.resumen}</p>
+    {/* TODO: galería del caso, pendiente del material del cliente. */}
+  </section>
+</Base>

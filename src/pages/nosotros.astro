@@ -1,0 +1,44 @@
+---
+import Base from '../layouts/Base.astro';
+import { empresa, equipo, metricas } from '../datos/empresa';
+---
+
+<Base titulo="Nosotros" descripcion="16 años produciendo radio, televisión y eventos.">
+  <section class="mx-auto max-w-3xl px-4 py-12">
+    <h1 class="font-titulo text-4xl font-black">Nosotros</h1>
+    <p class="text-gris mt-4 text-lg">
+      {empresa.aniosDeTrayectoria} años produciendo radio, televisión y eventos en Uruguay.
+    </p>
+
+    <dl class="mt-10 grid gap-6 sm:grid-cols-3">
+      {
+        metricas.map((metrica) => (
+          <div>
+            <dt class="sr-only">{metrica.detalle}</dt>
+            <dd>
+              <span class="font-titulo text-rojo-claro block text-3xl font-black">
+                {metrica.valor}
+              </span>
+              <span class="text-gris text-sm">
+                {metrica.unidad} {metrica.detalle}
+              </span>
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+
+    <h2 class="font-titulo mt-12 text-2xl font-black">Equipo</h2>
+    <ul class="mt-6 space-y-6">
+      {
+        equipo.map((persona) => (
+          <li class="border-humo bg-carbon border p-6">
+            <p class="font-semibold">{persona.nombre}</p>
+            <p class="text-gris text-sm">{persona.rol}</p>
+            {persona.bio && <p class="mt-3 text-sm">{persona.bio}</p>}
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</Base>
