@@ -5,17 +5,23 @@
  */
 export const sitio = {
   nombre: 'Producciones D10',
-  // TODO: dominio pendiente de definir y comprar con el cliente.
+  // TODO: material pendiente del cliente. Dominio sin definir ni comprar.
   url: 'http://localhost:4321',
   descripcion:
     'Productora uruguaya con 16 años de trayectoria. Producimos programas de radio ' +
     'y televisión, eventos, podcasts y contenido audiovisual.',
   idioma: 'es-UY',
-  // TODO: datos de contacto pendientes. Hoy el cliente no tiene ni teléfono ni
-  // mail público en ningún lado: ésa es la herida que este sitio cierra.
-  telefono: null,
-  whatsapp: null,
-  email: null,
+  /*
+    TODO: material pendiente del cliente. Hoy el cliente no tiene ni teléfono ni
+    mail público en ningún lado: ésa es exactamente la herida que este sitio
+    cierra. Nada de esto se inventa; hasta que llegue, el sitio se comporta como
+    si no existiera.
+
+    `whatsapp` va en formato internacional sin signos: 598XXXXXXXX.
+  */
+  telefono: null as string | null,
+  whatsapp: null as string | null,
+  email: null as string | null,
 } as const;
 
 export const navegacion = [
@@ -32,3 +38,24 @@ export const redes = [
   { nombre: 'Facebook', href: 'https://www.facebook.com/produccionesd10/' },
   { nombre: 'Spotify', href: 'https://open.spotify.com/show/1WFY043VAfTkKc1OpxVIuD' },
 ] as const;
+
+/**
+ * Adónde manda el botón flotante.
+ *
+ * La decisión vive acá y no en el componente: mientras no tengamos el número de
+ * WhatsApp, el botón lleva al formulario en vez de desaparecer. El día que el
+ * cliente lo pase, se completa `whatsapp` arriba y el botón se convierte solo.
+ */
+export const botonFlotante = sitio.whatsapp
+  ? {
+      href: `https://wa.me/${sitio.whatsapp}`,
+      texto: 'Escribinos por WhatsApp',
+      esWhatsapp: true,
+      externo: true,
+    }
+  : {
+      href: '/contacto',
+      texto: 'Pedir presupuesto',
+      esWhatsapp: false,
+      externo: false,
+    };
