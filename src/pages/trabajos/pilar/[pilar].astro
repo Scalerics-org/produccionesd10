@@ -1,0 +1,65 @@
+---
+import Base from '../../../layouts/Base.astro';
+import ListaTrabajos from '../../../componentes/ListaTrabajos.astro';
+import {
+  contarPorPilar,
+  obtenerServicios,
+  obtenerTrabajos,
+  obtenerTrabajosDePilar,
+} from '../../../datos/consultas';
+import type { Pilar } from '../../../datos/pilares';
+
+/*
+  Una página por pilar. Es lo que hace que el filtro del portfolio funcione sin
+  JavaScript: cada filtro es un link a una URL que existe de verdad.
+*/
+export async function getStaticPaths() {
+  const servicios = await obtenerServicios();
+  return servicios.map((servicio) => ({
+    params: { pilar: servicio.id },
+    props: { servicio },
+  }));
+}
+
+const { servicio } = Astro.props;
+const pilar = servicio.id as Pilar;
+
+const todos = await obtenerTrabajos();
+const trabajos = await obtenerTrabajosDePilar(pilar);
+const servicios = await obtenerServicios();
+const cuenta = await contarPorPilar();
+
+const filtros = [
+  { texto: 'Todos', href: '/trabajos', cantidad: todos.length, slug: null },
+  ...servicios.map((otro) => ({
+    texto: otro.data.nombre,
+    href: `/trabajos/pilar/${otro.id}`,
+    cantidad: cuenta[otro.id as Pilar],
+    slug: otro.id as Pilar,
+  })),
+];
+---
+
+<Base
+  titulo={`Trabajos de ${servicio.data.nombre.toLowerCase()}`}
+  descripcion={`Portfolio de Producciones D10 en ${servicio.data.nombre.toLowerCase()}: ${servicio.data.bajada}`}
+>
+  <section class="mx-auto max-w-6xl px-4 py-16">
+    <nav aria-label="Migas" class="text-plomo text-sm">
+      <a href="/trabajos" class="hover:text-tinta underline-offset-4 hover:underline">
+        Trabajos
+      </a>
+      <span aria-hidden="true"> / </span>
+      <span>{servicio.data.nombre}</span>
+    </nav>
+
+    <h1 class="font-titulo mt-6 text-4xl font-black sm:text-5xl">
+      {servicio.data.nombre}
+    </h1>
+    <p class="text-grafito mt-4 max-w-2xl text-lg text-pretty">
+      {servicio.data.bajada}
+    </p>
+
+    <ListaTrabajos trabajos={trabajos} filtros={filtros} pilarActivo={pilar} />
+  </section>
+</Base>

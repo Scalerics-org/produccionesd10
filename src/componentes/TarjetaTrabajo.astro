@@ -1,0 +1,60 @@
+---
+import { Image } from 'astro:assets';
+import type { Trabajo } from '../datos/consultas';
+
+type Props = { trabajo: Trabajo; cargarYa?: boolean };
+
+const { trabajo, cargarYa = false } = Astro.props;
+const portada = trabajo.data.galeria.at(0);
+---
+
+<article class="border-borde group hover:border-tinta border transition-colors">
+  <a href={`/trabajos/${trabajo.id}`} class="block">
+    {
+      portada && (
+        <div class="bg-papel-hondo aspect-[3/2] overflow-hidden">
+          <Image
+            src={portada.imagen}
+            alt={portada.alt}
+            widths={[400, 800]}
+            sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
+            loading={cargarYa ? 'eager' : 'lazy'}
+            class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+          />
+        </div>
+      )
+    }
+
+    <div class="p-5">
+      <p class="text-plomo flex items-center gap-2 text-xs tracking-widest uppercase">
+        <span>{trabajo.data.pilar.replace(/-/g, ' ')}</span>
+        {trabajo.data.fecha && <span aria-hidden="true">·</span>}
+        {trabajo.data.fecha && <span>{trabajo.data.fecha.slice(0, 4)}</span>}
+      </p>
+
+      <h3
+        class="font-titulo group-hover:text-rojo mt-2 text-lg font-black transition-colors"
+      >
+        {trabajo.data.titulo}
+      </h3>
+
+      {
+        trabajo.data.cliente && (
+          <p class="text-grafito mt-1 text-sm">{trabajo.data.cliente}</p>
+        )
+      }
+
+      <p class="text-grafito mt-3 line-clamp-3 text-sm text-pretty">
+        {trabajo.data.resumen}
+      </p>
+
+      {
+        trabajo.data.esPlaceholder && (
+          <p class="border-rojo text-rojo mt-4 border-l-2 pl-2 text-xs font-semibold tracking-widest uppercase">
+            Pendiente del cliente
+          </p>
+        )
+      }
+    </div>
+  </a>
+</article>

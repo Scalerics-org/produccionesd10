@@ -1,0 +1,77 @@
+---
+import { render } from 'astro:content';
+import { obtenerServicios } from '../datos/consultas';
+
+/*
+  Acordeón de los cuatro pilares.
+
+  Es `<details>` + `<summary>` nativo, sin una línea de JS: ya viene con el
+  teclado, el rol y el estado expandido resueltos por el navegador. El atributo
+  `name` compartido lo hace excluyente — se abre uno y se cierra el anterior —
+  y en los navegadores que todavía no lo soportan simplemente quedan abiertos
+  varios, que no es un problema.
+*/
+const servicios = await obtenerServicios();
+const renderizados = await Promise.all(
+  servicios.map(async (servicio) => ({
+    servicio,
+    Contenido: (await render(servicio)).Content,
+  })),
+);
+---
+
+<section class="mx-auto max-w-4xl px-4 py-20">
+  <h2 class="font-titulo text-3xl font-black sm:text-4xl">Qué hacemos</h2>
+  <p class="text-grafito mt-3 max-w-xl">
+    Cuatro líneas de trabajo, un solo equipo. La misma gente que sostiene un programa
+    semanal al aire produce los eventos y el material audiovisual.
+  </p>
+
+  <div class="border-borde mt-10 border-t">
+    {
+      renderizados.map(({ servicio, Contenido }, i) => (
+        <details name="pilares" open={i === 0} class="border-borde group border-b">
+          <summary class="hover:bg-papel-hondo flex cursor-pointer list-none items-baseline gap-4 py-5 transition-colors [&::-webkit-details-marker]:hidden">
+            <span class="text-plomo font-titulo w-8 shrink-0 text-sm font-black tabular-nums">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <span class="font-titulo flex-1 text-xl font-black sm:text-2xl">
+              {servicio.data.nombre}
+            </span>
+            <span class="text-plomo hidden flex-1 text-sm sm:block">
+              {servicio.data.bajada}
+            </span>
+            <span
+              aria-hidden="true"
+              class="text-rojo shrink-0 text-2xl leading-none transition-transform group-open:rotate-45"
+            >
+              +
+            </span>
+          </summary>
+
+          <div class="grid gap-8 pb-8 pl-12 sm:grid-cols-3">
+            <div class="prose-d10 text-grafito sm:col-span-2 [&_p]:mt-3 [&_p]:text-pretty">
+              <Contenido />
+            </div>
+            <div>
+              <h3 class="text-plomo text-xs font-semibold tracking-widest uppercase">
+                Incluye
+              </h3>
+              <ul class="mt-3 space-y-1 text-sm">
+                {servicio.data.incluye.map((item) => (
+                  <li class="border-borde border-b py-1 last:border-0">{item}</li>
+                ))}
+              </ul>
+              <a
+                href={`/servicios/${servicio.id}`}
+                class="text-rojo hover:text-rojo-hondo mt-4 inline-block text-sm font-semibold underline-offset-4 hover:underline"
+              >
+                Ver {servicio.data.nombre.toLowerCase()} →
+              </a>
+            </div>
+          </div>
+        </details>
+      ))
+    }
+  </div>
+</section>

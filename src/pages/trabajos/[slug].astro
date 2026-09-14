@@ -1,22 +1,195 @@
 ---
+import { Image } from 'astro:assets';
+import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import { trabajos } from '../../datos/trabajos';
+import TarjetaTrabajo from '../../componentes/TarjetaTrabajo.astro';
+import {
+  obtenerServicios,
+  obtenerTrabajos,
+  obtenerTrabajosDePilar,
+} from '../../datos/consultas';
 
-export function getStaticPaths() {
+export async function getStaticPaths() {
+  const trabajos = await obtenerTrabajos();
   return trabajos.map((trabajo) => ({
-    params: { slug: trabajo.slug },
+    params: { slug: trabajo.id },
     props: { trabajo },
   }));
 }
 
 const { trabajo } = Astro.props;
+const { Content } = await render(trabajo);
+
+const servicios = await obtenerServicios();
+const servicio = servicios.find((s) => s.id === trabajo.data.pilar);
+
+const relacionados = (await obtenerTrabajosDePilar(trabajo.data.pilar))
+  .filter((otro) => otro.id !== trabajo.id)
+  .slice(0, 3);
+
+const [portada, ...resto] = trabajo.data.galeria;
+const hayPlaceholders = trabajo.data.galeria.some((foto) => foto.esPlaceholder);
 ---
 
-<Base titulo={trabajo.titulo} descripcion={trabajo.resumen}>
-  <section class="mx-auto max-w-3xl px-4 py-12">
-    <h1 class="font-titulo text-4xl font-black">{trabajo.titulo}</h1>
-    {trabajo.cliente && <p class="text-gris mt-2">{trabajo.cliente}</p>}
-    <p class="mt-6">{trabajo.resumen}</p>
-    {/* TODO: galería del caso, pendiente del material del cliente. */}
-  </section>
+<Base titulo={trabajo.data.titulo} descripcion={trabajo.data.resumen}>
+  <article class="mx-auto max-w-5xl px-4 py-16">
+    <nav aria-label="Migas" class="text-plomo text-sm">
+      <a href="/trabajos" class="hover:text-tinta underline-offset-4 hover:underline">
+        Trabajos
+      </a>
+      <span aria-hidden="true"> / </span>
+      {
+        servicio && (
+          <>
+            <a
+              href={`/trabajos/pilar/${servicio.id}`}
+              class="hover:text-tinta underline-offset-4 hover:underline"
+            >
+              {servicio.data.nombre}
+            </a>
+            <span aria-hidden="true"> / </span>
+          </>
+        )
+      }
+      <span>{trabajo.data.titulo}</span>
+    </nav>
+
+    <header class="mt-6">
+      <h1 class="font-titulo text-4xl font-black text-balance sm:text-5xl">
+        {trabajo.data.titulo}
+      </h1>
+
+      {
+        trabajo.data.esPlaceholder && (
+          <p class="border-rojo bg-papel-hondo text-grafito mt-6 border-l-4 p-4 text-sm">
+            <strong class="text-tinta">Ficha provisoria.</strong> Está acá para que se
+            vea la plantilla en la demo. Falta el material del cliente.
+          </p>
+        )
+      }
+
+      <p class="text-grafito mt-6 max-w-2xl text-xl text-pretty">
+        {trabajo.data.resumen}
+      </p>
+
+      <dl class="border-borde mt-8 grid gap-6 border-t pt-6 sm:grid-cols-3">
+        {
+          trabajo.data.cliente && (
+            <div>
+              <dt class="text-plomo text-xs tracking-widest uppercase">Cliente</dt>
+              <dd class="mt-1 font-semibold">{trabajo.data.cliente}</dd>
+            </div>
+          )
+        }
+        {
+          servicio && (
+            <div>
+              <dt class="text-plomo text-xs tracking-widest uppercase">Pilar</dt>
+              <dd class="mt-1 font-semibold">
+                <a
+                  href={`/servicios/${servicio.id}`}
+                  class="hover:text-rojo underline-offset-4 hover:underline"
+                >
+                  {servicio.data.nombre}
+                </a>
+              </dd>
+            </div>
+          )
+        }
+        {
+          trabajo.data.fecha && (
+            <div>
+              <dt class="text-plomo text-xs tracking-widest uppercase">Desde</dt>
+              <dd class="mt-1 font-semibold tabular-nums">{trabajo.data.fecha}</dd>
+            </div>
+          )
+        }
+      </dl>
+    </header>
+
+    {
+      portada && (
+        <figure class="mt-12">
+          <Image
+            src={portada.imagen}
+            alt={portada.alt}
+            widths={[640, 1024, 1600]}
+            sizes="(min-width: 1024px) 1024px, 100vw"
+            loading="eager"
+            fetchpriority="high"
+            class="w-full"
+          />
+        </figure>
+      )
+    }
+
+    <div
+      class="text-grafito mx-auto mt-12 max-w-2xl [&_em]:italic [&_p]:mt-4 [&_p]:text-pretty"
+    >
+      <Content />
+    </div>
+
+    {
+      trabajo.data.resultado && (
+        <section class="bg-papel-hondo border-borde mt-12 border p-8">
+          <h2 class="text-plomo text-xs font-semibold tracking-widest uppercase">
+            Resultado
+          </h2>
+          <p class="font-titulo mt-3 text-xl font-black text-balance">
+            {trabajo.data.resultado}
+          </p>
+        </section>
+      )
+    }
+
+    {
+      resto.length > 0 && (
+        <section class="mt-16">
+          <h2 class="font-titulo text-2xl font-black">Galería</h2>
+          {hayPlaceholders && (
+            /* TODO: material pendiente del cliente. */
+            <p class="text-plomo mt-2 text-sm">
+              Imágenes provisorias: faltan las fotos reales.
+            </p>
+          )}
+          <div class="mt-6 grid gap-4 sm:grid-cols-2">
+            {resto.map((foto) => (
+              <figure>
+                <Image
+                  src={foto.imagen}
+                  alt={foto.alt}
+                  widths={[480, 960]}
+                  sizes="(min-width: 640px) 480px, 100vw"
+                  loading="lazy"
+                  class="w-full"
+                />
+              </figure>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      relacionados.length > 0 && (
+        <section class="mt-20">
+          <h2 class="font-titulo text-2xl font-black">Otros trabajos del pilar</h2>
+          <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {relacionados.map((otro) => (
+              <TarjetaTrabajo trabajo={otro} />
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <p class="mt-16">
+      <a
+        href="/contacto"
+        class="bg-tinta hover:bg-rojo inline-block px-6 py-3 font-semibold text-white transition-colors"
+      >
+        Quiero algo parecido
+      </a>
+    </p>
+  </article>
 </Base>

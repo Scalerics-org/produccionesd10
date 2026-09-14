@@ -1,0 +1,71 @@
+---
+import { obtenerClientes } from '../datos/consultas';
+
+/*
+  Carrusel de logos.
+
+  Es un `@keyframes` sobre una pista duplicada: la copia se corre el 50% de su
+  ancho y, cuando termina, la segunda tanda quedó exactamente donde arrancó la
+  primera, así que el ciclo no pega un salto. Sin librería.
+
+  Se frena solo con `:hover` y con `:focus-within` — si alguien llega tabulando,
+  el carrusel tiene que parar igual — y con `prefers-reduced-motion` no arranca
+  nunca (está en `global.css`). La pista es scrolleable a mano, así que aunque
+  esté frenada se llega a todos los logos.
+*/
+const clientes = await obtenerClientes();
+const pista = [...clientes, ...clientes];
+---
+
+{
+  clientes.length > 0 && (
+    <section class="border-borde overflow-hidden border-y py-14">
+      <h2 class="text-plomo px-4 text-center text-xs font-semibold tracking-widest uppercase">
+        Confiaron en nosotros
+      </h2>
+
+      {/*
+        El contenedor scrollea, así que el navegador lo hace enfocable para
+        poder recorrerlo con las flechas. Lo declaramos explícito y con nombre:
+        un div que recibe foco y no se anuncia es peor que uno que no lo recibe.
+      */}
+      <div
+        class="carrusel-logos mt-8 overflow-x-auto"
+        tabindex="0"
+        role="group"
+        aria-label="Logos de clientes"
+      >
+        <ul
+          class="pista-logos flex w-max items-center gap-12 px-6"
+          style="--duracion: 45s"
+        >
+          {/* La segunda tanda es puro relleno visual: va con aria-hidden y
+              con alt vacío para que no se anuncie dos veces. */}
+          {pista.map((cliente, i) => (
+            <li
+              class="shrink-0"
+              aria-hidden={i >= clientes.length ? 'true' : undefined}
+            >
+              <img
+                src={cliente.data.logo}
+                alt={i >= clientes.length ? '' : cliente.data.nombre}
+                width="200"
+                height="72"
+                loading="lazy"
+                decoding="async"
+                class="h-16 w-auto opacity-70 grayscale transition hover:opacity-100 hover:grayscale-0"
+              />
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {clientes.every((cliente) => cliente.data.esPlaceholder) && (
+        /* TODO: material pendiente del cliente. Los ocho logos son casilleros. */
+        <p class="text-plomo mt-8 px-4 text-center text-xs">
+          Logos provisorios: el cliente todavía no nos pasó los reales.
+        </p>
+      )}
+    </section>
+  )
+}

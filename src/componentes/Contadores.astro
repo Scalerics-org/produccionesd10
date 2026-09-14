@@ -1,0 +1,57 @@
+---
+import { enGruposDeMiles, metricas } from '../datos/empresa';
+
+/*
+  Contadores del home.
+
+  El número que cuenta lo dibuja CSS con `counter()` sobre un `::after`, y el
+  avance lo empuja `animation-timeline: view()`. Como el contenido generado por
+  CSS no es texto confiable para un lector de pantalla, cada métrica lleva el
+  número de verdad en un `sr-only` y la parte animada va con `aria-hidden`.
+
+  Si el navegador no soporta `animation-timeline`, la animación queda con
+  duración 0 y `fill: both`: el número aparece directo en su valor final. No
+  se rompe, sólo no cuenta.
+*/
+---
+
+<section class="bg-papel-hondo border-borde border-y">
+  <dl class="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:grid-cols-3">
+    {
+      metricas.map((metrica) => {
+        const grupos = enGruposDeMiles(metrica.valor);
+        const escrito = `${metrica.prefijo}${grupos.join('.')}`;
+
+        return (
+          <div>
+            <dt class="sr-only">
+              {metrica.unidad} {metrica.detalle}
+            </dt>
+            <dd>
+              <p class="font-titulo text-5xl font-black tabular-nums sm:text-6xl">
+                <span class="sr-only">{escrito}</span>
+                <span aria-hidden="true">
+                  {metrica.prefijo}
+                  {grupos.map((grupo, i) => (
+                    <>
+                      {i > 0 && '.'}
+                      <span
+                        class:list={[
+                          'grupo-contador',
+                          i > 0 && 'grupo-contador--relleno',
+                        ]}
+                        style={`--hasta:${Number(grupo)}`}
+                      />
+                    </>
+                  ))}
+                </span>
+              </p>
+              <p class="mt-2 text-lg font-semibold">{metrica.unidad}</p>
+              <p class="text-plomo mt-1 text-sm">{metrica.detalle}</p>
+            </dd>
+          </div>
+        );
+      })
+    }
+  </dl>
+</section>

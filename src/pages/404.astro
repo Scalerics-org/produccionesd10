@@ -1,0 +1,30 @@
+---
+import Base from '../layouts/Base.astro';
+import { navegacion } from '../datos/sitio';
+---
+
+<Base
+  titulo="Página no encontrada"
+  descripcion="La página que buscabas no existe o cambió de dirección."
+>
+  <section class="mx-auto max-w-2xl px-4 py-24">
+    <p class="text-plomo font-titulo text-6xl font-black">404</p>
+    <h1 class="font-titulo mt-4 text-3xl font-black text-balance">
+      Esta página no existe
+    </h1>
+    <p class="text-grafito mt-4 text-pretty">
+      Puede que el link esté viejo o que la hayamos movido. Probá por acá:
+    </p>
+    <ul class="border-borde mt-8 border-t">
+      {
+        navegacion.map((item) => (
+          <li class="border-borde border-b">
+            <a href={item.href} class="hover:text-rojo block py-3 font-semibold">
+              {item.texto} →
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</Base>

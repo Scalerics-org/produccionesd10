@@ -1,78 +1,49 @@
 ---
 import Base from '../layouts/Base.astro';
-import { servicios } from '../datos/servicios';
+import FormularioContacto from '../componentes/FormularioContacto.astro';
+import { redes, sitio } from '../datos/sitio';
 ---
 
 <Base titulo="Contacto" descripcion="Contanos tu proyecto y te pasamos un presupuesto.">
-  <section class="mx-auto max-w-2xl px-4 py-12">
-    <h1 class="font-titulo text-4xl font-black">Contanos tu proyecto</h1>
-    <p class="text-gris mt-3">Te respondemos con un presupuesto.</p>
+  <section class="mx-auto max-w-3xl px-4 py-16">
+    <h1 class="font-titulo text-4xl font-black sm:text-5xl">Contanos tu proyecto</h1>
+    <p class="text-grafito mt-4 max-w-2xl text-lg text-pretty">
+      Un evento, un institucional, un programa o un podcast. Escribinos qué necesitás y
+      te respondemos con una propuesta concreta.
+    </p>
 
-    {/* TODO: endpoint de Cloudflare pendiente. Validación nativa + honeypot. */}
-    <form class="mt-8 space-y-5" method="post" action="/api/contacto">
-      <p class="hidden" aria-hidden="true">
-        <label>
-          No completar
-          <input type="text" name="apellido2" tabindex="-1" autocomplete="off" />
-        </label>
-      </p>
+    <FormularioContacto />
 
-      <label class="block">
-        <span class="text-sm font-semibold">Nombre</span>
-        <input
-          type="text"
-          name="nombre"
-          required
-          class="border-humo bg-carbon mt-1 w-full border px-3 py-2"
-        />
-      </label>
-
-      <label class="block">
-        <span class="text-sm font-semibold">Empresa</span>
-        <input
-          type="text"
-          name="empresa"
-          class="border-humo bg-carbon mt-1 w-full border px-3 py-2"
-        />
-      </label>
-
-      <label class="block">
-        <span class="text-sm font-semibold">Email</span>
-        <input
-          type="email"
-          name="email"
-          required
-          class="border-humo bg-carbon mt-1 w-full border px-3 py-2"
-        />
-      </label>
-
-      <label class="block">
-        <span class="text-sm font-semibold">Tipo de proyecto</span>
-        <select name="tipo" class="border-humo bg-carbon mt-1 w-full border px-3 py-2">
-          {
-            servicios.map((servicio) => (
-              <option value={servicio.slug}>{servicio.nombre}</option>
-            ))
-          }
-          <option value="otro">Otro</option>
-        </select>
-      </label>
-
-      <label class="block">
-        <span class="text-sm font-semibold">Contanos</span>
-        <textarea
-          name="mensaje"
-          rows="5"
-          required
-          class="border-humo bg-carbon mt-1 w-full border px-3 py-2"></textarea>
-      </label>
-
-      <button
-        type="submit"
-        class="bg-rojo hover:bg-rojo-claro px-6 py-3 font-semibold transition-colors"
-      >
-        Enviar
-      </button>
-    </form>
+    <aside class="border-borde mt-16 border-t pt-8">
+      <h2 class="text-plomo text-xs font-semibold tracking-widest uppercase">
+        También nos encontrás en
+      </h2>
+      <ul class="mt-4 flex flex-wrap gap-x-6 gap-y-2">
+        {
+          redes.map((red) => (
+            <li>
+              <a
+                href={red.href}
+                rel="noopener"
+                target="_blank"
+                class="hover:text-rojo font-semibold underline-offset-4 hover:underline"
+              >
+                {red.nombre}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      {
+        /* TODO: material pendiente del cliente. Teléfono, WhatsApp, mail y
+           dirección. Mientras no estén, las redes son la única vía verificable
+           que tenemos: no se inventa ninguna. */
+        !sitio.telefono && !sitio.email && (
+          <p class="text-plomo mt-6 text-sm">
+            Teléfono y mail directos: pendientes de que el cliente nos los pase.
+          </p>
+        )
+      }
+    </aside>
   </section>
 </Base>

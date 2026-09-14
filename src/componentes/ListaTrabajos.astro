@@ -1,0 +1,67 @@
+---
+import TarjetaTrabajo from './TarjetaTrabajo.astro';
+import type { Trabajo } from '../datos/consultas';
+import type { Pilar } from '../datos/pilares';
+
+type Props = {
+  trabajos: Trabajo[];
+  /** Lista de filtros: nombre visible, destino y cuántos hay. */
+  filtros: { texto: string; href: string; cantidad: number; slug: Pilar | null }[];
+  pilarActivo: Pilar | null;
+};
+
+const { trabajos, filtros, pilarActivo } = Astro.props;
+---
+
+<!--
+  El filtro son links a páginas reales, no botones con JS.
+
+  Cada pilar tiene su propia URL estática: anda sin JavaScript, se puede
+  compartir el link de "sólo eventos", y cada listado se indexa por separado.
+  Un filtro con `?pilar=` y JS habría perdido las tres cosas.
+-->
+<nav aria-label="Filtrar por pilar" class="border-borde mt-8 border-y">
+  <ul class="flex flex-wrap">
+    {
+      filtros.map((filtro) => {
+        const activo = filtro.slug === pilarActivo;
+        return (
+          <li>
+            <a
+              href={filtro.href}
+              aria-current={activo ? 'page' : undefined}
+              class:list={[
+                'inline-flex items-baseline gap-2 px-4 py-3 text-sm transition-colors',
+                activo
+                  ? 'bg-tinta font-semibold text-white'
+                  : 'text-grafito hover:bg-papel-hondo hover:text-tinta',
+              ]}
+            >
+              {filtro.texto}
+              <span
+                class:list={[
+                  'text-xs tabular-nums',
+                  activo ? 'text-niebla' : 'text-plomo',
+                ]}
+              >
+                {filtro.cantidad}
+              </span>
+            </a>
+          </li>
+        );
+      })
+    }
+  </ul>
+</nav>
+
+{
+  trabajos.length === 0 ? (
+    <p class="text-grafito mt-12">Todavía no hay trabajos publicados en este pilar.</p>
+  ) : (
+    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {trabajos.map((trabajo, i) => (
+        <TarjetaTrabajo trabajo={trabajo} cargarYa={i < 3} />
+      ))}
+    </div>
+  )
+}

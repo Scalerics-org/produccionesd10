@@ -1,48 +1,80 @@
 ---
+import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import { servicios } from '../../datos/servicios';
-import { trabajos } from '../../datos/trabajos';
+import TarjetaTrabajo from '../../componentes/TarjetaTrabajo.astro';
+import { obtenerServicios, obtenerTrabajosDePilar } from '../../datos/consultas';
+import type { Pilar } from '../../datos/pilares';
 
-export function getStaticPaths() {
+export async function getStaticPaths() {
+  const servicios = await obtenerServicios();
   return servicios.map((servicio) => ({
-    params: { slug: servicio.slug },
+    params: { slug: servicio.id },
     props: { servicio },
   }));
 }
 
 const { servicio } = Astro.props;
-const relacionados = trabajos.filter((trabajo) => trabajo.pilar === servicio.slug);
+const { Content } = await render(servicio);
+const relacionados = await obtenerTrabajosDePilar(servicio.id as Pilar);
 ---
 
-<Base titulo={servicio.nombre} descripcion={servicio.bajada}>
-  <section class="mx-auto max-w-4xl px-4 py-12">
-    <h1 class="font-titulo text-4xl font-black">{servicio.nombre}</h1>
-    <p class="text-gris mt-3 text-xl">{servicio.bajada}</p>
-    <p class="mt-6 max-w-2xl">{servicio.descripcion}</p>
+<Base titulo={servicio.data.nombre} descripcion={servicio.data.bajada}>
+  <article class="mx-auto max-w-5xl px-4 py-16">
+    <nav aria-label="Migas" class="text-plomo text-sm">
+      <a href="/servicios" class="hover:text-tinta underline-offset-4 hover:underline">
+        Servicios
+      </a>
+      <span aria-hidden="true"> / </span>
+      <span>{servicio.data.nombre}</span>
+    </nav>
 
-    <h2 class="font-titulo mt-10 text-xl font-black">Incluye</h2>
-    <ul class="text-gris mt-4 space-y-1">
-      {servicio.incluye.map((item) => <li>· {item}</li>)}
-    </ul>
+    <h1 class="font-titulo mt-6 text-4xl font-black sm:text-5xl">
+      {servicio.data.nombre}
+    </h1>
+    <p class="text-grafito mt-4 max-w-2xl text-xl text-pretty">
+      {servicio.data.bajada}
+    </p>
+
+    <div class="mt-12 grid gap-12 lg:grid-cols-3">
+      <div
+        class="text-grafito lg:col-span-2 [&_em]:italic [&_p]:mt-4 [&_p]:text-pretty"
+      >
+        <Content />
+      </div>
+
+      <aside>
+        <h2 class="text-plomo text-xs font-semibold tracking-widest uppercase">
+          Incluye
+        </h2>
+        <ul class="border-borde mt-4 border-t">
+          {
+            servicio.data.incluye.map((item) => (
+              <li class="border-borde border-b py-3 text-sm">{item}</li>
+            ))
+          }
+        </ul>
+        <a
+          href="/contacto"
+          class="bg-tinta hover:bg-rojo mt-8 inline-block px-6 py-3 font-semibold text-white transition-colors"
+        >
+          Pedir presupuesto
+        </a>
+      </aside>
+    </div>
 
     {
       relacionados.length > 0 && (
-        <>
-          <h2 class="font-titulo mt-10 text-xl font-black">Trabajos</h2>
-          <ul class="mt-4 space-y-2">
+        <section class="mt-20">
+          <h2 class="font-titulo text-2xl font-black">
+            Trabajos de {servicio.data.nombre.toLowerCase()}
+          </h2>
+          <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {relacionados.map((trabajo) => (
-              <li>
-                <a
-                  href={`/trabajos/${trabajo.slug}`}
-                  class="text-rojo-claro underline underline-offset-4"
-                >
-                  {trabajo.titulo}
-                </a>
-              </li>
+              <TarjetaTrabajo trabajo={trabajo} />
             ))}
-          </ul>
-        </>
+          </div>
+        </section>
       )
     }
-  </section>
+  </article>
 </Base>

@@ -1,21 +1,54 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { servicios } from '../../datos/servicios';
+import { obtenerServicios, obtenerTrabajosDePilar } from '../../datos/consultas';
+import type { Pilar } from '../../datos/pilares';
+
+/* El id del servicio es el slug del pilar: son la misma taxonomía. */
+const servicios = await obtenerServicios();
+const conTrabajos = await Promise.all(
+  servicios.map(async (servicio) => ({
+    servicio,
+    cantidad: (await obtenerTrabajosDePilar(servicio.id as Pilar)).length,
+  })),
+);
 ---
 
-<Base titulo="Servicios" descripcion="Eventos, audiovisual, radio y TV, y podcasts.">
-  <section class="mx-auto max-w-4xl px-4 py-12">
-    <h1 class="font-titulo text-4xl font-black">Servicios</h1>
-    <ul class="mt-8 space-y-6">
+<Base
+  titulo="Servicios"
+  descripcion="Eventos, audiovisual, radio y TV, y podcasts: las cuatro líneas de Producciones D10."
+>
+  <section class="mx-auto max-w-5xl px-4 py-16">
+    <h1 class="font-titulo text-4xl font-black sm:text-5xl">Servicios</h1>
+    <p class="text-grafito mt-4 max-w-2xl text-lg text-pretty">
+      Cuatro líneas de trabajo y un solo equipo. El mismo que sostiene un programa
+      semanal al aire produce los eventos y el material audiovisual.
+    </p>
+
+    <ul class="mt-12 grid gap-6 sm:grid-cols-2">
       {
-        servicios.map((servicio) => (
-          <li class="border-humo bg-carbon border p-6">
-            <h2 class="font-titulo text-2xl font-black">
-              <a href={`/servicios/${servicio.slug}`} class="hover:text-rojo-claro">
-                {servicio.nombre}
+        conTrabajos.map(({ servicio, cantidad }, i) => (
+          <li class="border-borde hover:border-tinta border p-8 transition-colors">
+            <p class="text-plomo font-titulo text-sm font-black tabular-nums">
+              {String(i + 1).padStart(2, '0')}
+            </p>
+            <h2 class="font-titulo mt-3 text-2xl font-black">
+              <a href={`/servicios/${servicio.id}`} class="hover:text-rojo">
+                {servicio.data.nombre}
               </a>
             </h2>
-            <p class="text-gris mt-2">{servicio.bajada}</p>
+            <p class="text-grafito mt-2">{servicio.data.bajada}</p>
+
+            <ul class="text-plomo mt-5 flex flex-wrap gap-2 text-xs">
+              {servicio.data.incluye.map((item) => (
+                <li class="border-borde border px-2 py-1">{item}</li>
+              ))}
+            </ul>
+
+            <p class="text-plomo mt-5 text-sm">
+              {cantidad === 1
+                ? '1 trabajo publicado'
+                : `${cantidad} trabajos publicados`}
+            </p>
           </li>
         ))
       }

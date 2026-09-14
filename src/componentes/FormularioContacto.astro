@@ -1,0 +1,127 @@
+---
+import { obtenerServicios } from '../datos/consultas';
+
+/*
+  Formulario de presupuesto.
+
+  Validación nativa del navegador — `required`, `type="email"`, `minlength` —
+  y nada de JS: el navegador ya sabe hacer esto, ya lo traduce al idioma del
+  usuario y ya lo anuncia bien en un lector de pantalla.
+
+  El honeypot es el campo `apellido2`: está escondido para las personas y
+  visible para un bot que completa todo lo que encuentra. Si viene con algo,
+  el Worker descarta la consulta sin decir nada. Va oculto con `hidden` y
+  `tabindex="-1"` para que no se pueda alcanzar tabulando, y con
+  `autocomplete="off"` para que el navegador no lo rellene solo.
+*/
+const servicios = await obtenerServicios();
+---
+
+<form
+  method="post"
+  action="/api/contacto"
+  class="mt-10 grid gap-6 sm:grid-cols-2"
+  novalidate={false}
+>
+  <div hidden aria-hidden="true">
+    <label>
+      No completar este campo
+      <input type="text" name="apellido2" tabindex="-1" autocomplete="off" />
+    </label>
+  </div>
+
+  <p class="sm:col-span-2">
+    <label class="block">
+      <span class="text-sm font-semibold">
+        Nombre <span class="text-rojo" aria-hidden="true">*</span>
+      </span>
+      <input
+        type="text"
+        name="nombre"
+        required
+        autocomplete="name"
+        maxlength="120"
+        class="border-borde focus:border-tinta mt-2 w-full border px-3 py-2.5 outline-none"
+      />
+    </label>
+  </p>
+
+  <p>
+    <label class="block">
+      <span class="text-sm font-semibold">Empresa u organización</span>
+      <input
+        type="text"
+        name="empresa"
+        autocomplete="organization"
+        maxlength="120"
+        class="border-borde focus:border-tinta mt-2 w-full border px-3 py-2.5 outline-none"
+      />
+    </label>
+  </p>
+
+  <p>
+    <label class="block">
+      <span class="text-sm font-semibold">
+        Email <span class="text-rojo" aria-hidden="true">*</span>
+      </span>
+      <input
+        type="email"
+        name="email"
+        required
+        autocomplete="email"
+        maxlength="200"
+        class="border-borde focus:border-tinta mt-2 w-full border px-3 py-2.5 outline-none"
+      />
+    </label>
+  </p>
+
+  <p class="sm:col-span-2">
+    <label class="block">
+      <span class="text-sm font-semibold">
+        Tipo de proyecto <span class="text-rojo" aria-hidden="true">*</span>
+      </span>
+      <select
+        name="tipo"
+        required
+        class="border-borde focus:border-tinta bg-papel mt-2 w-full border px-3 py-2.5 outline-none"
+      >
+        <option value="">Elegí una opción</option>
+        {
+          servicios.map((servicio) => (
+            <option value={servicio.id}>{servicio.data.nombre}</option>
+          ))
+        }
+        <option value="otro">Otro</option>
+      </select>
+    </label>
+  </p>
+
+  <p class="sm:col-span-2">
+    <label class="block">
+      <span class="text-sm font-semibold">
+        Contanos el proyecto <span class="text-rojo" aria-hidden="true">*</span>
+      </span>
+      <textarea
+        name="mensaje"
+        required
+        rows="6"
+        minlength="10"
+        maxlength="4000"
+        class="border-borde focus:border-tinta mt-2 w-full border px-3 py-2.5 outline-none"
+      ></textarea>
+    </label>
+    <span class="text-plomo mt-2 block text-sm">
+      Qué necesitás, para cuándo y dónde. Cuanto más concreto, más concreto el
+      presupuesto.
+    </span>
+  </p>
+
+  <p class="sm:col-span-2">
+    <button
+      type="submit"
+      class="bg-rojo hover:bg-rojo-hondo px-8 py-3.5 font-semibold text-white transition-colors"
+    >
+      Enviar consulta
+    </button>
+  </p>
+</form>

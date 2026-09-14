@@ -1,26 +1,63 @@
 ---
 import Base from '../layouts/Base.astro';
-import { clientes } from '../datos/trabajos';
+import { obtenerClientes } from '../datos/consultas';
+
+const clientes = await obtenerClientes();
+const todosPendientes =
+  clientes.length > 0 && clientes.every((cliente) => cliente.data.esPlaceholder);
 ---
 
-<Base titulo="Clientes" descripcion="Marcas y organizaciones que confían en nosotros.">
-  <section class="mx-auto max-w-4xl px-4 py-12">
-    <h1 class="font-titulo text-4xl font-black">Clientes</h1>
+<Base
+  titulo="Clientes"
+  descripcion="Marcas, agencias y organismos que trabajaron con Producciones D10."
+>
+  <section class="mx-auto max-w-5xl px-4 py-16">
+    <h1 class="font-titulo text-4xl font-black sm:text-5xl">Clientes</h1>
+    <p class="text-grafito mt-4 max-w-2xl text-lg text-pretty">
+      Marcas, agencias, organismos y artistas que confiaron en la casa.
+    </p>
+
+    {
+      todosPendientes && (
+        /* TODO: material pendiente del cliente. Los ocho son casilleros vacíos:
+           no se inventa ni un nombre ni un logo. */
+        <p class="border-rojo bg-papel-hondo text-grafito mt-8 border-l-4 p-4 text-sm">
+          <strong class="text-tinta">Muro provisorio.</strong> El cliente todavía no nos
+          pasó los logos ni la lista de marcas. Lo que se ve abajo son casilleros, no
+          clientes reales.
+        </p>
+      )
+    }
+
     {
       clientes.length === 0 ? (
-        <p class="text-gris mt-6">
-          {/* TODO: logos y nombres pendientes del cliente. */}
-          Pendiente: el cliente todavía no nos pasó los logos.
-        </p>
+        <p class="text-grafito mt-10">Todavía no hay clientes publicados.</p>
       ) : (
-        <ul class="mt-8 grid grid-cols-2 gap-6 sm:grid-cols-4">
+        <ul class="border-borde mt-10 grid grid-cols-2 gap-px border sm:grid-cols-3 lg:grid-cols-4">
           {clientes.map((cliente) => (
-            <li class="border-humo grid place-items-center border p-6 text-sm">
-              {cliente.nombre}
+            <li class="bg-papel outline-borde grid place-items-center p-8 outline">
+              <img
+                src={cliente.data.logo}
+                alt={cliente.data.nombre}
+                width="200"
+                height="72"
+                loading="lazy"
+                decoding="async"
+                class="h-16 w-auto opacity-70"
+              />
             </li>
           ))}
         </ul>
       )
     }
+
+    <p class="mt-12">
+      <a
+        href="/contacto"
+        class="bg-tinta hover:bg-rojo inline-block px-6 py-3 font-semibold text-white transition-colors"
+      >
+        Quiero trabajar con ustedes
+      </a>
+    </p>
   </section>
 </Base>
