@@ -1,24 +1,151 @@
 @import 'tailwindcss';
 
 /*
-  Tokens de marca D10. La paleta sale del escudo y de las placas de redes.
-  Todo color se define acá, en :root — nunca únicamente adentro de un media
-  query, porque entonces el tema claro queda sin definir.
+  ─────────────────────────────────────────────────────────────────────────────
+  Tokens de Producciones D10.
+
+  Derivados de los de Noche D10 (repo `noched10`, al lado de éste), pero no
+  iguales: son dos marcas que comparten sistema y no se ven igual.
+
+  El programa es nocturno — fondo negro, rojo protagonista, energía de piso de
+  TV. La productora es lo contrario: un portfolio. Acá el papel es blanco, la
+  tipografía es negra y el rojo aparece poco, siempre para señalar la acción
+  (el botón de presupuesto, el link activo, el dato duro). Si el rojo empieza a
+  ser el fondo de algo grande, se rompió la regla.
+
+  Lo único que las dos marcas comparten literal es el rojo del escudo: #c8102e.
+  ─────────────────────────────────────────────────────────────────────────────
 */
 @theme {
-  --color-negro: #0a0a0a;
-  --color-carbon: #161616;
-  --color-humo: #2a2a2a;
-  --color-rojo: #c8102e;
-  --color-rojo-claro: #e63946;
-  --color-hueso: #f4f3ef;
-  --color-gris: #9a9a9a;
+  /* Escala neutra. Es la columna vertebral: casi todo el sitio se pinta acá.
+     Los contrastes de al lado están medidos, no estimados. */
+  --color-tinta: #0b0b0c; /* texto y secciones invertidas — 19,67:1 sobre papel */
+  --color-grafito: #3f3f43; /* texto secundario — 10,48:1 sobre papel */
+  --color-plomo: #62626a; /* metadatos — 6,04:1 sobre papel, 5,39:1 sobre papel-hondo */
+  --color-niebla: #b9b9c0; /* texto apagado sobre tinta — 10,08:1 */
+  --color-borde: #e3e3e6; /* bordes de 1px sobre papel: decorativos, no son texto */
+  --color-papel-hondo: #f2f2f0; /* bandas de sección, tarjetas */
+  --color-papel: #ffffff; /* fondo por defecto */
+
+  /* Acento. Uno solo, y se usa poco.
+     Ojo con el rojo del escudo sobre fondo oscuro: da 3,34:1 y no pasa AA de
+     texto. Sobre tinta va siempre --color-rojo-claro. */
+  --color-rojo: #c8102e; /* 5,88:1 sobre papel — AA */
+  --color-rojo-hondo: #9b0c23; /* hover — 8,50:1 sobre papel */
+  --color-rojo-claro: #f2607a; /* el rojo para fondo oscuro — 6,30:1 sobre tinta */
+
+  /* Borde de las secciones invertidas, donde --color-borde no se ve. */
+  --color-borde-hondo: #26262a;
 
   --font-titulo: 'Archivo', system-ui, sans-serif;
   --font-texto: 'Inter', system-ui, sans-serif;
 }
 
-/* Respetar siempre la preferencia de movimiento reducido del sistema. */
+/*
+  El contador animado del home.
+
+  `--n` va de 0 hasta `--hasta` empujado por el scroll, no por un reloj: el
+  `animation-timeline: view()` ata el avance a cuánto entró el elemento en el
+  viewport. Sin JS y sin librería.
+
+  El número se parte en grupos de miles porque `counter()` no sabe poner el
+  separador: "1.800" son dos contadores, uno que va de 0 a 1 y otro de 0 a 800
+  con relleno a tres dígitos. Los dos avanzan a la par, así que la cuenta sube
+  de 0.000 a 1.800 sin saltar para atrás.
+*/
+@property --n {
+  syntax: '<integer>';
+  /*
+    `inherits: true` no es un detalle: el número lo dibuja el `::after` del
+    grupo, y un pseudo-elemento hereda de su elemento de origen. Con
+    `inherits: false` la animación movía `--n` en el span — el valor computado
+    subía bien — pero adentro del `::after` `var(--n)` caía al initial-value y
+    la pantalla mostraba 0.000 para siempre. Verificado en el navegador.
+  */
+  inherits: true;
+  initial-value: 0;
+}
+
+@counter-style tres-digitos {
+  system: numeric;
+  symbols: '0' '1' '2' '3' '4' '5' '6' '7' '8' '9';
+  pad: 3 '0';
+}
+
+@keyframes contar {
+  from {
+    --n: 0;
+  }
+  to {
+    --n: var(--hasta);
+  }
+}
+
+/*
+  Carrusel de logos. Un track duplicado que se corre exactamente la mitad de su
+  ancho: cuando llega al final, la segunda copia quedó donde estaba la primera
+  y el salto no se ve.
+*/
+@keyframes desfilar {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@layer components {
+  .grupo-contador::after {
+    counter-reset: n var(--n);
+    content: counter(n);
+  }
+
+  .grupo-contador--relleno::after {
+    content: counter(n, tres-digitos);
+  }
+
+  /*
+    Ojo con el shorthand acá: escrito `animation: contar linear both` junto a
+    `animation-timeline: view()`, el minificador (Lightning CSS, que viene con
+    Tailwind 4) los pliega en `animation: linear both contar view()`. Ese
+    shorthand no existe — el atajo `animation` resetea el timeline pero no
+    acepta un valor de timeline — así que el navegador tira la declaración
+    entera y el contador queda mudo en cero. Medido, no supuesto.
+
+    Con longhands y `animation-duration: auto` no hay nada que plegar: `auto`
+    es un valor que sólo tiene sentido con un timeline y el shorthand no lo
+    puede representar.
+  */
+  .grupo-contador {
+    animation-name: contar;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+    animation-duration: auto;
+    animation-timeline: view();
+    /* Arranca cuando asomó un poco y termina antes del centro: para cuando el
+       ojo llega al número, ya terminó de contar. */
+    animation-range: entry 15% cover 40%;
+  }
+
+  .pista-logos {
+    animation: desfilar var(--duracion, 40s) linear infinite;
+  }
+
+  .carrusel-logos:hover .pista-logos,
+  .carrusel-logos:focus-within .pista-logos {
+    animation-play-state: paused;
+  }
+}
+
+/*
+  Movimiento reducido.
+
+  Ojo: bajar `animation-duration` no alcanza para las animaciones atadas al
+  scroll — `animation-timeline: view()` ignora la duración, así que el contador
+  seguiría contando. Hay que apagar el timeline y dejar el número en su valor
+  final, y frenar el carrusel de verdad.
+*/
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -28,4 +155,34 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+
+  .grupo-contador {
+    animation: none !important;
+    animation-timeline: auto !important;
+    --n: var(--hasta);
+  }
+
+  .pista-logos {
+    animation: none !important;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/*
+  Transiciones de página con la View Transitions API nativa del navegador: un
+  fundido corto. El sitio es un portfolio, no una intro.
+*/
+@view-transition {
+  navigation: auto;
+}
+
+/* El foco tiene que verse sobre papel y sobre tinta por igual. */
+:focus-visible {
+  outline: 2px solid var(--color-rojo);
+  outline-offset: 2px;
 }
