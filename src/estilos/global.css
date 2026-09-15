@@ -4,41 +4,172 @@
   ─────────────────────────────────────────────────────────────────────────────
   Tokens de Producciones D10.
 
-  Derivados de los de Noche D10 (repo `noched10`, al lado de éste), pero no
-  iguales: son dos marcas que comparten sistema y no se ven igual.
+  Salen del diseño aprobado en Claude Design ("Producciones D10.dc.html", sistema
+  Modernist) y comparten familia con Noche D10 (repo `noched10`, al lado): la
+  grilla, las reglas de 2 px y Archivo son las mismas. Lo que separa las marcas
+  es el fondo y la cantidad de rojo: la productora vive sobre hueso con tinta
+  negra y el rojo de acento; el programa se queda con el negro nocturno.
 
-  El programa es nocturno — fondo negro, rojo protagonista, energía de piso de
-  TV. La productora es lo contrario: un portfolio. Acá el papel es blanco, la
-  tipografía es negra y el rojo aparece poco, siempre para señalar la acción
-  (el botón de presupuesto, el link activo, el dato duro). Si el rojo empieza a
-  ser el fondo de algo grande, se rompió la regla.
+  Reglas del sistema, para no discutirlas de nuevo:
+  - Cero radio en todo. Las celdas se separan con reglas de 2 px, nunca sombra.
+  - Etiquetas alineadas a la izquierda, también adentro de los botones.
+  - Fotos siempre en blanco y negro (`.foto-byn`): deja el rojo como único color.
+  - El rojo como campo sólo en los cierres grandes (el CTA de cada página y el
+    resultado del caso). En texto corrido sobre hueso, el párrafo va negro.
 
-  Lo único que las dos marcas comparten literal es el rojo del escudo: #c8102e.
+  Los contrastes están medidos, no estimados. Un desvío deliberado del diseño:
+  el diseño pone kickers de 11 px en #c8102e sobre negro, y eso da 3,37:1 — no
+  pasa AA. Sobre fondo oscuro el texto rojo va en --color-rojo-claro.
   ─────────────────────────────────────────────────────────────────────────────
 */
 @theme {
-  /* Escala neutra. Es la columna vertebral: casi todo el sitio se pinta acá.
-     Los contrastes de al lado están medidos, no estimados. */
-  --color-tinta: #0b0b0c; /* texto y secciones invertidas — 19,67:1 sobre papel */
-  --color-grafito: #3f3f43; /* texto secundario — 10,48:1 sobre papel */
-  --color-plomo: #62626a; /* metadatos — 6,04:1 sobre papel, 5,39:1 sobre papel-hondo */
-  --color-niebla: #b9b9c0; /* texto apagado sobre tinta — 10,08:1 */
-  --color-borde: #e3e3e6; /* bordes de 1px sobre papel: decorativos, no son texto */
-  --color-papel-hondo: #f2f2f0; /* bandas de sección, tarjetas */
-  --color-papel: #ffffff; /* fondo por defecto */
+  --color-tinta: #0a0a0a; /* texto y fondos invertidos — 17,83:1 sobre hueso */
+  --color-carbon: #161616; /* segunda capa oscura */
+  --color-humo: #2a2a2a; /* texto secundario — 12,93:1 sobre hueso */
+  --color-plomo: #5c5c5c; /* metadatos — 6,02:1 sobre hueso. El diseño usa #7a7a7a: 3,87:1, no pasa */
+  --color-niebla: #9a9a9a; /* texto apagado sobre tinta — 7,04:1 */
+  --color-ceniza: #d8d6d0; /* texto corrido sobre tinta — 13,62:1 */
+  --color-hueso: #f4f3ef; /* fondo por defecto */
+  --color-hueso-hondo: #eae9e5; /* bandas de sección */
 
-  /* Acento. Uno solo, y se usa poco.
-     Ojo con el rojo del escudo sobre fondo oscuro: da 3,34:1 y no pasa AA de
-     texto. Sobre tinta va siempre --color-rojo-claro. */
-  --color-rojo: #c8102e; /* 5,88:1 sobre papel — AA */
-  --color-rojo-hondo: #9b0c23; /* hover — 8,50:1 sobre papel */
-  --color-rojo-claro: #f2607a; /* el rojo para fondo oscuro — 6,30:1 sobre tinta */
+  --color-rojo: #c8102e; /* el del escudo — 5,30:1 sobre hueso; hueso sobre rojo, igual */
+  --color-rojo-hondo: #8d0b20; /* hover y pressed — 8,59:1 sobre hueso */
+  --color-rojo-claro: #f2607a; /* texto rojo sobre fondo oscuro — 6,34:1 sobre tinta */
 
-  /* Borde de las secciones invertidas, donde --color-borde no se ve. */
-  --color-borde-hondo: #26262a;
+  --font-sans: 'Archivo', system-ui, sans-serif;
+}
 
-  --font-titulo: 'Archivo', system-ui, sans-serif;
-  --font-texto: 'Inter', system-ui, sans-serif;
+/*
+  Archivo variable, sólo el subconjunto latino (34,9 KB). Autoalojada: una
+  fuente de Google en otro dominio suma una conexión más antes del primer
+  render. Licencia SIL Open Font License 1.1, se puede redistribuir.
+*/
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('/fuentes/archivo-latin-variable.woff2') format('woff2');
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+
+  body {
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-weight: 800;
+    text-wrap: balance;
+  }
+
+  /* El foco se ve sobre hueso y sobre tinta por igual: el rojo pasa 3:1 contra los dos. */
+  :focus-visible {
+    outline: 2px solid var(--color-rojo);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--color-rojo) 30%, transparent);
+  }
+}
+
+/*
+  Las piezas del sistema van como `@utility` y no en `@layer components`: en
+  Tailwind 4 es la única forma de que acepten variantes (`lg:boton`,
+  `group-open:trama-oscura`).
+*/
+/* Versalita chica que va arriba de cada título: "Servicio 01 · Eventos". */
+@utility kicker {
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* Rótulo de dato: "Cliente", "Emisión", etiquetas de formulario. */
+@utility rotulo {
+  font-size: 10px;
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+@utility titular {
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 0.95;
+}
+
+/* Botón base del sistema: plano, sin radio, etiqueta a la izquierda. */
+@utility boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 48px;
+  padding: 0.875rem 1.25rem;
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: left;
+  transition:
+    background-color 150ms,
+    color 150ms,
+    border-color 150ms;
+}
+
+/* Trama de líneas finas: el "sin foto todavía" del sistema, en oscuro y en claro. */
+@utility trama-oscura {
+  background-color: var(--color-carbon);
+  background-image: repeating-linear-gradient(
+    115deg,
+    rgb(244 243 239 / 0.05) 0 1px,
+    transparent 1px 9px
+  );
+}
+
+@utility trama-clara {
+  background-color: var(--color-hueso-hondo);
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgb(10 10 10 / 0.07) 0 1px,
+    transparent 1px 9px
+  );
+}
+
+@utility foto-byn {
+  filter: grayscale(1) contrast(1.08);
+}
+
+/* Un logo sobre negro: el fondo negro del JPEG desaparece contra el de la sección. */
+/* Grilla con reglas de 2 px que no deja huecos negros en una fila incompleta. */
+@utility celdas-con-reglas {
+  & > * {
+    outline: 2px solid var(--color-tinta);
+  }
+}
+
+/* Una tira que se desliza de costado sin mostrar la barra de scroll. */
+@utility sin-barra {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility logo-sobre-negro {
+  mix-blend-mode: screen;
 }
 
 /*
@@ -179,10 +310,4 @@
 */
 @view-transition {
   navigation: auto;
-}
-
-/* El foco tiene que verse sobre papel y sobre tinta por igual. */
-:focus-visible {
-  outline: 2px solid var(--color-rojo);
-  outline-offset: 2px;
 }
