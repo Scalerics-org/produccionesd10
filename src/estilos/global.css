@@ -1,24 +1,319 @@
 @import 'tailwindcss';
 
 /*
-  Tokens de marca D10. La paleta sale del escudo y de las placas de redes.
-  Todo color se define acá, en :root — nunca únicamente adentro de un media
-  query, porque entonces el tema claro queda sin definir.
+  ─────────────────────────────────────────────────────────────────────────────
+  Tokens de Producciones D10.
+
+  Salen del diseño aprobado en Claude Design ("Producciones D10.dc.html", sistema
+  Modernist) y comparten familia con Noche D10 (repo `noched10`, al lado): la
+  grilla, las reglas de 2 px y Archivo son las mismas. Lo que separa las marcas
+  es el fondo y la cantidad de rojo: la productora vive sobre hueso con tinta
+  negra y el rojo de acento; el programa se queda con el negro nocturno.
+
+  Reglas del sistema, para no discutirlas de nuevo:
+  - Cero radio en todo. Las celdas se separan con reglas de 2 px, nunca sombra.
+  - Etiquetas alineadas a la izquierda, también adentro de los botones.
+  - Fotos siempre en blanco y negro (`.foto-byn`): deja el rojo como único color.
+  - El rojo como campo sólo en los cierres grandes (el CTA de cada página y el
+    resultado del caso). En texto corrido sobre hueso, el párrafo va negro.
+
+  Los contrastes están medidos, no estimados. Un desvío deliberado del diseño:
+  el diseño pone kickers de 11 px en #c8102e sobre negro, y eso da 3,37:1 — no
+  pasa AA. Sobre fondo oscuro el texto rojo va en --color-rojo-claro.
+  ─────────────────────────────────────────────────────────────────────────────
 */
 @theme {
-  --color-negro: #0a0a0a;
-  --color-carbon: #161616;
-  --color-humo: #2a2a2a;
-  --color-rojo: #c8102e;
-  --color-rojo-claro: #e63946;
-  --color-hueso: #f4f3ef;
-  --color-gris: #9a9a9a;
+  --color-tinta: #0a0a0a; /* texto y fondos invertidos — 17,83:1 sobre hueso */
+  --color-carbon: #161616; /* segunda capa oscura */
+  --color-humo: #2a2a2a; /* texto secundario — 12,93:1 sobre hueso */
+  --color-plomo: #5c5c5c; /* metadatos — 6,02:1 sobre hueso. El diseño usa #7a7a7a: 3,87:1, no pasa */
+  --color-niebla: #9a9a9a; /* texto apagado sobre tinta — 7,04:1 */
+  --color-ceniza: #d8d6d0; /* texto corrido sobre tinta — 13,62:1 */
+  --color-hueso: #f4f3ef; /* fondo por defecto */
+  --color-hueso-hondo: #eae9e5; /* bandas de sección */
 
-  --font-titulo: 'Archivo', system-ui, sans-serif;
-  --font-texto: 'Inter', system-ui, sans-serif;
+  --color-rojo: #c8102e; /* el del escudo — 5,30:1 sobre hueso; hueso sobre rojo, igual */
+  --color-rojo-hondo: #8d0b20; /* hover y pressed — 8,59:1 sobre hueso */
+  --color-rojo-claro: #f2607a; /* texto rojo sobre fondo oscuro — 6,34:1 sobre tinta */
+
+  --font-sans: 'Archivo', system-ui, sans-serif;
 }
 
-/* Respetar siempre la preferencia de movimiento reducido del sistema. */
+/*
+  Archivo variable, sólo el subconjunto latino (34,9 KB). Autoalojada: una
+  fuente de Google en otro dominio suma una conexión más antes del primer
+  render. Licencia SIL Open Font License 1.1, se puede redistribuir.
+*/
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('/fuentes/archivo-latin-variable.woff2') format('woff2');
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+
+  body {
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-weight: 800;
+    text-wrap: balance;
+  }
+
+  /* El foco se ve sobre hueso y sobre tinta por igual: el rojo pasa 3:1 contra los dos. */
+  :focus-visible {
+    outline: 2px solid var(--color-rojo);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--color-rojo) 30%, transparent);
+  }
+}
+
+/*
+  Las piezas del sistema van como `@utility` y no en `@layer components`: en
+  Tailwind 4 es la única forma de que acepten variantes (`lg:boton`,
+  `group-open:trama-oscura`).
+*/
+/* Versalita chica que va arriba de cada título: "Servicio 01 · Eventos". */
+@utility kicker {
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* Rótulo de dato: "Cliente", "Emisión", etiquetas de formulario. */
+@utility rotulo {
+  font-size: 10px;
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+@utility titular {
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 0.95;
+}
+
+/* Botón base del sistema: plano, sin radio, etiqueta a la izquierda. */
+@utility boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 48px;
+  padding: 0.875rem 1.25rem;
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: left;
+  transition:
+    background-color 150ms,
+    color 150ms,
+    border-color 150ms;
+}
+
+/* Trama de líneas finas: el "sin foto todavía" del sistema, en oscuro y en claro. */
+@utility trama-oscura {
+  background-color: var(--color-carbon);
+  background-image: repeating-linear-gradient(
+    115deg,
+    rgb(244 243 239 / 0.05) 0 1px,
+    transparent 1px 9px
+  );
+}
+
+@utility trama-clara {
+  background-color: var(--color-hueso-hondo);
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgb(10 10 10 / 0.07) 0 1px,
+    transparent 1px 9px
+  );
+}
+
+@utility foto-byn {
+  filter: grayscale(1) contrast(1.08);
+}
+
+/* Un logo sobre negro: el fondo negro del JPEG desaparece contra el de la sección. */
+/*
+  El marco del diseño. El lienzo de Claude Design mide 1180 px con 34 px de
+  margen: en pantallas más anchas los fondos siguen a sangre, pero el contenido
+  no se estira. `marco` es el margen del contenido (nunca menos de 34 px) y
+  `lienzo` el de las grillas cuyas celdas ya traen sus 34 px.
+*/
+@utility px-marco {
+  padding-inline: max(34px, calc((100% - 1112px) / 2));
+}
+@utility inset-x-marco {
+  left: max(34px, calc((100% - 1112px) / 2));
+  right: max(34px, calc((100% - 1112px) / 2));
+}
+@utility left-marco {
+  left: max(34px, calc((100% - 1112px) / 2));
+}
+@utility mx-marco {
+  margin-inline: max(34px, calc((100% - 1112px) / 2));
+}
+/*
+  Una sección de dos columnas con lienzo: el fondo de la derecha tiene que
+  llegar al borde de la pantalla aunque la columna termine en los 1180 px.
+*/
+@utility fondo-partido {
+  @media (width >= 64rem) {
+    background: linear-gradient(
+      90deg,
+      var(--color-hueso) 50%,
+      var(--color-hueso-hondo) 50%
+    );
+  }
+}
+
+@utility px-lienzo {
+  padding-inline: max(0px, calc((100% - 1180px) / 2));
+}
+
+/* Grilla con reglas de 2 px que no deja huecos negros en una fila incompleta. */
+@utility celdas-con-reglas {
+  & > * {
+    outline: 2px solid var(--color-tinta);
+  }
+}
+
+/* Una tira que se desliza de costado sin mostrar la barra de scroll. */
+@utility sin-barra {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility logo-sobre-negro {
+  mix-blend-mode: screen;
+}
+
+/*
+  El contador animado del home.
+
+  `--n` va de 0 hasta `--hasta` empujado por el scroll, no por un reloj: el
+  `animation-timeline: view()` ata el avance a cuánto entró el elemento en el
+  viewport. Sin JS y sin librería.
+
+  El número se parte en grupos de miles porque `counter()` no sabe poner el
+  separador: "1.800" son dos contadores, uno que va de 0 a 1 y otro de 0 a 800
+  con relleno a tres dígitos. Los dos avanzan a la par, así que la cuenta sube
+  de 0.000 a 1.800 sin saltar para atrás.
+*/
+@property --n {
+  syntax: '<integer>';
+  /*
+    `inherits: true` no es un detalle: el número lo dibuja el `::after` del
+    grupo, y un pseudo-elemento hereda de su elemento de origen. Con
+    `inherits: false` la animación movía `--n` en el span — el valor computado
+    subía bien — pero adentro del `::after` `var(--n)` caía al initial-value y
+    la pantalla mostraba 0.000 para siempre. Verificado en el navegador.
+  */
+  inherits: true;
+  initial-value: 0;
+}
+
+@counter-style tres-digitos {
+  system: numeric;
+  symbols: '0' '1' '2' '3' '4' '5' '6' '7' '8' '9';
+  pad: 3 '0';
+}
+
+@keyframes contar {
+  from {
+    --n: 0;
+  }
+  to {
+    --n: var(--hasta);
+  }
+}
+
+/*
+  Carrusel de logos. Un track duplicado que se corre exactamente la mitad de su
+  ancho: cuando llega al final, la segunda copia quedó donde estaba la primera
+  y el salto no se ve.
+*/
+@keyframes desfilar {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@layer components {
+  .grupo-contador::after {
+    counter-reset: n var(--n);
+    content: counter(n);
+  }
+
+  .grupo-contador--relleno::after {
+    content: counter(n, tres-digitos);
+  }
+
+  /*
+    Ojo con el shorthand acá: escrito `animation: contar linear both` junto a
+    `animation-timeline: view()`, el minificador (Lightning CSS, que viene con
+    Tailwind 4) los pliega en `animation: linear both contar view()`. Ese
+    shorthand no existe — el atajo `animation` resetea el timeline pero no
+    acepta un valor de timeline — así que el navegador tira la declaración
+    entera y el contador queda mudo en cero. Medido, no supuesto.
+
+    Con longhands y `animation-duration: auto` no hay nada que plegar: `auto`
+    es un valor que sólo tiene sentido con un timeline y el shorthand no lo
+    puede representar.
+  */
+  .grupo-contador {
+    animation-name: contar;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+    animation-duration: auto;
+    animation-timeline: view();
+    /* Arranca cuando asomó un poco y termina antes del centro: para cuando el
+       ojo llega al número, ya terminó de contar. */
+    animation-range: entry 15% cover 40%;
+  }
+
+  .pista-logos {
+    animation: desfilar var(--duracion, 40s) linear infinite;
+  }
+
+  .carrusel-logos:hover .pista-logos,
+  .carrusel-logos:focus-within .pista-logos {
+    animation-play-state: paused;
+  }
+}
+
+/*
+  Movimiento reducido.
+
+  Ojo: bajar `animation-duration` no alcanza para las animaciones atadas al
+  scroll — `animation-timeline: view()` ignora la duración, así que el contador
+  seguiría contando. Hay que apagar el timeline y dejar el número en su valor
+  final, y frenar el carrusel de verdad.
+*/
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -28,4 +323,28 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+
+  .grupo-contador {
+    animation: none !important;
+    animation-timeline: auto !important;
+    --n: var(--hasta);
+  }
+
+  .pista-logos {
+    animation: none !important;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/*
+  Transiciones de página con la View Transitions API nativa del navegador: un
+  fundido corto. El sitio es un portfolio, no una intro.
+*/
+@view-transition {
+  navigation: auto;
 }

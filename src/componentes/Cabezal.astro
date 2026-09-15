@@ -1,34 +1,185 @@
 ---
-import { navegacion, sitio } from '../datos/sitio';
+import Logotipo from './Logotipo.astro';
+import { obtenerServicios } from '../datos/consultas';
+import { canalDirecto, navegacion, redes } from '../datos/sitio';
 
+/*
+  Cabezal.
+
+  Dos versiones del diseño: sobre hueso con regla negra de 2 px en las páginas
+  internas, e invertido sobre negro en el home, donde se apoya sobre el reel.
+
+  El menú de celular es un `<details>`: abre y cierra sin JS, con teclado y con
+  el estado expandido anunciado por el navegador. El `<summary>` queda por
+  encima del panel para que el mismo botón sirva de cerrar.
+*/
+type Props = { invertido?: boolean };
+
+const { invertido = false } = Astro.props;
 const rutaActual = Astro.url.pathname;
+const servicios = await obtenerServicios();
+
+/** Una sección está activa si estamos en ella o en cualquier ficha de adentro. */
+const estaActivo = (href: string) =>
+  rutaActual === href || rutaActual.startsWith(`${href}/`);
 ---
 
-<header class="border-humo bg-negro/95 border-b backdrop-blur">
-  <nav class="mx-auto flex max-w-6xl flex-wrap items-center gap-6 px-4 py-4">
-    <a href="/" class="font-titulo text-xl font-black tracking-tight">
-      {sitio.nombre}
+<header
+  class:list={[
+    'sticky top-0 z-30',
+    invertido
+      ? 'bg-tinta text-hueso border-hueso/15 border-b'
+      : 'bg-hueso text-tinta border-tinta border-b-2',
+  ]}
+>
+  <div class="lg:px-marco flex items-center justify-between gap-6 px-4 py-3 lg:py-4">
+    <a href="/" aria-label="D10 De Diez Producciones — inicio">
+      <Logotipo invertido={invertido} />
     </a>
-    <ul class="flex flex-wrap gap-x-5 gap-y-2 text-sm">
+
+    <nav aria-label="Principal" class="hidden items-center gap-6 lg:flex">
       {
         navegacion.map((item) => (
-          <li>
-            <a
-              href={item.href}
-              aria-current={rutaActual === item.href ? 'page' : undefined}
-              class="text-gris hover:text-hueso aria-[current=page]:text-hueso transition-colors"
-            >
-              {item.texto}
-            </a>
-          </li>
+          <a
+            href={item.href}
+            aria-current={estaActivo(item.href) ? 'page' : undefined}
+            class:list={[
+              'kicker border-b-2 border-transparent pb-[3px] tracking-[0.1em] transition-colors',
+              'aria-[current=page]:border-rojo',
+              invertido
+                ? 'text-niebla hover:text-hueso aria-[current=page]:text-hueso'
+                : 'text-humo hover:text-tinta aria-[current=page]:text-tinta',
+            ]}
+          >
+            {item.texto}
+          </a>
         ))
       }
-    </ul>
-    <a
-      href="/contacto"
-      class="bg-rojo hover:bg-rojo-claro ml-auto px-4 py-2 text-sm font-semibold transition-colors"
-    >
-      Pedir presupuesto
-    </a>
-  </nav>
+      <a
+        href="/contacto"
+        class:list={[
+          'kicker px-4 py-3 tracking-[0.09em] transition-colors',
+          invertido
+            ? 'bg-rojo text-hueso hover:bg-rojo-hondo'
+            : 'bg-tinta text-hueso hover:bg-rojo',
+        ]}
+      >
+        Pedir presupuesto
+      </a>
+    </nav>
+
+    <div class="flex items-center gap-2.5 lg:hidden">
+      <a
+        href="/contacto"
+        class="bg-rojo text-hueso hover:bg-rojo-hondo kicker px-3 py-[14px] text-[10px] tracking-[0.08em]"
+      >
+        Presupuesto
+      </a>
+
+      <details class="menu-movil group">
+        <summary
+          class:list={[
+            'relative z-50 flex size-11 cursor-pointer list-none flex-col items-center justify-center gap-[5px] border [&::-webkit-details-marker]:hidden',
+            'group-open:border-hueso/35 group-open:text-hueso',
+            invertido ? 'border-hueso/35' : 'border-tinta/35',
+          ]}
+        >
+          <span class="sr-only">Menú</span>
+          <span
+            aria-hidden="true"
+            class="block h-0.5 w-5 bg-current transition-transform group-open:translate-y-[3.5px] group-open:rotate-45"
+          ></span>
+          <span
+            aria-hidden="true"
+            class="block h-0.5 w-5 bg-current transition-transform group-open:-translate-y-[3.5px] group-open:-rotate-45"
+          ></span>
+        </summary>
+
+        <div
+          class="bg-tinta text-hueso fixed inset-0 z-40 flex flex-col overflow-y-auto pt-[68px]"
+        >
+          <nav
+            aria-label="Principal"
+            class="border-hueso/20 flex flex-1 flex-col border-t"
+          >
+            <a
+              href="/"
+              class="border-hueso/20 flex items-baseline gap-3 border-b px-4 py-5"
+            >
+              <span class="text-rojo-claro text-[10px] font-semibold">01</span>
+              <span class="text-[34px] leading-none font-extrabold tracking-[-0.03em]">
+                Inicio
+              </span>
+            </a>
+            {
+              navegacion.map((item, i) => (
+                <>
+                  <a
+                    href={item.href}
+                    aria-current={estaActivo(item.href) ? 'page' : undefined}
+                    class="border-hueso/20 aria-[current=page]:text-rojo-claro flex items-baseline gap-3 border-b px-4 py-5"
+                  >
+                    <span class="text-rojo-claro text-[10px] font-semibold">
+                      {String(i + 2).padStart(2, '0')}
+                    </span>
+                    <span class="text-[34px] leading-none font-extrabold tracking-[-0.03em]">
+                      {item.texto}
+                    </span>
+                  </a>
+                  {item.href === '/servicios' && (
+                    <ul class="bg-carbon border-hueso/20 border-b">
+                      {servicios.map((servicio) => (
+                        <li>
+                          <a
+                            href={`/servicios/${servicio.id}`}
+                            class="kicker text-ceniza hover:text-hueso flex min-h-11 items-center py-3 pr-4 pl-10 tracking-[0.12em]"
+                          >
+                            {servicio.data.nombre}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </>
+              ))
+            }
+          </nav>
+
+          <div class="border-rojo border-t-2 px-4 pt-5 pb-6">
+            <a
+              href={canalDirecto.href}
+              class="boton bg-rojo text-hueso hover:bg-rojo-hondo min-h-14 w-full text-[13px]"
+              {...canalDirecto.externo
+                ? { target: '_blank', rel: 'noopener noreferrer' }
+                : {}}
+            >
+              {canalDirecto.texto}
+              <span aria-hidden="true" class="text-lg">→</span>
+            </a>
+            {
+              canalDirecto.pendiente && (
+                <p class="rotulo text-niebla mt-3">{canalDirecto.detalle}</p>
+              )
+            }
+            <ul class="text-niebla mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs">
+              {
+                redes.map((red) => (
+                  <li>
+                    <a
+                      href={red.href}
+                      class="hover:text-hueso"
+                      rel="noopener"
+                      target="_blank"
+                    >
+                      {red.nombre}
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
 </header>

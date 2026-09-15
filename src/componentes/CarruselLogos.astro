@@ -1,0 +1,80 @@
+---
+import { obtenerClientes } from '../datos/consultas';
+import { home } from '../datos/home';
+
+/*
+  Carrusel de logos: la franja negra del home (1d), con el claim numérico
+  arriba y celdas de alto fijo separadas por reglas.
+
+  Es un `@keyframes` sobre una pista duplicada: la copia se corre el 50% de su
+  ancho y cuando termina la segunda tanda quedó donde arrancó la primera, así
+  que el ciclo no pega un salto. Sin librería.
+
+  Se frena con `:hover` y con `:focus-within` — si alguien llega tabulando, el
+  carrusel tiene que parar igual — y con `prefers-reduced-motion` no arranca
+  (está en `global.css`). La pista se puede recorrer a mano, así que aunque
+  esté frenada se llega a todos los logos.
+
+  Los logos van en blanco sobre negro, como pide el diseño: un filtro los pasa a
+  blanco, así el cliente puede mandarlos en cualquier color.
+*/
+const clientes = await obtenerClientes();
+const pista = [...clientes, ...clientes];
+const sonProvisorios = clientes.every((cliente) => cliente.data.esPlaceholder);
+const { claim, rotulo, avisoPendiente } = home.clientes;
+---
+
+{
+  clientes.length > 0 && (
+    <section class="bg-tinta text-hueso border-rojo overflow-hidden border-t-2 py-6 lg:pt-[30px] lg:pb-[34px]">
+      <div class="lg:px-marco flex items-baseline justify-between gap-6 px-4 pb-[18px] lg:pb-5">
+        <h2 class="max-w-[34ch] text-[22px] leading-[1.15] tracking-[-0.025em] lg:text-[26px] lg:leading-[1.1]">
+          {claim}
+        </h2>
+        <a
+          href="/clientes"
+          class="kicker text-niebla hover:text-hueso hidden tracking-[0.14em] lg:block"
+        >
+          {rotulo}
+        </a>
+      </div>
+
+      {/*
+        El contenedor scrollea, así que el navegador lo hace enfocable para
+        recorrerlo con las flechas. Lo declaramos explícito y con nombre: un div
+        que recibe foco y no se anuncia es peor que uno que no lo recibe.
+      */}
+      <div
+        class="carrusel-logos border-hueso/20 sin-barra overflow-x-auto border-y"
+        tabindex="0"
+        role="group"
+        aria-label="Logos de clientes"
+      >
+        <ul class="pista-logos flex w-max" style="--duracion: 45s">
+          {/* La segunda tanda es relleno visual: va oculta para no anunciarse dos veces. */}
+          {pista.map((cliente, i) => (
+            <li
+              class="border-hueso/20 flex h-[78px] w-[130px] shrink-0 items-center justify-center border-r lg:h-24 lg:w-[200px]"
+              aria-hidden={i >= clientes.length ? 'true' : undefined}
+            >
+              <img
+                src={cliente.data.logo}
+                alt={i >= clientes.length ? '' : cliente.data.nombre}
+                width="200"
+                height="72"
+                loading="lazy"
+                decoding="async"
+                class="h-10 w-auto opacity-70 brightness-0 invert transition-opacity hover:opacity-100 lg:h-12"
+              />
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {sonProvisorios && (
+        /* TODO: material pendiente del cliente. Los logos son casilleros. */
+        <p class="text-niebla lg:mx-marco mx-4 mt-3.5 text-[11px]">{avisoPendiente}</p>
+      )}
+    </section>
+  )
+}

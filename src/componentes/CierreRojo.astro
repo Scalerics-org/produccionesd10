@@ -1,0 +1,53 @@
+---
+import { canalDirecto } from '../datos/sitio';
+
+/*
+  El cierre de cada página: el único lugar donde el rojo corre como campo. Una
+  frase grande y la acción, más el canal directo al lado.
+*/
+type Props = {
+  frase: string;
+  cta?: string;
+  href?: string;
+  /** Nosotros cierra con un solo botón; el resto suma WhatsApp. */
+  conCanalDirecto?: boolean;
+};
+
+const {
+  frase,
+  cta = 'Pedir presupuesto',
+  href = '/contacto',
+  conCanalDirecto = true,
+} = Astro.props;
+---
+
+<section
+  class="bg-rojo text-hueso lg:px-marco flex flex-col gap-[18px] px-4 pt-[26px] pb-7 lg:flex-row lg:items-end lg:justify-between lg:gap-10 lg:py-10"
+>
+  <h2
+    class="titular max-w-[22ch] text-[34px] leading-[0.98] lg:text-[52px] lg:leading-[0.96]"
+  >
+    {frase}
+  </h2>
+  <div class="flex flex-col gap-0.5 lg:flex-none lg:flex-row lg:gap-2.5">
+    <a href={href} class="boton bg-tinta text-hueso hover:bg-carbon min-h-[52px]"
+      >{cta}</a
+    >
+    {
+      conCanalDirecto && (
+        <a
+          href={canalDirecto.href}
+          class="boton border-hueso hover:bg-hueso hover:text-rojo-hondo min-h-[52px] border"
+          {...(canalDirecto.externo
+            ? { target: '_blank', rel: 'noopener noreferrer' }
+            : {})}
+        >
+          {canalDirecto.texto}
+          {canalDirecto.pendiente && (
+            <span class="sr-only">({canalDirecto.detalle})</span>
+          )}
+        </a>
+      )
+    }
+  </div>
+</section>

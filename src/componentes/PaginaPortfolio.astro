@@ -1,0 +1,45 @@
+---
+import ListaTrabajos from './ListaTrabajos.astro';
+import {
+  filtrosDelPortfolio,
+  obtenerTrabajos,
+  obtenerTrabajosDePilar,
+} from '../datos/consultas';
+import type { Pilar } from '../datos/pilares';
+
+/*
+  El cuerpo de /trabajos y de /trabajos/pilar/[pilar] (2a y 2e del diseño).
+  Las dos rutas son la misma pantalla con otro filtro activo.
+*/
+type Props = { pilar: Pilar | null; titular: string; bajada: string };
+
+const { pilar, titular, bajada } = Astro.props;
+const todos = await obtenerTrabajos();
+const trabajos = pilar ? await obtenerTrabajosDePilar(pilar) : todos;
+const filtros = await filtrosDelPortfolio(pilar);
+---
+
+<section class="bg-hueso">
+  <div class="lg:px-marco px-4 pt-6 pb-4 lg:pt-10 lg:pb-6">
+    <p class="kicker text-rojo mb-3 text-[10px] lg:mb-4 lg:text-[11px]">Portfolio</p>
+    <h1 class="titular mb-3.5 max-w-[20ch] text-[40px] lg:mb-4 lg:text-[62px]">
+      {titular}
+    </h1>
+    <p class="text-humo max-w-[56ch] text-base text-pretty">{bajada}</p>
+  </div>
+
+  <ListaTrabajos trabajos={trabajos} filtros={filtros} total={todos.length} />
+</section>
+
+<section
+  class="bg-tinta text-hueso border-rojo flex flex-col gap-5 border-t-2 px-4 py-7 lg:flex-row lg:items-center lg:justify-between lg:gap-[30px] lg:p-[34px]"
+>
+  <p
+    class="max-w-[34ch] text-2xl leading-[1.1] font-extrabold tracking-[-0.03em] lg:text-[30px]"
+  >
+    ¿Buscás algo que no ves acá? Lo produjimos igual.
+  </p>
+  <a href="/contacto" class="boton bg-rojo text-hueso hover:bg-rojo-hondo flex-none">
+    Pedir presupuesto
+  </a>
+</section>

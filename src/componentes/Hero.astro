@@ -1,0 +1,158 @@
+---
+import { home } from '../datos/home';
+
+/*
+  Hero del home: el reel a pantalla completa con el claim abajo a la izquierda
+  (pantalla 1a del diseño).
+
+  El orden de carga importa y no es casual:
+
+  1. El poster se pinta primero y es el elemento LCP. Va en AVIF (8,7 KB), con
+     `fetchpriority="high"` y precargado desde el `<head>`. El `<picture>` deja
+     el JPEG como reserva para el navegador que no entienda AVIF.
+  2. El `<video>` sale sin `src`: los `<source>` llevan la ruta en un
+     `data-fuente` y el script se la pasa recién en el evento `load`, y sólo en
+     viewport de escritorio. Hasta ese momento el video no pidió un byte.
+     Tampoco lleva `poster`: medido, el navegador bajaba igual el JPEG aunque
+     el video no tuviera `src`, y el `<img>` de atrás ya muestra esa imagen.
+  3. Con movimiento reducido el video no arranca nunca y queda el poster.
+  4. El alto se ajusta a la ventana (nunca más de 640 px): en una pantalla baja
+     o con zoom, el claim tiene que verse sin scrollear.
+
+  TODO: material pendiente del cliente. El poster es una foto de stock
+  (Unsplash, 4_M8uIfPEZw) y el video un fondo generado. Mientras el video sea
+  provisorio se suma en modo pantalla y al 60%, para no tapar la foto.
+
+  El diseño pinta el reel en blanco y negro: el filtro va en CSS, así el mismo
+  archivo sirve el día que el cliente quiera color.
+*/
+const { hero } = home;
+---
+
+<section class="bg-tinta text-hueso relative isolate overflow-hidden">
+  <div class="relative h-[430px] lg:h-[min(640px,calc(100svh-77px))] lg:min-h-[460px]">
+    <picture>
+      <source srcset="/video/hero-poster.avif" type="image/avif" />
+      <img
+        src="/video/hero-poster.jpg"
+        alt=""
+        width="1600"
+        height="900"
+        fetchpriority="high"
+        decoding="sync"
+        class="foto-byn absolute inset-0 h-full w-full object-cover"
+      />
+    </picture>
+
+    <video
+      id="video-hero"
+      class="foto-byn absolute inset-0 h-full w-full object-cover opacity-0 mix-blend-screen transition-opacity duration-1000"
+      muted
+      loop
+      playsinline
+      preload="metadata"
+      aria-hidden="true"
+      tabindex="-1"
+    >
+      <source data-fuente="/video/hero.webm" type="video/webm" />
+      <source data-fuente="/video/hero.mp4" type="video/mp4" />
+    </video>
+
+    <!-- La trama y el degradado son los que hacen legible el claim sobre cualquier fotograma. -->
+    <div class="trama-oscura absolute inset-0 !bg-transparent" aria-hidden="true"></div>
+    <div
+      class="from-tinta via-tinta/70 to-tinta/10 absolute inset-0 bg-gradient-to-t"
+      aria-hidden="true"
+    >
+    </div>
+
+    <p
+      class="rotulo bg-rojo text-hueso lg:left-marco absolute top-3.5 left-4 px-2 py-1.5 lg:top-[26px]"
+    >
+      {hero.avisoPendiente}
+    </p>
+
+    <div class="lg:inset-x-marco absolute inset-x-4 bottom-0 pb-5 lg:pb-[30px]">
+      <div class="bg-hueso/20 mb-[26px] hidden h-0.5 lg:block"></div>
+      <div class="grid items-end gap-4 lg:grid-cols-[1.35fr_0.65fr] lg:gap-[46px]">
+        <div>
+          <p class="kicker text-rojo-claro mb-3 text-[10px] lg:mb-4 lg:text-[11px]">
+            {hero.kicker}
+          </p>
+          <h1 class="titular text-[44px] lg:text-[72px]">
+            {
+              hero.titular.map((linea, i) => (
+                <>
+                  {i > 0 && <br class="hidden lg:inline" />}
+                  {i > 0 && ' '}
+                  {linea}
+                </>
+              ))
+            }
+          </h1>
+        </div>
+        <div>
+          <p class="text-ceniza text-sm text-pretty lg:mb-[18px] lg:text-[15px]">
+            {hero.bajada}
+          </p>
+          <div class="hidden gap-2.5 lg:flex">
+            <a
+              href={hero.ctaPrincipal.href}
+              class="boton bg-rojo text-hueso hover:bg-rojo-hondo"
+            >
+              {hero.ctaPrincipal.texto}
+            </a>
+            <a
+              href={hero.ctaSecundario.href}
+              class="boton border-hueso/40 hover:border-hueso hover:bg-hueso/10 border"
+            >
+              {hero.ctaSecundario.texto}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- En celular los botones salen del hero y forman una barra de dos celdas (1e). -->
+  <div class="border-rojo grid grid-cols-2 border-t-2 lg:hidden">
+    <a
+      href={hero.ctaPrincipal.href}
+      class="boton bg-rojo text-hueso hover:bg-rojo-hondo min-h-14"
+    >
+      {hero.ctaPrincipal.texto}
+    </a>
+    <a
+      href={hero.ctaSecundario.href}
+      class="boton border-hueso/30 hover:bg-hueso/10 min-h-14 border-l"
+    >
+      {hero.ctaSecundario.texto}
+    </a>
+  </div>
+</section>
+
+<script is:inline>
+  // Sin `is:inline` Astro lo empaqueta como módulo y agrega un request.
+  addEventListener('load', () => {
+    const video = document.getElementById('video-hero');
+    if (!video) return;
+    // En celular el video es puro costo: pantalla chica, datos caros.
+    if (!matchMedia('(min-width: 1024px)').matches) return;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    video.addEventListener(
+      'canplay',
+      () => {
+        video.style.opacity = '0.6';
+        video.play().catch(() => {});
+      },
+      { once: true },
+    );
+
+    // Los `<source>` salen del HTML sin `src`: recién acá se los damos.
+    for (const fuente of video.querySelectorAll('source')) {
+      fuente.src = fuente.dataset.fuente;
+    }
+    video.load();
+  });
+</script>

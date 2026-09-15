@@ -2,42 +2,102 @@
 import '../estilos/global.css';
 import Cabezal from '../componentes/Cabezal.astro';
 import PieDePagina from '../componentes/PieDePagina.astro';
+import BotonWhatsapp from '../componentes/BotonWhatsapp.astro';
+import DatosEstructurados from '../componentes/DatosEstructurados.astro';
 import { sitio } from '../datos/sitio';
 
 type Props = {
   titulo: string;
   descripcion?: string;
+  /** Imagen OG propia de la página. Si no hay, va la del sitio. */
+  imagenOg?: string;
+  /** El hero de la home precarga su poster: es el elemento LCP. */
+  precargar?: { href: string; tipo: string };
+  /** El home apoya el cabezal sobre el reel: va invertido, en negro. */
+  cabezalInvertido?: boolean;
 };
 
-const { titulo, descripcion = sitio.descripcion } = Astro.props;
-const canonical = new URL(Astro.url.pathname, Astro.site ?? sitio.url);
+const {
+  titulo,
+  descripcion = sitio.descripcion,
+  imagenOg = '/og-por-defecto.jpg',
+  precargar,
+  cabezalInvertido = false,
+} = Astro.props;
+
+const base = Astro.site ?? new URL(sitio.url);
+const canonical = new URL(Astro.url.pathname, base);
+const urlImagenOg = new URL(imagenOg, base);
+const tituloCompleto = `${titulo} · ${sitio.nombre}`;
 ---
 
 <!doctype html>
-<html lang={sitio.idioma} class="scroll-smooth">
+<html lang={sitio.idioma}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{titulo} · {sitio.nombre}</title>
+    <title>{tituloCompleto}</title>
     <meta name="description" content={descripcion} />
     <link rel="canonical" href={canonical.href} />
+
+    <!-- La única fuente del sitio. Precargada: sin esto el título grande se pinta
+         primero con la de sistema y salta cuando llega Archivo. -->
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="/fuentes/archivo-latin-variable.woff2"
+      crossorigin
+    />
+
+    {
+      /* El poster del hero tiene que empezar a bajar antes de que el CSS
+         termine de parsearse: es el LCP y no hay segunda oportunidad. */
+      precargar && (
+        <link
+          rel="preload"
+          as="image"
+          href={precargar.href}
+          type={precargar.tipo}
+          fetchpriority="high"
+        />
+      )
+    }
+
     <meta property="og:type" content="website" />
-    <meta property="og:title" content={`${titulo} · ${sitio.nombre}`} />
+    <meta property="og:site_name" content={sitio.nombre} />
+    <meta property="og:title" content={tituloCompleto} />
     <meta property="og:description" content={descripcion} />
+    <meta property="og:url" content={canonical.href} />
+    <meta property="og:image" content={urlImagenOg.href} />
     <meta property="og:locale" content="es_UY" />
-    <!-- TODO: favicon e imagen OG cuando el cliente pase el logo en vectorial. -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={tituloCompleto} />
+    <meta name="twitter:description" content={descripcion} />
+    <meta name="twitter:image" content={urlImagenOg.href} />
+
+    <!-- TODO: material pendiente del cliente. El favicon y la imagen OG son
+         provisorios hasta que llegue el logo en vectorial. -->
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="/favicon-192.png" />
+    <meta name="theme-color" content="#0a0a0a" />
+
+    <DatosEstructurados />
   </head>
-  <body class="bg-negro text-hueso font-texto antialiased">
+
+  <body class="bg-hueso text-tinta font-sans antialiased">
     <a
       href="#contenido"
-      class="focus:bg-rojo sr-only focus:not-sr-only focus:px-4 focus:py-2"
+      class="bg-rojo text-hueso sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:px-4 focus:py-3 focus:font-semibold"
     >
       Ir al contenido
     </a>
-    <Cabezal />
+    <Cabezal invertido={cabezalInvertido} />
     <main id="contenido">
       <slot />
     </main>
     <PieDePagina />
+    <BotonWhatsapp />
   </body>
 </html>

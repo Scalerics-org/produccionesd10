@@ -1,0 +1,62 @@
+---
+import { datosDeContacto, redes } from '../datos/sitio';
+
+/*
+  Teléfono, mail y redes. El dato que falta no desaparece: la fila dice
+  "pendiente" en rojo, que es como lo marca el diseño.
+*/
+type Props = { conRedesComoBotones?: boolean };
+
+const { conRedesComoBotones = false } = Astro.props;
+---
+
+<dl class="flex flex-col gap-3.5">
+  {
+    datosDeContacto.map((dato) => (
+      <div class="border-tinta/30 border-b pb-3">
+        <dt class="rotulo text-plomo mb-1.5">{dato.rotulo}</dt>
+        <dd class="text-lg leading-none font-extrabold lg:text-xl">
+          {dato.valor && dato.href ? (
+            <a href={dato.href} class="hover:text-rojo">
+              {dato.valor}
+            </a>
+          ) : (
+            /* TODO: material pendiente del cliente. */
+            <span class="text-rojo">Pendiente del cliente</span>
+          )}
+        </dd>
+      </div>
+    ))
+  }
+  <div>
+    <dt class="rotulo text-plomo mb-2">Redes</dt>
+    <dd>
+      <ul
+        class:list={[
+          'flex flex-wrap',
+          conRedesComoBotones ? 'gap-2' : 'gap-x-3 gap-y-1',
+        ]}
+      >
+        {
+          redes.map((red) => (
+            <li>
+              <a
+                href={red.href}
+                rel="noopener"
+                target="_blank"
+                class:list={[
+                  'text-tinta text-[11px] font-semibold tracking-[0.06em]',
+                  conRedesComoBotones
+                    ? 'border-tinta/45 hover:border-tinta hover:bg-hueso inline-flex min-h-11 items-center border px-[11px]'
+                    : 'hover:text-rojo text-[13px] font-normal tracking-normal',
+                ]}
+              >
+                {red.nombre}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </dd>
+  </div>
+</dl>

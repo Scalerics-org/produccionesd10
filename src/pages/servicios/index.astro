@@ -1,24 +1,57 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { servicios } from '../../datos/servicios';
+import CierreRojo from '../../componentes/CierreRojo.astro';
+import { obtenerServicios } from '../../datos/consultas';
+
+/*
+  Índice de servicios. El diseño no lo dibuja — el menú va directo a cada
+  pilar —, así que repite la grilla de cuatro celdas de "Cómo trabajamos".
+*/
+const servicios = await obtenerServicios();
 ---
 
-<Base titulo="Servicios" descripcion="Eventos, audiovisual, radio y TV, y podcasts.">
-  <section class="mx-auto max-w-4xl px-4 py-12">
-    <h1 class="font-titulo text-4xl font-black">Servicios</h1>
-    <ul class="mt-8 space-y-6">
+<Base
+  titulo="Servicios"
+  descripcion="Eventos, audiovisual, radio y TV, y podcasts: las cuatro líneas de Producciones D10."
+>
+  <section class="trama-oscura text-hueso lg:px-marco px-4 pt-6 pb-8 lg:pt-11 lg:pb-12">
+    <p class="kicker text-rojo-claro mb-3 text-[10px] lg:mb-4 lg:text-[11px]">
+      Servicios
+    </p>
+    <h1 class="titular max-w-[18ch] text-[44px] lg:text-[68px]">
+      Cuatro líneas, un solo equipo.
+    </h1>
+  </section>
+
+  <section class="bg-hueso border-rojo lg:px-marco border-t-2 px-4 py-6 lg:py-10">
+    <ul class="bg-tinta border-tinta grid gap-0.5 border-2 sm:grid-cols-2">
       {
-        servicios.map((servicio) => (
-          <li class="border-humo bg-carbon border p-6">
-            <h2 class="font-titulo text-2xl font-black">
-              <a href={`/servicios/${servicio.slug}`} class="hover:text-rojo-claro">
-                {servicio.nombre}
+        servicios.map((servicio, i) => (
+          <li class="bg-hueso group relative flex flex-col p-5 lg:p-7">
+            <span class="text-rojo text-[34px] leading-none font-extrabold">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <h2 class="mt-3 mb-2 text-[30px] leading-none tracking-[-0.03em] lg:text-[40px]">
+              <a
+                href={`/servicios/${servicio.id}`}
+                class="decoration-rojo decoration-2 underline-offset-4 group-hover:underline after:absolute after:inset-0"
+              >
+                {servicio.data.nombre}
               </a>
             </h2>
-            <p class="text-gris mt-2">{servicio.bajada}</p>
+            <p class="text-humo mb-4 text-[15px]">{servicio.data.descripcion}</p>
+            <ul class="mt-auto flex flex-wrap gap-2">
+              {servicio.data.incluye.map((item) => (
+                <li class="border-tinta/45 border px-[11px] py-2 text-[11px] font-semibold tracking-[0.06em]">
+                  {item.titulo}
+                </li>
+              ))}
+            </ul>
           </li>
         ))
       }
     </ul>
   </section>
+
+  <CierreRojo frase="Contanos qué hay que producir y te decimos cómo." />
 </Base>

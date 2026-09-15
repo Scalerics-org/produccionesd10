@@ -1,0 +1,61 @@
+---
+import { Image } from 'astro:assets';
+import { obtenerCasoDestacado } from '../datos/consultas';
+import { home } from '../datos/home';
+
+/*
+  La franja del caso destacado del home (1d): el escudo a la izquierda, el
+  relato y tres cifras a la derecha. Toma el caso del dominio: el primero que
+  tenga cifras cargadas, que hoy es Noche D10.
+*/
+const caso = await obtenerCasoDestacado();
+const { kicker, titulo, texto, enlace } = home.casoDestacado;
+const portada = caso?.data.portada;
+---
+
+{
+  caso && (
+    <section class="bg-carbon text-hueso border-hueso/20 lg:px-lienzo grid border-t-2 lg:grid-cols-[1fr_1.25fr]">
+      <div class="border-hueso/20 lg:px-marco flex items-center px-4 pt-[26px] lg:border-r lg:py-9">
+        {portada?.tipo === 'logo' && (
+          <Image
+            src={portada.imagen}
+            alt={portada.alt}
+            width={380}
+            loading="lazy"
+            class="logo-sobre-negro w-[130px] lg:w-[190px]"
+          />
+        )}
+      </div>
+      <div class="lg:px-marco px-4 pt-4 pb-[26px] lg:py-9">
+        <p class="kicker text-rojo-claro mb-2.5 text-[10px] lg:mb-3.5 lg:text-[11px]">
+          {kicker}
+        </p>
+        <h2 class="mb-3 text-[30px] leading-[1.02] tracking-[-0.03em] lg:mb-3.5 lg:text-[40px] lg:leading-none">
+          {titulo}
+        </h2>
+        <p class="text-ceniza mb-[18px] max-w-[52ch] text-sm text-pretty lg:mb-[22px] lg:text-[15px]">
+          {texto}
+        </p>
+        <dl class="border-hueso/25 mb-[18px] grid grid-cols-3 border-y lg:mb-[22px]">
+          {caso.data.cifras.slice(0, 3).map((cifra) => (
+            <div class="flex flex-col-reverse py-3.5 lg:py-4">
+              <dt class="rotulo text-niebla mt-1.5 text-[9px] lg:text-[10px]">
+                {cifra.corta}
+              </dt>
+              <dd class="text-[22px] leading-none font-extrabold lg:text-[28px]">
+                {cifra.valor}
+              </dd>
+            </div>
+          ))}
+        </dl>
+        <a
+          href={`/trabajos/${caso.id}`}
+          class="boton border-hueso hover:bg-hueso hover:text-tinta w-full border lg:w-auto"
+        >
+          {enlace}
+        </a>
+      </div>
+    </section>
+  )
+}

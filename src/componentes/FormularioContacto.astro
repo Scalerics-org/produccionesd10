@@ -1,0 +1,152 @@
+---
+import { obtenerServicios } from '../datos/consultas';
+import { campos, textosDelFormulario } from '../datos/formulario';
+import { contacto } from '../datos/sitio';
+
+/*
+  Formulario de presupuesto.
+
+  Validación nativa del navegador — `required`, `pattern`, `minlength` — y nada
+  de JS. Los estados de error del diseño (3f: rótulo y borde en rojo, con una
+  línea que explica qué falta) salen de `:user-invalid`, que recién se activa
+  cuando la persona tocó el campo o intentó enviar: no se pinta todo de rojo
+  al cargar la página.
+
+  El honeypot está escondido para las personas y visible para un bot que
+  completa todo lo que encuentra. Va con `hidden`, `tabindex="-1"` y
+  `autocomplete="off"`: no se alcanza tabulando ni lo rellena el navegador.
+*/
+type Props = { compacto?: boolean };
+
+const { compacto = false } = Astro.props;
+const servicios = await obtenerServicios();
+
+const estiloCampo =
+  'border-tinta/40 hover:border-tinta/70 focus:border-rojo user-invalid:border-rojo user-invalid:border-2 w-full border bg-transparent px-[13px] py-[13px] text-[15px] outline-none lg:text-sm';
+const estiloRotulo =
+  'rotulo text-humo group-has-[:user-invalid]:text-rojo mb-1.5 block';
+const estiloError =
+  'text-rojo mt-[7px] hidden text-[11px] leading-[1.3] font-semibold group-has-[:user-invalid]:block';
+---
+
+<form id="formulario" method="post" action="/api/contacto" class="scroll-mt-24">
+  <div hidden aria-hidden="true">
+    <label>
+      No completar este campo
+      <input type="text" name={campos.honeypot} tabindex="-1" autocomplete="off" />
+    </label>
+  </div>
+
+  <fieldset class="group mb-[22px]">
+    <legend class={estiloRotulo}>{campos.tipo.rotulo}</legend>
+    <div
+      class="border-tinta/40 group-has-[:user-invalid]:border-rojo grid grid-cols-2 border group-has-[:user-invalid]:border-2 sm:flex"
+    >
+      {
+        servicios.map((servicio, i) => (
+          <label
+            class:list={[
+              'kicker has-[:checked]:bg-tinta has-[:checked]:text-hueso hover:bg-hueso-hondo has-[:focus-visible]:outline-rojo text-humo flex min-h-12 flex-1 cursor-pointer items-center px-3 tracking-[0.06em] has-[:focus-visible]:outline-2 has-[:focus-visible]:-outline-offset-2',
+              i % 2 === 1 && 'border-tinta/40 border-l',
+              i >= 2 && 'border-tinta/40 border-t sm:border-t-0',
+              i === 2 && 'sm:border-l',
+            ]}
+          >
+            <input
+              type="radio"
+              name={campos.tipo.nombre}
+              value={servicio.id}
+              required
+              class="sr-only"
+            />
+            {servicio.data.nombre}
+          </label>
+        ))
+      }
+    </div>
+    <p class={estiloError}>{campos.tipo.error}</p>
+  </fieldset>
+
+  <div class:list={['grid gap-x-[18px] gap-y-4', !compacto && 'sm:grid-cols-2']}>
+    <p class="group">
+      <label class={estiloRotulo} for="campo-nombre">{campos.nombre.rotulo}</label>
+      <input
+        id="campo-nombre"
+        type="text"
+        name={campos.nombre.nombre}
+        required
+        autocomplete="name"
+        maxlength={campos.nombre.maximo}
+        placeholder={campos.nombre.ayuda}
+        class={estiloCampo}
+      />
+      <span class={estiloError}>{campos.nombre.error}</span>
+    </p>
+
+    <p>
+      <label class={estiloRotulo} for="campo-empresa">{campos.empresa.rotulo}</label>
+      <input
+        id="campo-empresa"
+        type="text"
+        name={campos.empresa.nombre}
+        autocomplete="organization"
+        maxlength={campos.empresa.maximo}
+        placeholder={campos.empresa.ayuda}
+        class={estiloCampo}
+      />
+    </p>
+
+    <p class="group">
+      <label class={estiloRotulo} for="campo-contacto">{campos.contacto.rotulo}</label>
+      <input
+        id="campo-contacto"
+        type="text"
+        inputmode="email"
+        name={campos.contacto.nombre}
+        required
+        autocomplete="email"
+        maxlength={campos.contacto.maximo}
+        pattern={campos.contacto.patron}
+        placeholder={campos.contacto.ayuda}
+        class={estiloCampo}
+      />
+      <span class={estiloError}>{campos.contacto.error}</span>
+    </p>
+
+    <p>
+      <label class={estiloRotulo} for="campo-fecha">{campos.fecha.rotulo}</label>
+      <input
+        id="campo-fecha"
+        type="text"
+        name={campos.fecha.nombre}
+        maxlength={campos.fecha.maximo}
+        placeholder={campos.fecha.ayuda}
+        class={estiloCampo}
+      />
+    </p>
+  </div>
+
+  <p class="group mt-4">
+    <label class={estiloRotulo} for="campo-mensaje">{campos.mensaje.rotulo}</label>
+    <textarea
+      id="campo-mensaje"
+      name={campos.mensaje.nombre}
+      required
+      rows="4"
+      minlength={campos.mensaje.minimo}
+      maxlength={campos.mensaje.maximo}
+      placeholder={campos.mensaje.ayuda}
+      class:list={[estiloCampo, 'min-h-[104px] resize-y']}></textarea>
+    <span class={estiloError}>{campos.mensaje.error}</span>
+  </p>
+
+  <div class="mt-[22px] flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-[18px]">
+    <button
+      type="submit"
+      class="boton bg-rojo text-hueso hover:bg-rojo-hondo active:bg-rojo-hondo min-h-[52px] cursor-pointer px-6 text-[13px]"
+    >
+      {textosDelFormulario.enviar}
+    </button>
+    <p class="text-humo max-w-[30ch] text-xs leading-[1.45]">{contacto.privacidad}</p>
+  </div>
+</form>

@@ -1,26 +1,61 @@
 ---
 import Base from '../layouts/Base.astro';
-import { clientes } from '../datos/trabajos';
+import CierreRojo from '../componentes/CierreRojo.astro';
+import { obtenerClientes } from '../datos/consultas';
+
+/*
+  Clientes. El diseño no la dibuja: sigue la franja de logos del home, en blanco
+  sobre negro y con la misma grilla de reglas.
+*/
+const clientes = await obtenerClientes();
+const todosPendientes =
+  clientes.length > 0 && clientes.every((cliente) => cliente.data.esPlaceholder);
 ---
 
-<Base titulo="Clientes" descripcion="Marcas y organizaciones que confían en nosotros.">
-  <section class="mx-auto max-w-4xl px-4 py-12">
-    <h1 class="font-titulo text-4xl font-black">Clientes</h1>
+<Base
+  titulo="Clientes"
+  descripcion="Marcas, agencias y organismos que trabajaron con Producciones D10."
+>
+  <section class="bg-tinta text-hueso lg:px-marco px-4 pt-6 pb-8 lg:pt-10 lg:pb-12">
+    <p class="kicker text-rojo-claro mb-3 text-[10px] lg:mb-4 lg:text-[11px]">
+      Clientes
+    </p>
+    <h1 class="titular mb-4 max-w-[20ch] text-[40px] lg:text-[62px]">
+      Marcas, organismos y artistas que confiaron en la casa.
+    </h1>
+
+    {
+      todosPendientes && (
+        /* TODO: material pendiente del cliente. Los casilleros no son clientes reales. */
+        <p class="bg-rojo text-hueso mb-8 inline-block px-3 py-2 text-[13px]">
+          <strong>Muro provisorio.</strong> Faltan los logos y la lista de marcas: lo
+          que se ve son casilleros.
+        </p>
+      )
+    }
+
     {
       clientes.length === 0 ? (
-        <p class="text-gris mt-6">
-          {/* TODO: logos y nombres pendientes del cliente. */}
-          Pendiente: el cliente todavía no nos pasó los logos.
-        </p>
+        <p class="text-ceniza">Todavía no hay clientes publicados.</p>
       ) : (
-        <ul class="mt-8 grid grid-cols-2 gap-6 sm:grid-cols-4">
+        <ul class="bg-hueso/20 border-hueso/20 grid grid-cols-2 gap-px border sm:grid-cols-3 lg:grid-cols-4">
           {clientes.map((cliente) => (
-            <li class="border-humo grid place-items-center border p-6 text-sm">
-              {cliente.nombre}
+            <li class="bg-tinta grid h-28 place-items-center p-6 lg:h-36">
+              <img
+                src={cliente.data.logo}
+                alt={cliente.data.nombre}
+                width="200"
+                height="72"
+                loading="lazy"
+                decoding="async"
+                class="h-12 w-auto opacity-80 brightness-0 invert"
+              />
             </li>
           ))}
         </ul>
       )
     }
   </section>
+
+  <CierreRojo frase="La próxima marca en esta grilla puede ser la tuya." />
 </Base>

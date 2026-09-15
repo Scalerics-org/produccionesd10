@@ -1,0 +1,35 @@
+---
+/*
+  Lockup provisorio de la marca: "D10" con la bajada "DE DIEZ PRODUCCIONES",
+  como lo resuelve el diseño.
+
+  TODO: material pendiente del cliente. No es el logo: el oficial es el
+  monograma rojo metálico y todavía no lo tenemos en vectorial. Esto es texto
+  tipográfico a propósito, para no redibujar una marca que no es nuestra.
+*/
+type Props = { invertido?: boolean; chico?: boolean };
+
+const { invertido = false, chico = false } = Astro.props;
+---
+
+<span
+  class:list={[
+    'inline-flex w-max flex-col gap-0.5 border',
+    chico ? 'px-2 py-1.5' : 'px-2.5 py-1.5',
+    invertido ? 'border-hueso/35 text-hueso' : 'border-tinta/35 text-tinta',
+  ]}
+>
+  <span
+    class:list={[
+      'leading-none font-extrabold tracking-[-0.02em]',
+      chico ? 'text-[15px]' : 'text-lg',
+    ]}>D10</span
+  >
+  <span
+    class:list={[
+      'leading-none font-semibold tracking-[0.2em]',
+      chico ? 'text-[5px]' : 'text-[6px]',
+      invertido ? 'text-rojo-claro' : 'text-rojo',
+    ]}>DE DIEZ PRODUCCIONES</span
+  >
+</span>

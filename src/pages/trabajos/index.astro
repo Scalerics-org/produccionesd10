@@ -1,35 +1,15 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { servicios } from '../../datos/servicios';
-import { trabajos } from '../../datos/trabajos';
+import PaginaPortfolio from '../../componentes/PaginaPortfolio.astro';
 ---
 
-<Base titulo="Trabajos" descripcion="Programas, eventos, audiovisual y podcasts.">
-  <section class="mx-auto max-w-6xl px-4 py-12">
-    <h1 class="font-titulo text-4xl font-black">Trabajos</h1>
-    {/* TODO: filtro por pilar, funcionando con query params (sin JS). */}
-    <p class="text-gris mt-3">
-      {servicios.map((servicio) => servicio.nombre).join(' · ')}
-    </p>
-
-    <ul class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {
-        trabajos.map((trabajo) => (
-          <li class="border-humo bg-carbon border p-6">
-            <h2 class="font-semibold">
-              <a href={`/trabajos/${trabajo.slug}`} class="hover:text-rojo-claro">
-                {trabajo.titulo}
-              </a>
-            </h2>
-            <p class="text-gris mt-2 text-sm">{trabajo.resumen}</p>
-            {trabajo.esPlaceholder && (
-              <p class="text-rojo-claro mt-3 text-xs tracking-widest uppercase">
-                Pendiente del cliente
-              </p>
-            )}
-          </li>
-        ))
-      }
-    </ul>
-  </section>
+<Base
+  titulo="Trabajos"
+  descripcion="Portfolio de Producciones D10: eventos, audiovisual, radio y TV, y podcasts."
+>
+  <PaginaPortfolio
+    pilar={null}
+    titular="Todo lo que produjimos, por tipo de producción."
+    bajada="La misma taxonomía que usamos en servicios: eventos, audiovisual, radio y TV, podcasts. Si lo ofrecemos, acá están los trabajos que lo prueban."
+  />
 </Base>

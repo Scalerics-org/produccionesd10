@@ -1,0 +1,32 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PaginaPortfolio from '../../../componentes/PaginaPortfolio.astro';
+import { obtenerServicios } from '../../../datos/consultas';
+import type { Pilar } from '../../../datos/pilares';
+
+/*
+  Una página por pilar. Es lo que hace que el filtro del portfolio funcione sin
+  JavaScript: cada filtro es un link a una URL que existe de verdad.
+*/
+export async function getStaticPaths() {
+  const servicios = await obtenerServicios();
+  return servicios.map((servicio) => ({
+    params: { pilar: servicio.id },
+    props: { servicio },
+  }));
+}
+
+const { servicio } = Astro.props;
+const nombre = servicio.data.nombre;
+---
+
+<Base
+  titulo={`Trabajos de ${nombre.toLowerCase()}`}
+  descripcion={`Portfolio de Producciones D10 en ${nombre.toLowerCase()}: ${servicio.data.bajada}`}
+>
+  <PaginaPortfolio
+    pilar={servicio.id as Pilar}
+    titular={`${nombre}: lo que produjimos.`}
+    bajada={servicio.data.descripcion}
+  />
+</Base>

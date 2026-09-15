@@ -1,0 +1,28 @@
+---
+import { empresa } from '../datos/empresa';
+import { redes, sitio } from '../datos/sitio';
+
+const base = Astro.site ?? new URL(sitio.url);
+
+/*
+  JSON-LD de la organización. Los campos que el cliente todavía no confirmó
+  (teléfono, dirección) se omiten en vez de ir vacíos: un `telephone: ""` es
+  peor que no tener el campo, porque Google lo indexa igual.
+*/
+const organizacion = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: empresa.nombre,
+  url: base.href,
+  description: sitio.descripcion,
+  foundingDate: empresa.fundacion,
+  logo: new URL('/favicon-512.png', base).href,
+  image: new URL('/og-por-defecto.jpg', base).href,
+  areaServed: 'UY',
+  sameAs: redes.map((red) => red.href),
+  ...(sitio.email ? { email: sitio.email } : {}),
+  ...(sitio.telefono ? { telephone: sitio.telefono } : {}),
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(organizacion)} is:inline />

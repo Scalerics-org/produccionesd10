@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 
-# TODO: apuntar al dominio real cuando esté definido.
-Sitemap: http://localhost:4321/sitemap-index.xml
+# TODO: material pendiente del cliente. Apuntar al dominio real cuando esté
+# definido y comprado; hoy `site` en astro.config.mjs es localhost.
+Sitemap: https://produccionesd10.scalerics.workers.dev/sitemap-index.xml

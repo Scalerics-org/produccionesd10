@@ -1,0 +1,73 @@
+---
+import { enGruposDeMiles, metricas } from '../datos/empresa';
+
+/*
+  Contadores del home.
+
+  En escritorio son la franja negra pegada al reel, con la regla roja arriba
+  (1d); en celular pasan a hueso y se apilan grandes (1e).
+
+  El número que cuenta lo dibuja CSS con `counter()` sobre un `::after`, y el
+  avance lo empuja `animation-timeline: view()`. Como el contenido generado por
+  CSS no es texto confiable para un lector de pantalla, cada métrica lleva el
+  número de verdad en un `sr-only` y la parte animada va con `aria-hidden`.
+
+  Si el navegador no soporta `animation-timeline`, la animación queda con
+  duración 0 y `fill: both`: el número aparece directo en su valor final.
+*/
+---
+
+<section
+  class="lg:bg-tinta lg:text-hueso lg:border-rojo bg-hueso text-tinta lg:border-t-2"
+>
+  <dl class="lg:px-lienzo grid lg:grid-cols-3">
+    {
+      metricas.map((metrica, i) => {
+        const grupos = enGruposDeMiles(metrica.valor);
+        const escrito = `${metrica.prefijo}${grupos.join('.')}`;
+        const esUltima = i === metricas.length - 1;
+
+        return (
+          <div
+            class:list={[
+              'lg:px-marco px-4 pt-6 pb-[18px] lg:py-[26px]',
+              esUltima
+                ? 'border-tinta border-b-2 lg:border-b-0'
+                : 'border-tinta/35 lg:border-hueso/20 border-b-2 lg:border-r lg:border-b-0',
+            ]}
+          >
+            <dt class="sr-only">
+              {metrica.unidad} {metrica.detalle}
+            </dt>
+            <dd>
+              <p class="text-[54px] leading-none font-extrabold tracking-[-0.04em] tabular-nums lg:text-[46px] lg:tracking-[-0.035em]">
+                <span class="sr-only">{escrito}</span>
+                <span aria-hidden="true">
+                  {metrica.prefijo}
+                  {grupos.map((grupo, j) => (
+                    <>
+                      {j > 0 && '.'}
+                      <span
+                        class:list={[
+                          'grupo-contador',
+                          j > 0 && 'grupo-contador--relleno',
+                        ]}
+                        style={`--hasta:${Number(grupo)}`}
+                      />
+                    </>
+                  ))}
+                </span>
+              </p>
+              <p
+                class="rotulo text-humo lg:text-niebla mt-2 text-[11px] tracking-[0.13em] lg:text-[10px]"
+                aria-hidden="true"
+              >
+                {metrica.unidad} {metrica.detalle}
+              </p>
+            </dd>
+          </div>
+        );
+      })
+    }
+  </dl>
+</section>

@@ -1,0 +1,96 @@
+---
+import { obtenerServicios } from '../datos/consultas';
+import { home } from '../datos/home';
+
+/*
+  Acordeón de los cuatro pilares.
+
+  Es `<details>` + `<summary>` nativo, sin una línea de JS: el teclado, el rol
+  y el estado expandido los resuelve el navegador. El `name` compartido lo hace
+  excluyente — se abre uno y se cierra el anterior —, y donde todavía no se
+  soporta quedan abiertos varios, que no es un problema.
+
+  El diseño (1d) pinta el pilar abierto en negro con la trama y los cerrados en
+  hueso: acá eso sale de `group-open`, así el color sigue al que abras.
+*/
+const servicios = await obtenerServicios();
+---
+
+<section class="bg-hueso border-tinta border-t-2">
+  <div
+    class="lg:px-marco flex items-baseline justify-between gap-4 px-4 pt-6 pb-4 lg:pt-[34px] lg:pb-[18px]"
+  >
+    <h2 class="text-[26px] leading-none tracking-[-0.03em] lg:text-[32px]">
+      {home.pilares.titulo}
+    </h2>
+    <p class="kicker text-rojo hidden tracking-[0.14em] lg:block">
+      {home.pilares.ayuda}
+    </p>
+  </div>
+
+  {
+    servicios.map((servicio, i) => (
+      <details
+        name="pilares"
+        open={i === 0}
+        class:list={[
+          'group border-tinta/35 open:border-tinta border-t-2',
+          i === servicios.length - 1 && 'border-b-tinta border-b-2',
+        ]}
+      >
+        <summary
+          class:list={[
+            'lg:px-marco flex min-h-[78px] cursor-pointer list-none items-center gap-3 px-4 transition-colors lg:min-h-[96px] lg:gap-[26px] [&::-webkit-details-marker]:hidden',
+            'bg-hueso hover:bg-hueso-hondo text-tinta',
+            'group-open:trama-oscura group-open:text-hueso group-open:min-h-[88px] lg:group-open:min-h-[112px]',
+          ]}
+        >
+          <span class="flex flex-1 flex-col gap-[7px] lg:flex-none lg:flex-row lg:items-center lg:gap-[26px]">
+            <span class="text-rojo group-open:text-rojo-claro text-[10px] font-semibold tracking-[0.14em] lg:text-xs lg:tracking-[0.1em]">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <span class="text-[28px] leading-none font-extrabold tracking-[-0.03em] group-open:text-[30px] lg:text-[40px] lg:group-open:text-[44px]">
+              {servicio.data.nombre}
+            </span>
+          </span>
+          <span class="text-humo group-open:text-ceniza hidden flex-1 text-sm lg:block">
+            {servicio.data.bajada}
+          </span>
+          <span
+            aria-hidden="true"
+            class="text-2xl leading-none font-extrabold lg:hidden"
+          >
+            <span class="group-open:hidden">+</span>
+            <span class="hidden group-open:inline">—</span>
+          </span>
+          <span aria-hidden="true" class="kicker hidden tracking-[0.14em] lg:inline">
+            <span class="group-open:hidden">Abrir +</span>
+            <span class="hidden group-open:inline">Cerrar —</span>
+          </span>
+        </summary>
+
+        <div class="bg-carbon text-hueso border-hueso/20 lg:px-marco grid gap-4 border-t px-4 pt-[18px] pb-[22px] lg:grid-cols-[1.2fr_1fr] lg:gap-10 lg:py-7">
+          <p class="text-[15px] text-pretty lg:text-[17px]">
+            {servicio.data.descripcion}
+          </p>
+          <div>
+            <ul class="mb-[18px] hidden flex-wrap gap-2 lg:flex">
+              {servicio.data.incluye.map((item) => (
+                <li class="border-hueso/40 border px-[11px] py-2 text-[11px] font-semibold tracking-[0.06em]">
+                  {item.titulo}
+                </li>
+              ))}
+            </ul>
+            <a
+              href={`/servicios/${servicio.id}`}
+              class="boton bg-rojo text-hueso hover:bg-rojo-hondo w-full lg:w-auto"
+            >
+              Ver servicio
+              <span class="sr-only">{servicio.data.nombre}</span>
+            </a>
+          </div>
+        </div>
+      </details>
+    ))
+  }
+</section>

@@ -1,0 +1,38 @@
+---
+/*
+  "Qué incluye" y "Qué se hizo": una lista con reglas, número rojo, título y
+  detalle en una fila en escritorio, apilados en celular. La última fila cierra
+  con la regla fuerte de 2 px.
+*/
+type Props = {
+  items: readonly { titulo: string; detalle: string }[];
+  numerada?: boolean;
+};
+
+const { items, numerada = true } = Astro.props;
+---
+
+<ol class="border-tinta border-t-2">
+  {
+    items.map((item, i) => (
+      <li
+        class:list={[
+          'flex flex-col gap-1.5 py-4 lg:flex-row lg:items-baseline lg:gap-[18px] lg:py-[18px]',
+          i === items.length - 1
+            ? 'border-tinta border-b-2'
+            : 'border-tinta/30 border-b',
+        ]}
+      >
+        {numerada && (
+          <span class="text-rojo text-[10px] font-semibold tracking-[0.14em] lg:w-[26px] lg:text-[11px] lg:tracking-normal">
+            {String(i + 1).padStart(2, '0')}
+          </span>
+        )}
+        <h3 class="text-[20px] leading-[1.05] font-extrabold lg:w-[230px] lg:flex-none lg:text-[22px] lg:leading-none">
+          {item.titulo}
+        </h3>
+        <p class="text-humo text-sm leading-[1.45] lg:flex-1">{item.detalle}</p>
+      </li>
+    ))
+  }
+</ol>

@@ -1,93 +1,80 @@
 ---
 import Base from '../layouts/Base.astro';
-import { metricas } from '../datos/empresa';
-import { servicios } from '../datos/servicios';
-import { trabajos } from '../datos/trabajos';
+import Hero from '../componentes/Hero.astro';
+import Contadores from '../componentes/Contadores.astro';
+import AcordeonPilares from '../componentes/AcordeonPilares.astro';
+import GrillaTrabajos from '../componentes/GrillaTrabajos.astro';
+import CarruselLogos from '../componentes/CarruselLogos.astro';
+import CasoDestacado from '../componentes/CasoDestacado.astro';
+import FormularioContacto from '../componentes/FormularioContacto.astro';
+import CanalDirecto from '../componentes/CanalDirecto.astro';
+import DatosDeContacto from '../componentes/DatosDeContacto.astro';
+import { obtenerDestacados } from '../datos/consultas';
+import { home } from '../datos/home';
+import { contacto } from '../datos/sitio';
 
-const destacados = trabajos.filter((trabajo) => !trabajo.esPlaceholder).slice(0, 3);
+/* El orden de las secciones es el de la pantalla 1d del diseño. */
+const destacados = await obtenerDestacados(6);
 ---
 
-<Base titulo="Inicio">
-  <!-- Hero. Cuando entre el reel: video de fondo con poster AVIF, y el poster
-       es el elemento LCP. El video arranca después del load y solo en desktop. -->
-  <section class="mx-auto max-w-6xl px-4 py-20">
-    <h1 class="font-titulo max-w-4xl text-5xl leading-[1.05] font-black sm:text-7xl">
-      Hacemos televisión, radio y eventos en Uruguay desde hace 16 años.
-    </h1>
-    <p class="text-gris mt-6 max-w-2xl text-lg">
-      Producimos <a
-        href="/trabajos/noche-d10"
-        class="text-hueso underline underline-offset-4">Noche D10</a
-      > todas las semanas. Ese mismo equipo produce eventos, contenido audiovisual y podcasts.
-    </p>
-    <p class="mt-8">
+<Base
+  titulo="Inicio"
+  precargar={{ href: '/video/hero-poster.avif', tipo: 'image/avif' }}
+  cabezalInvertido
+>
+  <Hero />
+  <Contadores />
+  <AcordeonPilares />
+
+  <section class="bg-hueso lg:px-marco px-4 pt-6 pb-7 lg:pt-9 lg:pb-10">
+    <div class="mb-4 flex items-baseline justify-between gap-4 lg:mb-[22px]">
+      <h2 class="text-[26px] leading-none tracking-[-0.03em] lg:text-[32px]">
+        {home.destacados.titulo}
+      </h2>
       <a
-        href="/contacto"
-        class="bg-rojo hover:bg-rojo-claro inline-block px-6 py-3 font-semibold transition-colors"
+        href={home.destacados.enlace.href}
+        class="kicker border-rojo hidden border-b-2 pb-1 tracking-[0.14em] lg:inline-block"
       >
-        Contanos tu proyecto
+        {home.destacados.enlace.texto}
       </a>
-    </p>
+    </div>
+
+    <GrillaTrabajos trabajos={destacados} />
+
+    <a
+      href={home.destacados.enlace.href}
+      class="boton border-tinta hover:bg-tinta hover:text-hueso mt-4 w-full border-2 lg:hidden"
+    >
+      {home.destacados.enlace.texto}
+    </a>
   </section>
 
-  <section class="border-humo bg-carbon border-y">
-    <dl class="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:grid-cols-3">
-      {
-        metricas.map((metrica) => (
-          <div>
-            <dt class="sr-only">{metrica.detalle}</dt>
-            <dd>
-              <span class="font-titulo text-rojo-claro block text-5xl font-black">
-                {metrica.valor}
-              </span>
-              <span class="mt-1 block text-lg font-semibold">{metrica.unidad}</span>
-              <span class="text-gris mt-1 block text-sm">{metrica.detalle}</span>
-            </dd>
-          </div>
-        ))
-      }
-    </dl>
-  </section>
+  <CarruselLogos />
+  <CasoDestacado />
 
-  <section class="mx-auto max-w-6xl px-4 py-16">
-    <h2 class="font-titulo text-3xl font-black">Qué hacemos</h2>
-    <ul class="mt-8 grid gap-6 sm:grid-cols-2">
-      {
-        servicios.map((servicio) => (
-          <li class="border-humo bg-carbon border p-6">
-            <h3 class="font-titulo text-xl font-black">
-              <a href={`/servicios/${servicio.slug}`} class="hover:text-rojo-claro">
-                {servicio.nombre}
-              </a>
-            </h3>
-            <p class="text-gris mt-2 text-sm">{servicio.bajada}</p>
-            <p class="mt-4 text-sm">{servicio.descripcion}</p>
-          </li>
-        ))
-      }
-    </ul>
-  </section>
+  <section
+    class="bg-hueso fondo-partido border-tinta lg:px-lienzo grid border-t-2 lg:grid-cols-[1.15fr_1fr]"
+    aria-labelledby="titulo-contacto-home"
+  >
+    <div
+      class="bg-hueso border-tinta lg:px-marco px-4 pt-[26px] pb-[30px] lg:border-r-2 lg:py-9"
+    >
+      <h2
+        id="titulo-contacto-home"
+        class="mb-2 text-[28px] leading-none tracking-[-0.03em] lg:text-[34px]"
+      >
+        {home.contacto.titulo}
+      </h2>
+      <p class="text-humo mb-[18px] text-sm lg:mb-[22px]">{contacto.bajadaCorta}</p>
+      <FormularioContacto />
+    </div>
 
-  <section class="mx-auto max-w-6xl px-4 py-16">
-    <h2 class="font-titulo text-3xl font-black">Trabajos</h2>
-    <ul class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {
-        destacados.map((trabajo) => (
-          <li class="border-humo bg-carbon border p-6">
-            <h3 class="font-semibold">
-              <a href={`/trabajos/${trabajo.slug}`} class="hover:text-rojo-claro">
-                {trabajo.titulo}
-              </a>
-            </h3>
-            <p class="text-gris mt-2 text-sm">{trabajo.resumen}</p>
-          </li>
-        ))
-      }
-    </ul>
-    <p class="mt-8">
-      <a href="/trabajos" class="text-rojo-claro underline underline-offset-4">
-        Ver todos los trabajos
-      </a>
-    </p>
+    <div class="bg-hueso-hondo lg:px-marco flex flex-col gap-5 px-4 py-[26px] lg:py-9">
+      <p class="kicker text-rojo">{home.contacto.directo}</p>
+      <CanalDirecto tono="tinta" />
+      <div class="border-tinta/35 border-t-2 pt-[18px]">
+        <DatosDeContacto />
+      </div>
+    </div>
   </section>
 </Base>

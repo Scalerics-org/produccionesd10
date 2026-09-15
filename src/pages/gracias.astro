@@ -1,0 +1,44 @@
+---
+import Base from '../layouts/Base.astro';
+import { canalDirecto } from '../datos/sitio';
+
+/* El estado "consulta enviada" de 3f, como página propia: el Worker redirige acá. */
+---
+
+<Base titulo="Consulta enviada" descripcion="Recibimos tu consulta.">
+  <section class="bg-hueso lg:px-marco px-4 py-14 lg:py-24">
+    <div class="border-tinta max-w-xl border-2 p-[22px] lg:p-8">
+      <p
+        class="bg-rojo text-hueso mb-4 flex size-11 items-center justify-center text-[22px] font-extrabold"
+        aria-hidden="true"
+      >
+        ✓
+      </p>
+      <h1 class="mb-2.5 text-[34px] leading-[1.05] tracking-[-0.03em]">
+        Recibimos tu consulta
+      </h1>
+      <!-- TODO: material pendiente del cliente. Confirmar la promesa de respuesta en el día. -->
+      <p class="text-humo mb-[18px] text-sm leading-normal">
+        Te contestamos el mismo día hábil. Si la fecha del evento está cerca, escribinos
+        por WhatsApp y lo resolvemos hoy.
+      </p>
+      <div class="flex flex-col gap-0.5">
+        <a
+          href={canalDirecto.href}
+          class="boton bg-tinta text-hueso hover:bg-carbon"
+          {...canalDirecto.externo
+            ? { target: '_blank', rel: 'noopener noreferrer' }
+            : {}}
+        >
+          Escribir por WhatsApp <span aria-hidden="true">→</span>
+        </a>
+        <a
+          href="/trabajos"
+          class="boton border-tinta hover:bg-tinta hover:text-hueso border-2"
+        >
+          Mientras tanto, mirá los trabajos
+        </a>
+      </div>
+    </div>
+  </section>
+</Base>

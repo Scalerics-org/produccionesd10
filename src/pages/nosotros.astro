@@ -1,44 +1,136 @@
 ---
 import Base from '../layouts/Base.astro';
-import { empresa, equipo, metricas } from '../datos/empresa';
+import CierreRojo from '../componentes/CierreRojo.astro';
+import { equipo, hitos, historia, integrantesPendientes } from '../datos/empresa';
+
+/*
+  Nosotros (2c): la historia en cuatro tiempos, la dirección y el equipo.
+
+  Todo lo que el diseño dibuja como pendiente se publica como pendiente: los
+  años sin confirmar, las fotos, la bio de Matías y los nombres del equipo.
+*/
+const casillerosDeEquipo = Array.from({ length: integrantesPendientes });
 ---
 
-<Base titulo="Nosotros" descripcion="16 años produciendo radio, televisión y eventos.">
-  <section class="mx-auto max-w-3xl px-4 py-12">
-    <h1 class="font-titulo text-4xl font-black">Nosotros</h1>
-    <p class="text-gris mt-4 text-lg">
-      {empresa.aniosDeTrayectoria} años produciendo radio, televisión y eventos en Uruguay.
-    </p>
-
-    <dl class="mt-10 grid gap-6 sm:grid-cols-3">
+<Base
+  titulo="Nosotros"
+  descripcion="16 años produciendo radio, televisión, eventos y podcasts en Uruguay. Dirección: Luis Betarte. Producción general: Matías Bidegaray."
+>
+  <section
+    class="bg-hueso border-tinta lg:px-marco grid gap-8 border-b-2 px-4 pt-6 pb-7 lg:grid-cols-[1.2fr_1fr] lg:gap-[46px] lg:pt-11 lg:pb-[34px]"
+  >
+    <div>
+      <p class="kicker text-rojo mb-3 text-[10px] lg:mb-4 lg:text-[11px]">Nosotros</p>
+      <h1
+        class="titular mb-[18px] max-w-[18ch] text-[44px] leading-[0.94] lg:text-[64px]"
+      >
+        Dieciséis años haciendo que algo salga al aire.
+      </h1>
+      <p class="text-humo max-w-[52ch] text-[15px] text-pretty lg:text-[17px]">
+        Producciones D10 es una casa productora uruguaya. Empezó con un programa y
+        terminó produciendo eventos, contenido y podcasts para marcas, organismos y
+        artistas. El oficio es el mismo: resolver.
+      </p>
+    </div>
+    <dl class="celdas-con-reglas border-tinta grid gap-0.5 self-end border-2">
       {
-        metricas.map((metrica) => (
-          <div>
-            <dt class="sr-only">{metrica.detalle}</dt>
-            <dd>
-              <span class="font-titulo text-rojo-claro block text-3xl font-black">
-                {metrica.valor}
-              </span>
-              <span class="text-gris text-sm">
-                {metrica.unidad} {metrica.detalle}
-              </span>
+        hitos.map((hito) => (
+          <div class="bg-hueso flex flex-col-reverse px-[18px] py-4">
+            <dt class="rotulo text-humo mt-[7px] tracking-[0.13em]">{hito.etiqueta}</dt>
+            <dd class="text-[32px] leading-none font-extrabold tracking-[-0.03em]">
+              {hito.valor}
             </dd>
           </div>
         ))
       }
     </dl>
+  </section>
 
-    <h2 class="font-titulo mt-12 text-2xl font-black">Equipo</h2>
-    <ul class="mt-6 space-y-6">
+  <section
+    class="bg-tinta text-hueso lg:px-marco px-4 pt-6 pb-7 lg:pt-[34px] lg:pb-[38px]"
+  >
+    <h2 class="kicker text-rojo-claro mb-[22px]">La historia, en cuatro tiempos</h2>
+    <ol
+      class="bg-hueso/25 border-rojo border-hueso/25 grid gap-0.5 border-t-2 border-b sm:grid-cols-2 lg:grid-cols-4"
+    >
       {
-        equipo.map((persona) => (
-          <li class="border-humo bg-carbon border p-6">
-            <p class="font-semibold">{persona.nombre}</p>
-            <p class="text-gris text-sm">{persona.rol}</p>
-            {persona.bio && <p class="mt-3 text-sm">{persona.bio}</p>}
+        historia.map((tiempo) => (
+          <li class="bg-tinta px-5 pt-5 pb-6">
+            {tiempo.anio ? (
+              <span class="text-[26px] leading-none font-extrabold">{tiempo.anio}</span>
+            ) : (
+              /* TODO: material pendiente del cliente. */
+              <span class="rotulo text-rojo-claro inline-block py-2">
+                Año a confirmar
+              </span>
+            )}
+            <h3 class="mt-3 mb-2 text-[19px] leading-[1.1]">{tiempo.titulo}</h3>
+            <p class="text-niebla text-[13px] leading-normal">{tiempo.texto}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section
+    class="bg-tinta border-tinta lg:px-lienzo grid gap-0.5 border-t-2 lg:grid-cols-2"
+  >
+    {
+      equipo.map((persona) => (
+        <article class="bg-hueso grid sm:grid-cols-[0.85fr_1.15fr]">
+          <div class="trama-oscura flex min-h-[240px] items-end p-3.5 sm:min-h-[330px]">
+            {/* TODO: material pendiente del cliente. */}
+            <span class="rotulo text-niebla">
+              Retrato 3:4
+              <br />
+              pendiente
+            </span>
+          </div>
+          <div class="px-4 py-6 lg:px-6 lg:py-[26px]">
+            <p class="rotulo text-rojo mb-3 tracking-[0.16em]">{persona.rol}</p>
+            <h2 class="mb-4 text-[34px] leading-none tracking-[-0.03em]">
+              {persona.nombre}
+            </h2>
+            {persona.bio ? (
+              <p class="text-humo text-sm leading-[1.55] text-pretty">{persona.bio}</p>
+            ) : (
+              /* TODO: material pendiente del cliente. */
+              <p class="rotulo text-rojo">Bio pendiente del cliente</p>
+            )}
+          </div>
+        </article>
+      ))
+    }
+  </section>
+
+  <section
+    class="bg-hueso-hondo border-tinta lg:px-marco border-t-2 px-4 pt-6 pb-7 lg:pt-8 lg:pb-[38px]"
+  >
+    <div class="mb-5 flex flex-wrap items-baseline justify-between gap-2">
+      <h2 class="text-[26px] leading-none tracking-[-0.03em] lg:text-[30px]">
+        El equipo
+      </h2>
+      {/* TODO: material pendiente del cliente. */}
+      <p class="rotulo text-rojo">Faltan nombres, roles y fotos</p>
+    </div>
+    <ul class="bg-tinta border-tinta grid grid-cols-2 gap-0.5 border-2 lg:grid-cols-4">
+      {
+        casillerosDeEquipo.map(() => (
+          <li class="bg-hueso p-[18px]">
+            <div class="trama-clara mb-3.5 h-[108px]" />
+            <p class="text-plomo text-[17px] leading-[1.1] font-extrabold">
+              Integrante
+            </p>
+            <p class="rotulo text-plomo mt-[5px]">Rol pendiente</p>
           </li>
         ))
       }
     </ul>
   </section>
+
+  <CierreRojo
+    frase="El equipo que hace televisión todas las semanas puede hacer lo tuyo."
+    cta="Hablemos"
+    conCanalDirecto={false}
+  />
 </Base>

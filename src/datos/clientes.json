@@ -1,0 +1,50 @@
+[
+  {
+    "id": "cliente-01",
+    "nombre": "Cliente 01",
+    "logo": "/logos/cliente-01.svg",
+    "esPlaceholder": true
+  },
+  {
+    "id": "cliente-02",
+    "nombre": "Cliente 02",
+    "logo": "/logos/cliente-02.svg",
+    "esPlaceholder": true
+  },
+  {
+    "id": "cliente-03",
+    "nombre": "Cliente 03",
+    "logo": "/logos/cliente-03.svg",
+    "esPlaceholder": true
+  },
+  {
+    "id": "cliente-04",
+    "nombre": "Cliente 04",
+    "logo": "/logos/cliente-04.svg",
+    "esPlaceholder": true
+  },
+  {
+    "id": "cliente-05",
+    "nombre": "Cliente 05",
+    "logo": "/logos/cliente-05.svg",
+    "esPlaceholder": true
+  },
+  {
+    "id": "cliente-06",
+    "nombre": "Cliente 06",
+    "logo": "/logos/cliente-06.svg",
+    "esPlaceholder": true
+  },
+  {
+    "id": "cliente-07",
+    "nombre": "Cliente 07",
+    "logo": "/logos/cliente-07.svg",
+    "esPlaceholder": true
+  },
+  {
+    "id": "cliente-08",
+    "nombre": "Cliente 08",
+    "logo": "/logos/cliente-08.svg",
+    "esPlaceholder": true
+  }
+]

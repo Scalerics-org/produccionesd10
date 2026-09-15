@@ -1,0 +1,71 @@
+---
+import { Image } from 'astro:assets';
+import type { VisualDeTrabajo } from '../datos/consultas';
+
+/*
+  Lo que va arriba de una tarjeta de trabajo: foto en blanco y negro, el logo
+  del caso sobre negro, un rótulo tipográfico o el casillero de pendiente. Qué
+  toca lo decide `visualDeTrabajo()` en el dominio; acá sólo se dibuja.
+
+  Calidad 55 y tope de 640 px: la foto se ve en blanco y negro y a lo sumo a
+  460 px, y con la calidad por defecto una foto cargada (un rodaje) pesaba 71 KB.
+*/
+type Props = {
+  visual: VisualDeTrabajo;
+  /** Alto del casillero en px. El diseño usa 170–190 según la grilla. */
+  alto?: number;
+};
+
+const { visual, alto = 180 } = Astro.props;
+---
+
+<div
+  class:list={[
+    'relative flex items-center justify-center overflow-hidden',
+    visual.tipo === 'pendiente'
+      ? 'trama-clara border-tinta/25 border-b'
+      : 'trama-oscura',
+    visual.tipo === 'rotulo' && '!items-end !justify-start p-[18px]',
+  ]}
+  style={`height:${alto}px`}
+>
+  {
+    visual.tipo === 'foto' && (
+      <Image
+        src={visual.imagen}
+        alt={visual.alt}
+        widths={[400, 640]}
+        sizes="(min-width: 1024px) 460px, 100vw"
+        quality={55}
+        loading="lazy"
+        class="foto-byn absolute inset-0 h-full w-full object-cover"
+      />
+    )
+  }
+  {
+    visual.tipo === 'foto' && visual.provisoria && (
+      <span class="rotulo bg-tinta text-hueso absolute top-2 left-2 px-2 py-1">
+        Foto provisoria
+      </span>
+    )
+  }
+  {
+    visual.tipo === 'logo' && (
+      <Image
+        src={visual.imagen}
+        alt={visual.alt}
+        width={280}
+        loading="lazy"
+        class="logo-sobre-negro foto-byn h-[72%] w-auto"
+      />
+    )
+  }
+  {
+    visual.tipo === 'rotulo' && (
+      <span class="text-hueso text-[30px] leading-none font-extrabold tracking-[-0.03em]">
+        {visual.texto}
+      </span>
+    )
+  }
+  {visual.tipo === 'pendiente' && <span class="rotulo text-plomo">{visual.texto}</span>}
+</div>
