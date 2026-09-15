@@ -33,8 +33,9 @@ ctaSecundario:
   texto: Ver trabajos de eventos
   href: /trabajos/pilar/eventos
 visual:
-  tipo: pendiente
-  texto: Foto de evento · vertical 3:4 · pendiente
+  tipo: foto
+  imagen: ./imagenes/servicio-eventos.jpg
+  alt: Foto provisoria de un recital con público
 ---
 
 <!-- TODO: material pendiente del cliente.
@@ -42,4 +43,4 @@ visual:
        la nota de prensa habla de él.
      - El copy sale del diseño. Confirmar antes de publicar: "proveedores
        propios", la llamada de 20 minutos y el "precio cerrado".
-     - Falta la foto vertical 3:4 del hero. -->
+     - La foto del hero es de stock (Unsplash): falta la vertical 3:4 real. -->

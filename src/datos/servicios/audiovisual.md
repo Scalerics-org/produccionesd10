@@ -34,12 +34,13 @@ ctaSecundario:
   texto: Ver trabajos audiovisuales
   href: /trabajos/pilar/audiovisual
 visual:
-  tipo: pendiente
-  texto: Frame del reel · vertical 3:4 · pendiente
+  tipo: foto
+  imagen: ./imagenes/servicio-audiovisual.jpg
+  alt: Foto provisoria de un rodaje con cámara en estudio
 ---
 
 <!-- TODO: material pendiente del cliente.
      - El copy sale del diseño. Confirmar antes de publicar: la entrega en
        48 horas, el registro multicámara, el estudio propio de posproducción,
        el equipo propio de rodaje y la ronda de ajustes incluida.
-     - Falta el frame vertical del reel para el hero. -->
+     - La foto del hero es de stock (Unsplash): falta el frame vertical del reel. -->

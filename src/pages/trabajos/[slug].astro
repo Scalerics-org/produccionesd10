@@ -131,33 +131,33 @@ const hayResultado = datos.cifras.length > 0 || datos.resultado !== null;
           </h2>
           {faltanFotos && (
             /* TODO: material pendiente del cliente. */
-            <p class="rotulo text-rojo">Faltan las fotos · en alta, 3:2</p>
+            <p class="rotulo text-rojo">Fotos provisorias · faltan las reales</p>
           )}
         </div>
         <ul class="celdas-con-reglas border-tinta grid auto-rows-[120px] grid-cols-2 gap-0.5 border-2 lg:auto-rows-[150px] lg:grid-cols-4">
           {datos.galeria.map((foto, i) => (
             <li
               class:list={[
-                'relative flex items-center justify-center overflow-hidden p-2 text-center',
+                'bg-carbon relative overflow-hidden',
                 i === 0 && 'col-span-2 lg:row-span-2',
-                foto.esPlaceholder && 'trama-clara',
               ]}
             >
-              {foto.esPlaceholder ? (
-                <span class="rotulo text-plomo">{foto.alt}</span>
-              ) : (
-                <Image
-                  src={foto.imagen}
-                  alt={foto.alt}
-                  widths={[480, 960]}
-                  sizes={
-                    i === 0
-                      ? '(min-width: 1024px) 560px, 100vw'
-                      : '(min-width: 1024px) 280px, 50vw'
-                  }
-                  loading="lazy"
-                  class="foto-byn absolute inset-0 h-full w-full object-cover"
-                />
+              <Image
+                src={foto.imagen}
+                alt={foto.alt}
+                widths={[480, 960]}
+                sizes={
+                  i === 0
+                    ? '(min-width: 1024px) 560px, 100vw'
+                    : '(min-width: 1024px) 280px, 50vw'
+                }
+                loading="lazy"
+                class="foto-byn absolute inset-0 h-full w-full object-cover"
+              />
+              {foto.esPlaceholder && (
+                <span class="rotulo bg-tinta text-hueso absolute top-2 left-2 px-2 py-1">
+                  Foto provisoria
+                </span>
               )}
             </li>
           ))}

@@ -63,6 +63,7 @@ const trabajos = await obtenerTrabajosDePilar(servicio.id as Pilar);
       class:list={[
         'border-hueso/20 relative hidden h-[330px] border-l lg:flex',
         datos.visual.tipo === 'pendiente' && 'trama-oscura items-end p-4',
+        datos.visual.tipo === 'foto' && 'bg-carbon',
         datos.visual.tipo === 'logo' && 'bg-carbon items-center justify-center',
         datos.visual.tipo === 'rotulo' && 'bg-carbon flex-col justify-end p-[22px]',
       ]}
@@ -70,6 +71,22 @@ const trabajos = await obtenerTrabajosDePilar(servicio.id as Pilar);
       {
         datos.visual.tipo === 'pendiente' && (
           <span class="rotulo text-niebla">{datos.visual.texto}</span>
+        )
+      }
+      {
+        datos.visual.tipo === 'foto' && (
+          <>
+            <Image
+              src={datos.visual.imagen}
+              alt={datos.visual.alt}
+              widths={[480, 900]}
+              sizes="(min-width: 1024px) 45vw, 100vw"
+              class="foto-byn absolute inset-0 h-full w-full object-cover"
+            />
+            <span class="rotulo bg-tinta text-hueso absolute top-3 left-3 px-2 py-1">
+              Foto provisoria
+            </span>
+          </>
         )
       }
       {

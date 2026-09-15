@@ -39,6 +39,13 @@ const { visual, alto = 180 } = Astro.props;
     )
   }
   {
+    visual.tipo === 'foto' && visual.provisoria && (
+      <span class="rotulo bg-tinta text-hueso absolute top-2 left-2 px-2 py-1">
+        Foto provisoria
+      </span>
+    )
+  }
+  {
     visual.tipo === 'logo' && (
       <Image
         src={visual.imagen}

@@ -43,6 +43,8 @@ const servicios = defineCollection({
        */
       visual: z.discriminatedUnion('tipo', [
         z.object({ tipo: z.literal('pendiente'), texto: z.string() }),
+        /* Foto de stock marcada como provisoria mientras falta la del cliente. */
+        z.object({ tipo: z.literal('foto'), imagen: image(), alt: z.string() }),
         z.object({ tipo: z.literal('logo'), imagen: image(), alt: z.string() }),
         z.object({ tipo: z.literal('rotulo'), texto: z.string(), detalle: z.string() }),
       ]),

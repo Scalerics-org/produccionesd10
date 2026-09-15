@@ -79,20 +79,24 @@ export async function kickerDeTrabajo(trabajo: Trabajo): Promise<string> {
 export type VisualDeTrabajo =
   | { tipo: 'logo'; imagen: ImageMetadata; alt: string }
   | { tipo: 'rotulo'; texto: string }
-  | { tipo: 'foto'; imagen: ImageMetadata; alt: string }
+  | { tipo: 'foto'; imagen: ImageMetadata; alt: string; provisoria: boolean }
   | { tipo: 'pendiente'; texto: string };
 
 /**
  * Qué se dibuja arriba de la tarjeta de un trabajo.
  *
- * Una foto provisoria no se muestra como si fuera del trabajo: el casillero
- * dice que la foto falta. El orden es: foto real, logo o rótulo del caso, y si
- * no hay nada, el aviso de pendiente.
+ * El orden es: foto real, logo o rótulo del caso, foto provisoria de stock y,
+ * si no hay nada, el aviso de pendiente. La provisoria se dibuja con su rótulo
+ * de "Foto provisoria": que la demo tenga fotos no puede hacer que alguien crea
+ * que son de un trabajo de la casa.
  */
 export function visualDeTrabajo(trabajo: Trabajo): VisualDeTrabajo {
-  const fotoReal = trabajo.data.galeria.find((foto) => !foto.esPlaceholder);
-  if (fotoReal) return { tipo: 'foto', imagen: fotoReal.imagen, alt: fotoReal.alt };
-  if (trabajo.data.portada) return trabajo.data.portada;
+  const { galeria, portada } = trabajo.data;
+  const fotoReal = galeria.find((foto) => !foto.esPlaceholder);
+  if (fotoReal) return { tipo: 'foto', ...fotoReal, provisoria: false };
+  if (portada) return portada;
+  const provisoria = galeria.at(0);
+  if (provisoria) return { tipo: 'foto', ...provisoria, provisoria: true };
   return { tipo: 'pendiente', texto: 'Foto 3:2 pendiente' };
 }
 
