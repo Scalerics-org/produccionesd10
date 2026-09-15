@@ -16,7 +16,7 @@ const { trabajos, filtros, total } = Astro.props;
 ---
 
 <div
-  class="flex flex-col gap-4 px-4 pb-4 lg:flex-row lg:items-end lg:justify-between lg:gap-6 lg:px-[34px] lg:pb-5"
+  class="lg:px-marco flex flex-col gap-4 px-4 pb-4 lg:flex-row lg:items-end lg:justify-between lg:gap-6 lg:pb-5"
 >
   <nav
     aria-label="Filtrar por tipo de producción"
@@ -51,7 +51,7 @@ const { trabajos, filtros, total } = Astro.props;
   </p>
 </div>
 
-<div class="px-4 pb-6 lg:px-[34px] lg:pb-10">
+<div class="lg:px-marco px-4 pb-6 lg:pb-10">
   {
     trabajos.length === 0 ? (
       <p class="border-tinta text-humo border-2 p-6">

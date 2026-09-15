@@ -17,7 +17,7 @@ const casillerosDeEquipo = Array.from({ length: integrantesPendientes });
   descripcion="16 años produciendo radio, televisión, eventos y podcasts en Uruguay. Dirección: Luis Betarte. Producción general: Matías Bidegaray."
 >
   <section
-    class="bg-hueso border-tinta grid gap-8 border-b-2 px-4 pt-6 pb-7 lg:grid-cols-[1.2fr_1fr] lg:gap-[46px] lg:px-[34px] lg:pt-11 lg:pb-[34px]"
+    class="bg-hueso border-tinta lg:px-marco grid gap-8 border-b-2 px-4 pt-6 pb-7 lg:grid-cols-[1.2fr_1fr] lg:gap-[46px] lg:pt-11 lg:pb-[34px]"
   >
     <div>
       <p class="kicker text-rojo mb-3 text-[10px] lg:mb-4 lg:text-[11px]">Nosotros</p>
@@ -47,7 +47,7 @@ const casillerosDeEquipo = Array.from({ length: integrantesPendientes });
   </section>
 
   <section
-    class="bg-tinta text-hueso px-4 pt-6 pb-7 lg:px-[34px] lg:pt-[34px] lg:pb-[38px]"
+    class="bg-tinta text-hueso lg:px-marco px-4 pt-6 pb-7 lg:pt-[34px] lg:pb-[38px]"
   >
     <h2 class="kicker text-rojo-claro mb-[22px]">La historia, en cuatro tiempos</h2>
     <ol
@@ -72,7 +72,9 @@ const casillerosDeEquipo = Array.from({ length: integrantesPendientes });
     </ol>
   </section>
 
-  <section class="bg-tinta border-tinta grid gap-0.5 border-t-2 lg:grid-cols-2">
+  <section
+    class="bg-tinta border-tinta lg:px-lienzo grid gap-0.5 border-t-2 lg:grid-cols-2"
+  >
     {
       equipo.map((persona) => (
         <article class="bg-hueso grid sm:grid-cols-[0.85fr_1.15fr]">
@@ -102,7 +104,7 @@ const casillerosDeEquipo = Array.from({ length: integrantesPendientes });
   </section>
 
   <section
-    class="bg-hueso-hondo border-tinta border-t-2 px-4 pt-6 pb-7 lg:px-[34px] lg:pt-8 lg:pb-[38px]"
+    class="bg-hueso-hondo border-tinta lg:px-marco border-t-2 px-4 pt-6 pb-7 lg:pt-8 lg:pb-[38px]"
   >
     <div class="mb-5 flex flex-wrap items-baseline justify-between gap-2">
       <h2 class="text-[26px] leading-none tracking-[-0.03em] lg:text-[30px]">

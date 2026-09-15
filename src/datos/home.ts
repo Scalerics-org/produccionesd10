@@ -9,7 +9,7 @@ export const home = {
     kicker: 'Productora · Uruguay · desde 2010',
     /* El diseño usa dos claims: éste en desktop y "Producción que sale al aire."
        en celular. Un h1 por página: queda el de desktop en los dos. */
-    titular: 'Si sale al aire, lo producimos.',
+    titular: ['Si sale al aire,', 'lo producimos.'],
     bajada:
       'Eventos, programas de radio y TV, podcasts y contenido audiovisual. Hace 16 años, todas las semanas.',
     ctaPrincipal: { texto: 'Pedir presupuesto', href: '/contacto' },

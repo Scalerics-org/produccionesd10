@@ -61,19 +61,29 @@ const { hero } = home;
     </div>
 
     <p
-      class="rotulo bg-rojo text-hueso absolute top-3.5 left-4 px-2 py-1.5 lg:top-[26px] lg:left-[34px]"
+      class="rotulo bg-rojo text-hueso lg:left-marco absolute top-3.5 left-4 px-2 py-1.5 lg:top-[26px]"
     >
       {hero.avisoPendiente}
     </p>
 
-    <div class="absolute inset-x-4 bottom-0 pb-5 lg:inset-x-[34px] lg:pb-[30px]">
+    <div class="lg:inset-x-marco absolute inset-x-4 bottom-0 pb-5 lg:pb-[30px]">
       <div class="bg-hueso/20 mb-[26px] hidden h-0.5 lg:block"></div>
       <div class="grid items-end gap-4 lg:grid-cols-[1.35fr_0.65fr] lg:gap-[46px]">
         <div>
           <p class="kicker text-rojo-claro mb-3 text-[10px] lg:mb-4 lg:text-[11px]">
             {hero.kicker}
           </p>
-          <h1 class="titular text-[44px] lg:text-[72px]">{hero.titular}</h1>
+          <h1 class="titular text-[44px] lg:text-[72px]">
+            {
+              hero.titular.map((linea, i) => (
+                <>
+                  {i > 0 && <br class="hidden lg:inline" />}
+                  {i > 0 && ' '}
+                  {linea}
+                </>
+              ))
+            }
+          </h1>
         </div>
         <div>
           <p class="text-ceniza text-sm text-pretty lg:mb-[18px] lg:text-[15px]">

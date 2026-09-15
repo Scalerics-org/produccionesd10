@@ -15,8 +15,8 @@ const portada = caso?.data.portada;
 
 {
   caso && (
-    <section class="bg-carbon text-hueso border-hueso/20 grid border-t-2 lg:grid-cols-[1fr_1.25fr]">
-      <div class="border-hueso/20 flex items-center px-4 pt-[26px] lg:border-r lg:px-[34px] lg:py-9">
+    <section class="bg-carbon text-hueso border-hueso/20 lg:px-lienzo grid border-t-2 lg:grid-cols-[1fr_1.25fr]">
+      <div class="border-hueso/20 lg:px-marco flex items-center px-4 pt-[26px] lg:border-r lg:py-9">
         {portada?.tipo === 'logo' && (
           <Image
             src={portada.imagen}
@@ -27,7 +27,7 @@ const portada = caso?.data.portada;
           />
         )}
       </div>
-      <div class="px-4 pt-4 pb-[26px] lg:px-[34px] lg:py-9">
+      <div class="lg:px-marco px-4 pt-4 pb-[26px] lg:py-9">
         <p class="kicker text-rojo-claro mb-2.5 text-[10px] lg:mb-3.5 lg:text-[11px]">
           {kicker}
         </p>

@@ -18,7 +18,7 @@ const servicios = await obtenerServicios();
 
 <section class="bg-hueso border-tinta border-t-2">
   <div
-    class="flex items-baseline justify-between gap-4 px-4 pt-6 pb-4 lg:px-[34px] lg:pt-[34px] lg:pb-[18px]"
+    class="lg:px-marco flex items-baseline justify-between gap-4 px-4 pt-6 pb-4 lg:pt-[34px] lg:pb-[18px]"
   >
     <h2 class="text-[26px] leading-none tracking-[-0.03em] lg:text-[32px]">
       {home.pilares.titulo}
@@ -40,7 +40,7 @@ const servicios = await obtenerServicios();
       >
         <summary
           class:list={[
-            'flex min-h-[78px] cursor-pointer list-none items-center gap-3 px-4 transition-colors lg:min-h-[96px] lg:gap-[26px] lg:px-[34px] [&::-webkit-details-marker]:hidden',
+            'lg:px-marco flex min-h-[78px] cursor-pointer list-none items-center gap-3 px-4 transition-colors lg:min-h-[96px] lg:gap-[26px] [&::-webkit-details-marker]:hidden',
             'bg-hueso hover:bg-hueso-hondo text-tinta',
             'group-open:trama-oscura group-open:text-hueso group-open:min-h-[88px] lg:group-open:min-h-[112px]',
           ]}
@@ -69,7 +69,7 @@ const servicios = await obtenerServicios();
           </span>
         </summary>
 
-        <div class="bg-carbon text-hueso border-hueso/20 grid gap-4 border-t px-4 pt-[18px] pb-[22px] lg:grid-cols-[1.2fr_1fr] lg:gap-10 lg:px-[34px] lg:py-7">
+        <div class="bg-carbon text-hueso border-hueso/20 lg:px-marco grid gap-4 border-t px-4 pt-[18px] pb-[22px] lg:grid-cols-[1.2fr_1fr] lg:gap-10 lg:py-7">
           <p class="text-[15px] text-pretty lg:text-[17px]">
             {servicio.data.descripcion}
           </p>

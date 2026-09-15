@@ -14,9 +14,7 @@ const servicios = await obtenerServicios();
   titulo="Servicios"
   descripcion="Eventos, audiovisual, radio y TV, y podcasts: las cuatro líneas de Producciones D10."
 >
-  <section
-    class="trama-oscura text-hueso px-4 pt-6 pb-8 lg:px-[34px] lg:pt-11 lg:pb-12"
-  >
+  <section class="trama-oscura text-hueso lg:px-marco px-4 pt-6 pb-8 lg:pt-11 lg:pb-12">
     <p class="kicker text-rojo-claro mb-3 text-[10px] lg:mb-4 lg:text-[11px]">
       Servicios
     </p>
@@ -25,7 +23,7 @@ const servicios = await obtenerServicios();
     </h1>
   </section>
 
-  <section class="bg-hueso border-rojo border-t-2 px-4 py-6 lg:px-[34px] lg:py-10">
+  <section class="bg-hueso border-rojo lg:px-marco border-t-2 px-4 py-6 lg:py-10">
     <ul class="bg-tinta border-tinta grid gap-0.5 border-2 sm:grid-cols-2">
       {
         servicios.map((servicio, i) => (

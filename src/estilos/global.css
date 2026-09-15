@@ -153,6 +153,43 @@
 }
 
 /* Un logo sobre negro: el fondo negro del JPEG desaparece contra el de la sección. */
+/*
+  El marco del diseño. El lienzo de Claude Design mide 1180 px con 34 px de
+  margen: en pantallas más anchas los fondos siguen a sangre, pero el contenido
+  no se estira. `marco` es el margen del contenido (nunca menos de 34 px) y
+  `lienzo` el de las grillas cuyas celdas ya traen sus 34 px.
+*/
+@utility px-marco {
+  padding-inline: max(34px, calc((100% - 1112px) / 2));
+}
+@utility inset-x-marco {
+  left: max(34px, calc((100% - 1112px) / 2));
+  right: max(34px, calc((100% - 1112px) / 2));
+}
+@utility left-marco {
+  left: max(34px, calc((100% - 1112px) / 2));
+}
+@utility mx-marco {
+  margin-inline: max(34px, calc((100% - 1112px) / 2));
+}
+/*
+  Una sección de dos columnas con lienzo: el fondo de la derecha tiene que
+  llegar al borde de la pantalla aunque la columna termine en los 1180 px.
+*/
+@utility fondo-partido {
+  @media (width >= 64rem) {
+    background: linear-gradient(
+      90deg,
+      var(--color-hueso) 50%,
+      var(--color-hueso-hondo) 50%
+    );
+  }
+}
+
+@utility px-lienzo {
+  padding-inline: max(0px, calc((100% - 1180px) / 2));
+}
+
 /* Grilla con reglas de 2 px que no deja huecos negros en una fila incompleta. */
 @utility celdas-con-reglas {
   & > * {
