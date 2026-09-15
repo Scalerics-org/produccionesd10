@@ -5,6 +5,18 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ## [No publicado]
 
+### Cambiado
+
+- Rediseño completo según `Producciones D10.dc.html` de Claude Design: fondo hueso,
+  tinta negra, rojo de acento, reglas de 2 px y cero radio. Home, servicios,
+  portfolio, ficha de caso, nosotros, contacto y menú de celular.
+- Archivo autoalojada como única familia tipográfica, en lugar de Archivo + Inter.
+- Formulario de seis campos: "Qué necesitás" como control segmentado, mail o
+  teléfono en un solo campo y fecha estimada. Estados de error con `:user-invalid`.
+- El Worker acepta mail o teléfono y toma nombres y límites de `src/datos/formulario.ts`.
+- Servicios y casos con más datos en las colecciones: titular, qué incluye, pasos,
+  ficha, qué se hizo y cifras.
+
 ### Agregado
 
 - Andamiaje inicial: Astro 7 estático, Tailwind 4, TypeScript, sitemap.
