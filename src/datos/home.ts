@@ -17,7 +17,7 @@ export const home = {
        lleva al portfolio hasta que el cliente lo pase. */
     ctaSecundario: { texto: 'Ver trabajos', href: '/trabajos' },
     // TODO: material pendiente del cliente. El poster y el video son provisorios.
-    avisoPendiente: 'Poster del reel pendiente · es el LCP',
+    avisoPendiente: 'Foto y reel provisorios',
   },
   pilares: {
     titulo: 'Cuatro líneas, un solo equipo',

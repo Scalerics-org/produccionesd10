@@ -16,6 +16,12 @@ import { home } from '../datos/home';
      Tampoco lleva `poster`: medido, el navegador bajaba igual el JPEG aunque
      el video no tuviera `src`, y el `<img>` de atrás ya muestra esa imagen.
   3. Con movimiento reducido el video no arranca nunca y queda el poster.
+  4. El alto se ajusta a la ventana (nunca más de 640 px): en una pantalla baja
+     o con zoom, el claim tiene que verse sin scrollear.
+
+  TODO: material pendiente del cliente. El poster es una foto de stock
+  (Unsplash, 4_M8uIfPEZw) y el video un fondo generado. Mientras el video sea
+  provisorio se suma en modo pantalla y al 60%, para no tapar la foto.
 
   El diseño pinta el reel en blanco y negro: el filtro va en CSS, así el mismo
   archivo sirve el día que el cliente quiera color.
@@ -24,14 +30,14 @@ const { hero } = home;
 ---
 
 <section class="bg-tinta text-hueso relative isolate overflow-hidden">
-  <div class="relative h-[430px] lg:h-[640px]">
+  <div class="relative h-[430px] lg:h-[min(640px,calc(100svh-77px))] lg:min-h-[460px]">
     <picture>
       <source srcset="/video/hero-poster.avif" type="image/avif" />
       <img
         src="/video/hero-poster.jpg"
         alt=""
-        width="1920"
-        height="1080"
+        width="1600"
+        height="900"
         fetchpriority="high"
         decoding="sync"
         class="foto-byn absolute inset-0 h-full w-full object-cover"
@@ -40,7 +46,7 @@ const { hero } = home;
 
     <video
       id="video-hero"
-      class="foto-byn absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-1000"
+      class="foto-byn absolute inset-0 h-full w-full object-cover opacity-0 mix-blend-screen transition-opacity duration-1000"
       muted
       loop
       playsinline
@@ -137,7 +143,7 @@ const { hero } = home;
     video.addEventListener(
       'canplay',
       () => {
-        video.style.opacity = '1';
+        video.style.opacity = '0.6';
         video.play().catch(() => {});
       },
       { once: true },
