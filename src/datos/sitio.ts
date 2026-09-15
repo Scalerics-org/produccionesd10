@@ -5,8 +5,9 @@
  */
 export const sitio = {
   nombre: 'Producciones D10',
-  // TODO: material pendiente del cliente. Dominio sin definir ni comprar.
-  url: 'http://localhost:4321',
+  // TODO: material pendiente del cliente. Dominio sin definir ni comprar: hasta
+  // entonces, la URL provisoria de Cloudflare.
+  url: 'https://produccionesd10.scalerics.workers.dev',
   descripcion:
     'Productora uruguaya con 16 años de trayectoria. Producimos programas de radio ' +
     'y televisión, eventos, podcasts y contenido audiovisual.',

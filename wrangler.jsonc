@@ -2,12 +2,8 @@
   "name": "produccionesd10",
   "compatibility_date": "2026-09-01",
 
-  /*
-    TODO: pegar el account_id de la cuenta de Scalerics antes del primer deploy.
-    Sin esta línea, si wrangler está logueado con una cuenta personal el sitio
-    del cliente queda fuera del control de la agencia.
-  */
-  "account_id": "<cuenta de Scalerics>",
+  // Cuenta de Scalerics: el sitio del cliente queda bajo control de la agencia.
+  "account_id": "79da115d272d36fd6ac8a5b08291642e",
 
   /*
     El sitio es estático. El Worker existe sólo para POST /api/contacto: todo

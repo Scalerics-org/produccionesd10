@@ -12,7 +12,7 @@ import sitemap from '@astrojs/sitemap';
   y en src/datos/sitio.ts, y en ningún lado más.
 */
 export default defineConfig({
-  site: 'http://localhost:4321',
+  site: 'https://produccionesd10.scalerics.workers.dev',
 
   /*
     Sin barra final, y tiene que coincidir con `html_handling` de
