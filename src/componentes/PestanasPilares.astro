@@ -1,0 +1,36 @@
+---
+import type { Servicio } from '../datos/consultas';
+
+/*
+  La barra de los cuatro pilares debajo del cabezal de cada servicio. En
+  celular se desliza de costado: el diseño (3d) muestra tres y deja asomar el
+  cuarto.
+*/
+type Props = { servicios: Servicio[]; activo: string };
+
+const { servicios, activo } = Astro.props;
+---
+
+<nav
+  aria-label="Servicios"
+  class="bg-hueso border-tinta sin-barra overflow-x-auto border-b-2"
+>
+  <ul class="flex w-max">
+    {
+      servicios.map((servicio, i) => (
+        <li>
+          <a
+            href={`/servicios/${servicio.id}`}
+            aria-current={servicio.id === activo ? 'page' : undefined}
+            class:list={[
+              'kicker text-humo hover:bg-hueso-hondo aria-[current=page]:bg-tinta aria-[current=page]:text-hueso flex min-h-12 items-center px-3.5 tracking-[0.12em] lg:px-5',
+              i > 0 && 'border-tinta/30 border-l',
+            ]}
+          >
+            {servicio.data.nombre}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>

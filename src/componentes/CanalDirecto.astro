@@ -1,0 +1,43 @@
+---
+import { canalDirecto } from '../datos/sitio';
+
+/*
+  La tarjeta grande de "WhatsApp" del diseño (2d y el home). Si el número
+  todavía no llegó, la tarjeta se ve igual pero lleva al formulario y lo dice.
+*/
+type Props = { tono?: 'rojo' | 'tinta' };
+
+const { tono = 'rojo' } = Astro.props;
+---
+
+<a
+  href={canalDirecto.href}
+  class:list={[
+    'text-hueso flex min-h-14 items-center justify-between gap-4 p-4 transition-colors lg:p-[22px]',
+    tono === 'rojo' ? 'bg-rojo hover:bg-rojo-hondo' : 'bg-tinta hover:bg-carbon',
+  ]}
+  {...canalDirecto.externo ? { target: '_blank', rel: 'noopener noreferrer' } : {}}
+>
+  <span>
+    <span
+      class="block text-[22px] leading-none font-extrabold tracking-[-0.025em] lg:text-[26px]"
+    >
+      {canalDirecto.texto}
+    </span>
+    <span
+      class:list={[
+        'mt-2 block text-xs leading-none',
+        tono === 'rojo' ? 'text-hueso' : 'text-niebla',
+      ]}
+    >
+      {canalDirecto.detalle}
+    </span>
+  </span>
+  <span
+    aria-hidden="true"
+    class:list={[
+      'text-[26px] leading-none font-extrabold lg:text-[30px]',
+      tono === 'tinta' && 'text-rojo-claro',
+    ]}>→</span
+  >
+</a>

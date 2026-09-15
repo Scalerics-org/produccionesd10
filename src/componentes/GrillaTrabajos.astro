@@ -1,0 +1,21 @@
+---
+import TarjetaTrabajo from './TarjetaTrabajo.astro';
+import type { Trabajo } from '../datos/consultas';
+
+/*
+  La grilla del sistema: celdas iguales separadas por reglas de 2 px. Cada
+  regla es el `outline` de las celdas, que se pisa con el de la vecina adentro
+  del `gap`: así nunca se duplica en un cruce. No se usa el truco del fondo
+  negro que asoma por el gap porque, cuando la última fila queda incompleta,
+  el hueco se ve como un bloque negro.
+*/
+type Props = { trabajos: Trabajo[]; alto?: number };
+
+const { trabajos, alto } = Astro.props;
+---
+
+<div
+  class="celdas-con-reglas border-tinta grid gap-0.5 border-2 sm:grid-cols-2 lg:grid-cols-3"
+>
+  {trabajos.map((trabajo) => <TarjetaTrabajo trabajo={trabajo} alto={alto} />)}
+</div>

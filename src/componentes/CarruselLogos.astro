@@ -1,49 +1,60 @@
 ---
 import { obtenerClientes } from '../datos/consultas';
+import { home } from '../datos/home';
 
 /*
-  Carrusel de logos.
+  Carrusel de logos: la franja negra del home (1d), con el claim numérico
+  arriba y celdas de alto fijo separadas por reglas.
 
   Es un `@keyframes` sobre una pista duplicada: la copia se corre el 50% de su
-  ancho y, cuando termina, la segunda tanda quedó exactamente donde arrancó la
-  primera, así que el ciclo no pega un salto. Sin librería.
+  ancho y cuando termina la segunda tanda quedó donde arrancó la primera, así
+  que el ciclo no pega un salto. Sin librería.
 
-  Se frena solo con `:hover` y con `:focus-within` — si alguien llega tabulando,
-  el carrusel tiene que parar igual — y con `prefers-reduced-motion` no arranca
-  nunca (está en `global.css`). La pista es scrolleable a mano, así que aunque
+  Se frena con `:hover` y con `:focus-within` — si alguien llega tabulando, el
+  carrusel tiene que parar igual — y con `prefers-reduced-motion` no arranca
+  (está en `global.css`). La pista se puede recorrer a mano, así que aunque
   esté frenada se llega a todos los logos.
+
+  Los logos van en blanco sobre negro, como pide el diseño: un filtro los pasa a
+  blanco, así el cliente puede mandarlos en cualquier color.
 */
 const clientes = await obtenerClientes();
 const pista = [...clientes, ...clientes];
+const sonProvisorios = clientes.every((cliente) => cliente.data.esPlaceholder);
+const { claim, rotulo, avisoPendiente } = home.clientes;
 ---
 
 {
   clientes.length > 0 && (
-    <section class="border-borde overflow-hidden border-y py-14">
-      <h2 class="text-plomo px-4 text-center text-xs font-semibold tracking-widest uppercase">
-        Confiaron en nosotros
-      </h2>
+    <section class="bg-tinta text-hueso border-rojo overflow-hidden border-t-2 py-6 lg:pt-[30px] lg:pb-[34px]">
+      <div class="flex items-baseline justify-between gap-6 px-4 pb-[18px] lg:px-[34px] lg:pb-5">
+        <h2 class="max-w-[34ch] text-[22px] leading-[1.15] tracking-[-0.025em] lg:text-[26px] lg:leading-[1.1]">
+          {claim}
+        </h2>
+        <a
+          href="/clientes"
+          class="kicker text-niebla hover:text-hueso hidden tracking-[0.14em] lg:block"
+        >
+          {rotulo}
+        </a>
+      </div>
 
       {/*
         El contenedor scrollea, así que el navegador lo hace enfocable para
-        poder recorrerlo con las flechas. Lo declaramos explícito y con nombre:
-        un div que recibe foco y no se anuncia es peor que uno que no lo recibe.
+        recorrerlo con las flechas. Lo declaramos explícito y con nombre: un div
+        que recibe foco y no se anuncia es peor que uno que no lo recibe.
       */}
       <div
-        class="carrusel-logos mt-8 overflow-x-auto"
+        class="carrusel-logos border-hueso/20 sin-barra overflow-x-auto border-y"
         tabindex="0"
         role="group"
         aria-label="Logos de clientes"
       >
-        <ul
-          class="pista-logos flex w-max items-center gap-12 px-6"
-          style="--duracion: 45s"
-        >
-          {/* La segunda tanda es puro relleno visual: va con aria-hidden y
-              con alt vacío para que no se anuncie dos veces. */}
+        <ul class="pista-logos flex w-max" style="--duracion: 45s">
+          {/* La segunda tanda es relleno visual: va oculta para no anunciarse dos veces. */}
           {pista.map((cliente, i) => (
             <li
-              class="shrink-0"
+              class="border-hueso/20 flex h-[78px] w-[130px] shrink-0 items-center justify-center border-r lg:h-24 lg:w-[200px]"
               aria-hidden={i >= clientes.length ? 'true' : undefined}
             >
               <img
@@ -53,18 +64,16 @@ const pista = [...clientes, ...clientes];
                 height="72"
                 loading="lazy"
                 decoding="async"
-                class="h-16 w-auto opacity-70 grayscale transition hover:opacity-100 hover:grayscale-0"
+                class="h-10 w-auto opacity-70 brightness-0 invert transition-opacity hover:opacity-100 lg:h-12"
               />
             </li>
           ))}
         </ul>
       </div>
 
-      {clientes.every((cliente) => cliente.data.esPlaceholder) && (
-        /* TODO: material pendiente del cliente. Los ocho logos son casilleros. */
-        <p class="text-plomo mt-8 px-4 text-center text-xs">
-          Logos provisorios: el cliente todavía no nos pasó los reales.
-        </p>
+      {sonProvisorios && (
+        /* TODO: material pendiente del cliente. Los logos son casilleros. */
+        <p class="text-niebla mx-4 mt-3.5 text-[11px] lg:mx-[34px]">{avisoPendiente}</p>
       )}
     </section>
   )

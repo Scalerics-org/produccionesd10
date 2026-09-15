@@ -11,11 +11,11 @@ const { href, texto, esWhatsapp, externo } = botonFlotante;
 <a
   href={href}
   class:list={[
-    'fixed right-4 bottom-4 z-40 flex items-center gap-2 rounded-full px-5 py-3',
-    'text-sm font-semibold shadow-lg transition-colors',
+    'fixed right-4 bottom-4 z-20 flex min-h-12 items-center gap-2 px-4 py-3',
+    'kicker border-tinta border-2 tracking-[0.08em] transition-colors',
     esWhatsapp
-      ? 'text-tinta bg-[#25d366] hover:bg-[#1eb457]'
-      : 'bg-rojo hover:bg-rojo-hondo text-white',
+      ? 'bg-rojo text-hueso hover:bg-rojo-hondo'
+      : 'bg-rojo text-hueso hover:bg-rojo-hondo',
   ]}
   {...externo ? { target: '_blank', rel: 'noopener noreferrer' } : {}}
 >

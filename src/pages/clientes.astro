@@ -1,7 +1,12 @@
 ---
 import Base from '../layouts/Base.astro';
+import CierreRojo from '../componentes/CierreRojo.astro';
 import { obtenerClientes } from '../datos/consultas';
 
+/*
+  Clientes. El diseño no la dibuja: sigue la franja de logos del home, en blanco
+  sobre negro y con la misma grilla de reglas.
+*/
 const clientes = await obtenerClientes();
 const todosPendientes =
   clientes.length > 0 && clientes.every((cliente) => cliente.data.esPlaceholder);
@@ -11,31 +16,31 @@ const todosPendientes =
   titulo="Clientes"
   descripcion="Marcas, agencias y organismos que trabajaron con Producciones D10."
 >
-  <section class="mx-auto max-w-5xl px-4 py-16">
-    <h1 class="font-titulo text-4xl font-black sm:text-5xl">Clientes</h1>
-    <p class="text-grafito mt-4 max-w-2xl text-lg text-pretty">
-      Marcas, agencias, organismos y artistas que confiaron en la casa.
+  <section class="bg-tinta text-hueso px-4 pt-6 pb-8 lg:px-[34px] lg:pt-10 lg:pb-12">
+    <p class="kicker text-rojo-claro mb-3 text-[10px] lg:mb-4 lg:text-[11px]">
+      Clientes
     </p>
+    <h1 class="titular mb-4 max-w-[20ch] text-[40px] lg:text-[62px]">
+      Marcas, organismos y artistas que confiaron en la casa.
+    </h1>
 
     {
       todosPendientes && (
-        /* TODO: material pendiente del cliente. Los ocho son casilleros vacíos:
-           no se inventa ni un nombre ni un logo. */
-        <p class="border-rojo bg-papel-hondo text-grafito mt-8 border-l-4 p-4 text-sm">
-          <strong class="text-tinta">Muro provisorio.</strong> El cliente todavía no nos
-          pasó los logos ni la lista de marcas. Lo que se ve abajo son casilleros, no
-          clientes reales.
+        /* TODO: material pendiente del cliente. Los casilleros no son clientes reales. */
+        <p class="bg-rojo text-hueso mb-8 inline-block px-3 py-2 text-[13px]">
+          <strong>Muro provisorio.</strong> Faltan los logos y la lista de marcas: lo
+          que se ve son casilleros.
         </p>
       )
     }
 
     {
       clientes.length === 0 ? (
-        <p class="text-grafito mt-10">Todavía no hay clientes publicados.</p>
+        <p class="text-ceniza">Todavía no hay clientes publicados.</p>
       ) : (
-        <ul class="border-borde mt-10 grid grid-cols-2 gap-px border sm:grid-cols-3 lg:grid-cols-4">
+        <ul class="bg-hueso/20 border-hueso/20 grid grid-cols-2 gap-px border sm:grid-cols-3 lg:grid-cols-4">
           {clientes.map((cliente) => (
-            <li class="bg-papel outline-borde grid place-items-center p-8 outline">
+            <li class="bg-tinta grid h-28 place-items-center p-6 lg:h-36">
               <img
                 src={cliente.data.logo}
                 alt={cliente.data.nombre}
@@ -43,21 +48,14 @@ const todosPendientes =
                 height="72"
                 loading="lazy"
                 decoding="async"
-                class="h-16 w-auto opacity-70"
+                class="h-12 w-auto opacity-80 brightness-0 invert"
               />
             </li>
           ))}
         </ul>
       )
     }
-
-    <p class="mt-12">
-      <a
-        href="/contacto"
-        class="bg-tinta hover:bg-rojo inline-block px-6 py-3 font-semibold text-white transition-colors"
-      >
-        Quiero trabajar con ustedes
-      </a>
-    </p>
   </section>
+
+  <CierreRojo frase="La próxima marca en esta grilla puede ser la tuya." />
 </Base>

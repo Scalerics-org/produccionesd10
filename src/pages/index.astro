@@ -3,63 +3,78 @@ import Base from '../layouts/Base.astro';
 import Hero from '../componentes/Hero.astro';
 import Contadores from '../componentes/Contadores.astro';
 import AcordeonPilares from '../componentes/AcordeonPilares.astro';
+import GrillaTrabajos from '../componentes/GrillaTrabajos.astro';
 import CarruselLogos from '../componentes/CarruselLogos.astro';
-import TarjetaTrabajo from '../componentes/TarjetaTrabajo.astro';
+import CasoDestacado from '../componentes/CasoDestacado.astro';
+import FormularioContacto from '../componentes/FormularioContacto.astro';
+import CanalDirecto from '../componentes/CanalDirecto.astro';
+import DatosDeContacto from '../componentes/DatosDeContacto.astro';
 import { obtenerDestacados } from '../datos/consultas';
+import { home } from '../datos/home';
+import { contacto } from '../datos/sitio';
 
+/* El orden de las secciones es el de la pantalla 1d del diseño. */
 const destacados = await obtenerDestacados(6);
 ---
 
 <Base
   titulo="Inicio"
   precargar={{ href: '/video/hero-poster.avif', tipo: 'image/avif' }}
+  cabezalInvertido
 >
   <Hero />
   <Contadores />
   <AcordeonPilares />
 
-  <section class="mx-auto max-w-6xl px-4 py-8">
-    <div class="flex flex-wrap items-end justify-between gap-4">
-      <div>
-        <h2 class="font-titulo text-3xl font-black sm:text-4xl">Trabajos</h2>
-        <p class="text-grafito mt-2">Una muestra de lo que producimos.</p>
-      </div>
+  <section class="bg-hueso px-4 pt-6 pb-7 lg:px-[34px] lg:pt-9 lg:pb-10">
+    <div class="mb-4 flex items-baseline justify-between gap-4 lg:mb-[22px]">
+      <h2 class="text-[26px] leading-none tracking-[-0.03em] lg:text-[32px]">
+        {home.destacados.titulo}
+      </h2>
       <a
-        href="/trabajos"
-        class="text-rojo hover:text-rojo-hondo font-semibold underline-offset-4 hover:underline"
+        href={home.destacados.enlace.href}
+        class="kicker border-rojo hidden border-b-2 pb-1 tracking-[0.14em] lg:inline-block"
       >
-        Ver todo el portfolio →
+        {home.destacados.enlace.texto}
       </a>
     </div>
 
-    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {
-        /* En la home las tarjetas quedan lejos del primer pantallazo: van
-           todas diferidas para no competir con el poster, que es el LCP. */
-        destacados.map((trabajo) => <TarjetaTrabajo trabajo={trabajo} />)
-      }
-    </div>
+    <GrillaTrabajos trabajos={destacados} />
+
+    <a
+      href={home.destacados.enlace.href}
+      class="boton border-tinta hover:bg-tinta hover:text-hueso mt-4 w-full border-2 lg:hidden"
+    >
+      {home.destacados.enlace.texto}
+    </a>
   </section>
 
-  <div class="mt-16">
-    <CarruselLogos />
-  </div>
+  <CarruselLogos />
+  <CasoDestacado />
 
-  <section class="mx-auto max-w-4xl px-4 py-20 text-center">
-    <h2 class="font-titulo text-3xl font-black text-balance sm:text-4xl">
-      ¿Tenés un proyecto? Contanos y te pasamos un presupuesto.
-    </h2>
-    <p class="text-grafito mx-auto mt-4 max-w-xl text-pretty">
-      Un evento, un institucional, un programa o un podcast. Escribinos qué necesitás y
-      te respondemos con una propuesta concreta.
-    </p>
-    <p class="mt-8">
-      <a
-        href="/contacto"
-        class="bg-rojo hover:bg-rojo-hondo inline-block px-8 py-4 font-semibold text-white transition-colors"
+  <section
+    class="bg-hueso border-tinta grid border-t-2 lg:grid-cols-[1.15fr_1fr]"
+    aria-labelledby="titulo-contacto-home"
+  >
+    <div
+      class="border-tinta px-4 pt-[26px] pb-[30px] lg:border-r-2 lg:px-[34px] lg:py-9"
+    >
+      <h2
+        id="titulo-contacto-home"
+        class="mb-2 text-[28px] leading-none tracking-[-0.03em] lg:text-[34px]"
       >
-        Pedir presupuesto
-      </a>
-    </p>
+        {home.contacto.titulo}
+      </h2>
+      <p class="text-humo mb-[18px] text-sm lg:mb-[22px]">{contacto.bajadaCorta}</p>
+      <FormularioContacto />
+    </div>
+
+    <div class="bg-hueso-hondo flex flex-col gap-5 px-4 py-[26px] lg:px-[34px] lg:py-9">
+      <p class="kicker text-rojo">{home.contacto.directo}</p>
+      <CanalDirecto tono="tinta" />
+      <div class="border-tinta/35 border-t-2 pt-[18px]">
+        <DatosDeContacto />
+      </div>
+    </div>
   </section>
 </Base>

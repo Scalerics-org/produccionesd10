@@ -1,38 +1,15 @@
 ---
 import Base from '../../layouts/Base.astro';
-import ListaTrabajos from '../../componentes/ListaTrabajos.astro';
-import {
-  contarPorPilar,
-  obtenerServicios,
-  obtenerTrabajos,
-} from '../../datos/consultas';
-import type { Pilar } from '../../datos/pilares';
-
-const trabajos = await obtenerTrabajos();
-const servicios = await obtenerServicios();
-const cuenta = await contarPorPilar();
-
-const filtros = [
-  { texto: 'Todos', href: '/trabajos', cantidad: trabajos.length, slug: null },
-  ...servicios.map((servicio) => ({
-    texto: servicio.data.nombre,
-    href: `/trabajos/pilar/${servicio.id}`,
-    cantidad: cuenta[servicio.id as Pilar],
-    slug: servicio.id as Pilar,
-  })),
-];
+import PaginaPortfolio from '../../componentes/PaginaPortfolio.astro';
 ---
 
 <Base
   titulo="Trabajos"
-  descripcion="Portfolio de Producciones D10: programas, eventos, audiovisual y podcasts."
+  descripcion="Portfolio de Producciones D10: eventos, audiovisual, radio y TV, y podcasts."
 >
-  <section class="mx-auto max-w-6xl px-4 py-16">
-    <h1 class="font-titulo text-4xl font-black sm:text-5xl">Trabajos</h1>
-    <p class="text-grafito mt-4 max-w-2xl text-lg text-pretty">
-      Programas, eventos, piezas audiovisuales y podcasts.
-    </p>
-
-    <ListaTrabajos trabajos={trabajos} filtros={filtros} pilarActivo={null} />
-  </section>
+  <PaginaPortfolio
+    pilar={null}
+    titular="Todo lo que produjimos, por tipo de producción."
+    bajada="La misma taxonomía que usamos en servicios: eventos, audiovisual, radio y TV, podcasts. Si lo ofrecemos, acá están los trabajos que lo prueban."
+  />
 </Base>

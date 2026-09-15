@@ -1,80 +1,71 @@
 ---
-import { obtenerServicios } from '../datos/consultas';
+import Logotipo from './Logotipo.astro';
 import { empresa } from '../datos/empresa';
-import { redes, sitio } from '../datos/sitio';
+import { navegacionDelPie, redes } from '../datos/sitio';
 
-const servicios = await obtenerServicios();
+/*
+  Pie. Negro con la regla roja arriba, como cierra cada pantalla del diseño.
+
+  TODO: material pendiente del cliente. El diseño pone "Colonia, Uruguay", pero
+  lo único que sabemos es que Luis está radicado en Colonia, no dónde está la
+  empresa. Hasta que el cliente pase la dirección, razón social y RUT, el pie
+  dice "Uruguay" y nada más.
+*/
 const anio = new Date().getFullYear();
 ---
 
-<footer class="bg-tinta text-niebla mt-24">
-  <div class="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:grid-cols-2 lg:grid-cols-4">
-    <div class="lg:col-span-2">
-      <p class="font-titulo text-xl font-black text-white">
-        Producciones <span class="text-rojo-claro">D10</span>
-      </p>
-      <p class="mt-3 max-w-sm text-sm">{sitio.descripcion}</p>
-
-      <p class="mt-6 text-sm">
-        <a
-          href="/contacto"
-          class="border-rojo-claro text-white underline-offset-4 hover:underline"
-        >
-          Contanos tu proyecto →
-        </a>
-      </p>
-
-      {
-        /* TODO: material pendiente del cliente. Teléfono, mail, dirección,
-           razón social y RUT. Hasta que lleguen no se muestra nada: un dato
-           inventado en el pie es peor que un pie corto. */
-      }
-    </div>
-
+<footer class="bg-tinta text-niebla border-rojo border-t-2">
+  <div
+    class="flex flex-col gap-6 px-4 pt-[22px] pb-24 lg:flex-row lg:items-end lg:justify-between lg:px-[34px] lg:pt-[30px] lg:pb-24"
+  >
     <div>
-      <h2 class="text-xs font-semibold tracking-widest text-white uppercase">
-        Servicios
-      </h2>
-      <ul class="mt-4 space-y-2 text-sm">
-        {
-          servicios.map((servicio) => (
-            <li>
-              <a href={`/servicios/${servicio.id}`} class="hover:text-white">
-                {servicio.data.nombre}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
+      <a
+        href="/"
+        aria-label="D10 De Diez Producciones — inicio"
+        class="mb-3 inline-block lg:mb-3.5"
+      >
+        <Logotipo invertido />
+      </a>
+      <p class="text-xs">
+        {`© ${anio} ${empresa.nombre} · Uruguay · Razón social y RUT pendientes`}
+      </p>
     </div>
 
-    <div>
-      <h2 class="text-xs font-semibold tracking-widest text-white uppercase">
-        Seguinos
-      </h2>
-      <ul class="mt-4 space-y-2 text-sm">
-        {
-          redes.map((red) => (
-            <li>
-              <a
-                href={red.href}
-                class="hover:text-white"
-                rel="noopener"
-                target="_blank"
-              >
-                {red.nombre}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
+    <div class="flex flex-col gap-4 lg:items-end">
+      <nav aria-label="Secciones">
+        <ul class="flex flex-wrap gap-x-[18px] gap-y-2">
+          {
+            navegacionDelPie.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  class="kicker text-niebla hover:text-hueso tracking-[0.12em]"
+                >
+                  {item.texto}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+      <nav aria-label="Redes">
+        <ul class="flex flex-wrap gap-x-[18px] gap-y-2">
+          {
+            redes.map((red) => (
+              <li>
+                <a
+                  href={red.href}
+                  rel="noopener"
+                  target="_blank"
+                  class="kicker text-hueso hover:text-rojo-claro tracking-[0.12em]"
+                >
+                  {red.nombre}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
     </div>
-  </div>
-
-  <div class="border-borde-hondo border-t px-4 py-6 text-center text-xs">
-    <p>
-      © {anio}
-      {empresa.nombre} · {empresa.aniosDeTrayectoria} años produciendo en Uruguay
-    </p>
   </div>
 </footer>

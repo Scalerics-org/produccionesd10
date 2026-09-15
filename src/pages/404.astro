@@ -7,20 +7,32 @@ import { navegacion } from '../datos/sitio';
   titulo="Página no encontrada"
   descripcion="La página que buscabas no existe o cambió de dirección."
 >
-  <section class="mx-auto max-w-2xl px-4 py-24">
-    <p class="text-plomo font-titulo text-6xl font-black">404</p>
-    <h1 class="font-titulo mt-4 text-3xl font-black text-balance">
-      Esta página no existe
+  <section class="bg-hueso px-4 py-14 lg:px-[34px] lg:py-24">
+    <p class="kicker text-rojo mb-4">Error 404</p>
+    <h1 class="titular mb-4 max-w-[16ch] text-[44px] lg:text-[68px]">
+      Esta página no salió al aire.
     </h1>
-    <p class="text-grafito mt-4 text-pretty">
+    <p class="text-humo mb-8 max-w-[48ch] text-pretty">
       Puede que el link esté viejo o que la hayamos movido. Probá por acá:
     </p>
-    <ul class="border-borde mt-8 border-t">
+    <ul class="border-tinta max-w-xl border-t-2">
       {
-        navegacion.map((item) => (
-          <li class="border-borde border-b">
-            <a href={item.href} class="hover:text-rojo block py-3 font-semibold">
-              {item.texto} →
+        navegacion.map((item, i) => (
+          <li
+            class:list={[
+              i === navegacion.length - 1
+                ? 'border-tinta border-b-2'
+                : 'border-tinta/30 border-b',
+            ]}
+          >
+            <a
+              href={item.href}
+              class="hover:text-rojo flex items-baseline justify-between py-4 text-[22px] leading-none font-extrabold"
+            >
+              {item.texto}
+              <span aria-hidden="true" class="text-rojo">
+                →
+              </span>
             </a>
           </li>
         ))

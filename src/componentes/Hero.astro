@@ -1,98 +1,122 @@
 ---
-/*
-  Hero del home.
+import { home } from '../datos/home';
 
-  El orden importa y no es casual:
+/*
+  Hero del home: el reel a pantalla completa con el claim abajo a la izquierda
+  (pantalla 1a del diseño).
+
+  El orden de carga importa y no es casual:
 
   1. El poster se pinta primero y es el elemento LCP. Va en AVIF (8,7 KB), con
      `fetchpriority="high"` y precargado desde el `<head>`. El `<picture>` deja
-     el JPEG como reserva para el navegador que no entienda AVIF: baja uno de
-     los dos, nunca los dos, y el `<link rel="preload">` tampoco se dispara si
-     el navegador no soporta el `type`.
-  2. El `<video>` sale sin `src`: los dos `<source>` llevan la ruta en un
+     el JPEG como reserva para el navegador que no entienda AVIF.
+  2. El `<video>` sale sin `src`: los `<source>` llevan la ruta en un
      `data-fuente` y el script se la pasa recién en el evento `load`, y sólo en
-     viewport de escritorio. Van WebM/VP9 (29 KB) primero y MP4/H.264 (125 KB)
-     de reserva: el navegador baja uno solo. Así el video no compite por ancho
-     de banda con nada del render inicial: literalmente no existe hasta que la
-     página terminó de cargar.
+     viewport de escritorio. Hasta ese momento el video no pidió un byte.
+     Tampoco lleva `poster`: medido, el navegador bajaba igual el JPEG aunque
+     el video no tuviera `src`, y el `<img>` de atrás ya muestra esa imagen.
+  3. Con movimiento reducido el video no arranca nunca y queda el poster.
 
-     Tampoco lleva atributo `poster`: medido, el navegador se bajaba igual el
-     JPEG del poster (18,1 KB) aunque el video no tuviera `src`, y era el
-     recurso crítico más pesado de la home. No hacía falta para nada, porque el
-     `<img>` de atrás ya muestra exactamente esa imagen.
-  3. Si el usuario pidió movimiento reducido, el video no arranca nunca y se
-     queda el poster.
+  El diseño pinta el reel en blanco y negro: el filtro va en CSS, así el mismo
+  archivo sirve el día que el cliente quiera color.
 */
-const POSTER_AVIF = '/video/hero-poster.avif';
+const { hero } = home;
 ---
 
-<section class="bg-tinta relative isolate overflow-hidden text-white">
-  <picture>
-    <source srcset={POSTER_AVIF} type="image/avif" />
-    <img
-      src="/video/hero-poster.jpg"
-      alt=""
-      width="1920"
-      height="1080"
-      fetchpriority="high"
-      decoding="sync"
-      class="absolute inset-0 h-full w-full object-cover"
-    />
-  </picture>
+<section class="bg-tinta text-hueso relative isolate overflow-hidden">
+  <div class="relative h-[430px] lg:h-[640px]">
+    <picture>
+      <source srcset="/video/hero-poster.avif" type="image/avif" />
+      <img
+        src="/video/hero-poster.jpg"
+        alt=""
+        width="1920"
+        height="1080"
+        fetchpriority="high"
+        decoding="sync"
+        class="foto-byn absolute inset-0 h-full w-full object-cover"
+      />
+    </picture>
 
-  <video
-    id="video-hero"
-    class="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-1000"
-    muted
-    loop
-    playsinline
-    preload="metadata"
-    aria-hidden="true"
-    tabindex="-1"
-  >
-    <source data-fuente="/video/hero.webm" type="video/webm" />
-    <source data-fuente="/video/hero.mp4" type="video/mp4" />
-  </video>
+    <video
+      id="video-hero"
+      class="foto-byn absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-1000"
+      muted
+      loop
+      playsinline
+      preload="metadata"
+      aria-hidden="true"
+      tabindex="-1"
+    >
+      <source data-fuente="/video/hero.webm" type="video/webm" />
+      <source data-fuente="/video/hero.mp4" type="video/mp4" />
+    </video>
 
-  <!-- El degradado es el que hace legible el título sobre cualquier fotograma. -->
-  <div class="from-tinta via-tinta/85 absolute inset-0 bg-gradient-to-r to-transparent">
+    <!-- La trama y el degradado son los que hacen legible el claim sobre cualquier fotograma. -->
+    <div class="trama-oscura absolute inset-0 !bg-transparent" aria-hidden="true"></div>
+    <div
+      class="from-tinta via-tinta/70 to-tinta/10 absolute inset-0 bg-gradient-to-t"
+      aria-hidden="true"
+    >
+    </div>
+
+    <p
+      class="rotulo bg-rojo text-hueso absolute top-3.5 left-4 px-2 py-1.5 lg:top-[26px] lg:left-[34px]"
+    >
+      {hero.avisoPendiente}
+    </p>
+
+    <div class="absolute inset-x-4 bottom-0 pb-5 lg:inset-x-[34px] lg:pb-[30px]">
+      <div class="bg-hueso/20 mb-[26px] hidden h-0.5 lg:block"></div>
+      <div class="grid items-end gap-4 lg:grid-cols-[1.35fr_0.65fr] lg:gap-[46px]">
+        <div>
+          <p class="kicker text-rojo-claro mb-3 text-[10px] lg:mb-4 lg:text-[11px]">
+            {hero.kicker}
+          </p>
+          <h1 class="titular text-[44px] lg:text-[72px]">{hero.titular}</h1>
+        </div>
+        <div>
+          <p class="text-ceniza text-sm text-pretty lg:mb-[18px] lg:text-[15px]">
+            {hero.bajada}
+          </p>
+          <div class="hidden gap-2.5 lg:flex">
+            <a
+              href={hero.ctaPrincipal.href}
+              class="boton bg-rojo text-hueso hover:bg-rojo-hondo"
+            >
+              {hero.ctaPrincipal.texto}
+            </a>
+            <a
+              href={hero.ctaSecundario.href}
+              class="boton border-hueso/40 hover:border-hueso hover:bg-hueso/10 border"
+            >
+              {hero.ctaSecundario.texto}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="relative mx-auto max-w-6xl px-4 py-28 sm:py-36 lg:py-44">
-    <p class="text-rojo-claro text-xs font-semibold tracking-[0.2em] uppercase">
-      Productora · Uruguay
-    </p>
-    <h1
-      class="font-titulo mt-5 max-w-3xl text-4xl leading-[1.05] font-black text-balance sm:text-6xl lg:text-7xl"
+  <!-- En celular los botones salen del hero y forman una barra de dos celdas (1e). -->
+  <div class="border-rojo grid grid-cols-2 border-t-2 lg:hidden">
+    <a
+      href={hero.ctaPrincipal.href}
+      class="boton bg-rojo text-hueso hover:bg-rojo-hondo min-h-14"
     >
-      Hacemos televisión, radio y eventos desde hace 16 años.
-    </h1>
-    <p class="text-niebla mt-6 max-w-xl text-lg text-pretty">
-      Producimos <a
-        href="/trabajos/noche-d10"
-        class="text-white underline underline-offset-4">Noche D10</a
-      > todas las semanas. El mismo equipo produce eventos, contenido audiovisual y podcasts.
-    </p>
-    <div class="mt-10 flex flex-wrap gap-4">
-      <a
-        href="/contacto"
-        class="bg-rojo hover:bg-rojo-hondo px-6 py-3 font-semibold text-white transition-colors"
-      >
-        Contanos tu proyecto
-      </a>
-      <a
-        href="/trabajos"
-        class="border border-white/30 px-6 py-3 font-semibold transition-colors hover:border-white"
-      >
-        Ver trabajos
-      </a>
-    </div>
+      {hero.ctaPrincipal.texto}
+    </a>
+    <a
+      href={hero.ctaSecundario.href}
+      class="boton border-hueso/30 hover:bg-hueso/10 min-h-14 border-l"
+    >
+      {hero.ctaSecundario.texto}
+    </a>
   </div>
 </section>
 
 <script is:inline>
-  // Sin `is:inline` Astro lo empaqueta como módulo y agrega un request. Son
-  // trece líneas: no vale un archivo aparte.
+  // Sin `is:inline` Astro lo empaqueta como módulo y agrega un request.
   addEventListener('load', () => {
     const video = document.getElementById('video-hero');
     if (!video) return;
@@ -109,8 +133,7 @@ const POSTER_AVIF = '/video/hero-poster.avif';
       { once: true },
     );
 
-    // Los `<source>` salen del HTML sin `src`: recién acá se los damos y
-    // pedimos el `load()`. Hasta esta línea el navegador no pidió un solo byte.
+    // Los `<source>` salen del HTML sin `src`: recién acá se los damos.
     for (const fuente of video.querySelectorAll('source')) {
       fuente.src = fuente.dataset.fuente;
     }

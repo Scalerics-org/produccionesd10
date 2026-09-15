@@ -1,67 +1,64 @@
 ---
-import TarjetaTrabajo from './TarjetaTrabajo.astro';
-import type { Trabajo } from '../datos/consultas';
-import type { Pilar } from '../datos/pilares';
+import GrillaTrabajos from './GrillaTrabajos.astro';
+import type { FiltroDelPortfolio, Trabajo } from '../datos/consultas';
 
-type Props = {
-  trabajos: Trabajo[];
-  /** Lista de filtros: nombre visible, destino y cuántos hay. */
-  filtros: { texto: string; href: string; cantidad: number; slug: Pilar | null }[];
-  pilarActivo: Pilar | null;
-};
+/*
+  Filtro y grilla del portfolio (2a y 2e del diseño).
 
-const { trabajos, filtros, pilarActivo } = Astro.props;
+  El diseño resuelve el filtro con botones y estado; acá cada filtro es un link
+  a una página estática real. Se ve igual — el segmento activo en negro, con la
+  cantidad al lado — pero anda sin JavaScript, se puede compartir el link de
+  "sólo eventos" y cada listado se indexa por separado.
+*/
+type Props = { trabajos: Trabajo[]; filtros: FiltroDelPortfolio[]; total: number };
+
+const { trabajos, filtros, total } = Astro.props;
 ---
 
-<!--
-  El filtro son links a páginas reales, no botones con JS.
-
-  Cada pilar tiene su propia URL estática: anda sin JavaScript, se puede
-  compartir el link de "sólo eventos", y cada listado se indexa por separado.
-  Un filtro con `?pilar=` y JS habría perdido las tres cosas.
--->
-<nav aria-label="Filtrar por pilar" class="border-borde mt-8 border-y">
-  <ul class="flex flex-wrap">
-    {
-      filtros.map((filtro) => {
-        const activo = filtro.slug === pilarActivo;
-        return (
+<div
+  class="flex flex-col gap-4 px-4 pb-4 lg:flex-row lg:items-end lg:justify-between lg:gap-6 lg:px-[34px] lg:pb-5"
+>
+  <nav
+    aria-label="Filtrar por tipo de producción"
+    class="sin-barra -mx-4 overflow-x-auto px-4 lg:mx-0 lg:px-0"
+  >
+    <ul class="lg:border-tinta flex w-max gap-2 lg:gap-0 lg:border-2">
+      {
+        filtros.map((filtro, i) => (
           <li>
             <a
               href={filtro.href}
-              aria-current={activo ? 'page' : undefined}
+              aria-current={filtro.activo ? 'page' : undefined}
               class:list={[
-                'inline-flex items-baseline gap-2 px-4 py-3 text-sm transition-colors',
-                activo
-                  ? 'bg-tinta font-semibold text-white'
-                  : 'text-grafito hover:bg-papel-hondo hover:text-tinta',
+                'kicker flex min-h-12 items-baseline gap-2 px-[13px] py-[14px] tracking-[0.1em] transition-colors lg:px-[18px] lg:py-[15px]',
+                'border-tinta/40 border lg:border-0',
+                i > 0 && 'lg:border-tinta/30 lg:border-l',
+                filtro.activo
+                  ? 'bg-tinta text-hueso border-tinta'
+                  : 'text-humo hover:bg-hueso-hondo hover:text-tinta',
               ]}
             >
               {filtro.texto}
-              <span
-                class:list={[
-                  'text-xs tabular-nums',
-                  activo ? 'text-niebla' : 'text-plomo',
-                ]}
-              >
-                {filtro.cantidad}
-              </span>
+              <span class="text-[9px] opacity-70">{filtro.cantidad}</span>
             </a>
           </li>
-        );
-      })
-    }
-  </ul>
-</nav>
+        ))
+      }
+    </ul>
+  </nav>
+  <p class="kicker text-humo tracking-[0.14em] lg:mb-1.5">
+    Mostrando {trabajos.length} de {total}
+  </p>
+</div>
 
-{
-  trabajos.length === 0 ? (
-    <p class="text-grafito mt-12">Todavía no hay trabajos publicados en este pilar.</p>
-  ) : (
-    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {trabajos.map((trabajo, i) => (
-        <TarjetaTrabajo trabajo={trabajo} cargarYa={i < 3} />
-      ))}
-    </div>
-  )
-}
+<div class="px-4 pb-6 lg:px-[34px] lg:pb-10">
+  {
+    trabajos.length === 0 ? (
+      <p class="border-tinta text-humo border-2 p-6">
+        Todavía no hay trabajos publicados en este tipo de producción.
+      </p>
+    ) : (
+      <GrillaTrabajos trabajos={trabajos} alto={190} />
+    )
+  }
+</div>

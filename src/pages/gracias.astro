@@ -1,41 +1,44 @@
 ---
 import Base from '../layouts/Base.astro';
-import { redes } from '../datos/sitio';
+import { canalDirecto } from '../datos/sitio';
+
+/* El estado "consulta enviada" de 3f, como página propia: el Worker redirige acá. */
 ---
 
-<Base
-  titulo="Consulta enviada"
-  descripcion="Recibimos tu consulta. Te respondemos a la brevedad."
->
-  <section class="mx-auto max-w-2xl px-4 py-24 text-center">
-    <p class="text-rojo font-titulo text-5xl font-black" aria-hidden="true">✓</p>
-    <h1 class="font-titulo mt-6 text-4xl font-black text-balance">
-      Recibimos tu consulta
-    </h1>
-    <p class="text-grafito mt-4 text-lg text-pretty">
-      Te respondemos a la brevedad con una propuesta. Mientras tanto, podés ver en qué
-      andamos.
-    </p>
-
-    <div class="mt-10 flex flex-wrap justify-center gap-4">
-      <a
-        href="/trabajos"
-        class="bg-tinta hover:bg-rojo px-6 py-3 font-semibold text-white transition-colors"
+<Base titulo="Consulta enviada" descripcion="Recibimos tu consulta.">
+  <section class="bg-hueso px-4 py-14 lg:px-[34px] lg:py-24">
+    <div class="border-tinta max-w-xl border-2 p-[22px] lg:p-8">
+      <p
+        class="bg-rojo text-hueso mb-4 flex size-11 items-center justify-center text-[22px] font-extrabold"
+        aria-hidden="true"
       >
-        Ver trabajos
-      </a>
-      {
-        redes.slice(0, 1).map((red) => (
-          <a
-            href={red.href}
-            rel="noopener"
-            target="_blank"
-            class="border-borde hover:border-tinta border px-6 py-3 font-semibold transition-colors"
-          >
-            Seguinos en {red.nombre}
-          </a>
-        ))
-      }
+        ✓
+      </p>
+      <h1 class="mb-2.5 text-[34px] leading-[1.05] tracking-[-0.03em]">
+        Recibimos tu consulta
+      </h1>
+      <!-- TODO: material pendiente del cliente. Confirmar la promesa de respuesta en el día. -->
+      <p class="text-humo mb-[18px] text-sm leading-normal">
+        Te contestamos el mismo día hábil. Si la fecha del evento está cerca, escribinos
+        por WhatsApp y lo resolvemos hoy.
+      </p>
+      <div class="flex flex-col gap-0.5">
+        <a
+          href={canalDirecto.href}
+          class="boton bg-tinta text-hueso hover:bg-carbon"
+          {...canalDirecto.externo
+            ? { target: '_blank', rel: 'noopener noreferrer' }
+            : {}}
+        >
+          Escribir por WhatsApp <span aria-hidden="true">→</span>
+        </a>
+        <a
+          href="/trabajos"
+          class="boton border-tinta hover:bg-tinta hover:text-hueso border-2"
+        >
+          Mientras tanto, mirá los trabajos
+        </a>
+      </div>
     </div>
   </section>
 </Base>

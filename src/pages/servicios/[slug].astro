@@ -1,80 +1,165 @@
 ---
-import { render } from 'astro:content';
+import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
-import TarjetaTrabajo from '../../componentes/TarjetaTrabajo.astro';
+import PestanasPilares from '../../componentes/PestanasPilares.astro';
+import ListaNumerada from '../../componentes/ListaNumerada.astro';
+import GrillaTrabajos from '../../componentes/GrillaTrabajos.astro';
+import CierreRojo from '../../componentes/CierreRojo.astro';
 import { obtenerServicios, obtenerTrabajosDePilar } from '../../datos/consultas';
 import type { Pilar } from '../../datos/pilares';
 
+/*
+  Página de servicio: el patrón de 1f que el diseño repite en los cuatro
+  pilares (3a, 3b, 3c) y en celular (3d).
+*/
 export async function getStaticPaths() {
   const servicios = await obtenerServicios();
-  return servicios.map((servicio) => ({
+  return servicios.map((servicio, i) => ({
     params: { slug: servicio.id },
-    props: { servicio },
+    props: { servicio, numero: String(i + 1).padStart(2, '0'), servicios },
   }));
 }
 
-const { servicio } = Astro.props;
-const { Content } = await render(servicio);
-const relacionados = await obtenerTrabajosDePilar(servicio.id as Pilar);
+const { servicio, numero, servicios } = Astro.props;
+const datos = servicio.data;
+const trabajos = await obtenerTrabajosDePilar(servicio.id as Pilar);
 ---
 
-<Base titulo={servicio.data.nombre} descripcion={servicio.data.bajada}>
-  <article class="mx-auto max-w-5xl px-4 py-16">
-    <nav aria-label="Migas" class="text-plomo text-sm">
-      <a href="/servicios" class="hover:text-tinta underline-offset-4 hover:underline">
-        Servicios
-      </a>
-      <span aria-hidden="true"> / </span>
-      <span>{servicio.data.nombre}</span>
-    </nav>
+<Base titulo={datos.nombre} descripcion={datos.descripcion}>
+  <PestanasPilares servicios={servicios} activo={servicio.id} />
 
-    <h1 class="font-titulo mt-6 text-4xl font-black sm:text-5xl">
-      {servicio.data.nombre}
-    </h1>
-    <p class="text-grafito mt-4 max-w-2xl text-xl text-pretty">
-      {servicio.data.bajada}
-    </p>
-
-    <div class="mt-12 grid gap-12 lg:grid-cols-3">
-      <div
-        class="text-grafito lg:col-span-2 [&_em]:italic [&_p]:mt-4 [&_p]:text-pretty"
+  <section
+    class="trama-oscura text-hueso grid items-end lg:grid-cols-[1.25fr_1fr] lg:gap-[46px] lg:px-[34px] lg:pt-11"
+  >
+    <div class="px-4 pt-[26px] pb-7 lg:px-0 lg:pt-0 lg:pb-9">
+      <p class="kicker text-rojo-claro mb-3 text-[10px] lg:mb-4 lg:text-[11px]">
+        Servicio {numero} · {datos.nombre}
+      </p>
+      <h1 class="titular mb-3.5 text-[44px] leading-[0.94] lg:mb-[18px] lg:text-[68px]">
+        {datos.titular}
+      </h1>
+      <p
+        class="text-ceniza mb-5 max-w-[48ch] text-[15px] text-pretty lg:mb-6 lg:text-[17px]"
       >
-        <Content />
-      </div>
-
-      <aside>
-        <h2 class="text-plomo text-xs font-semibold tracking-widest uppercase">
-          Incluye
-        </h2>
-        <ul class="border-borde mt-4 border-t">
-          {
-            servicio.data.incluye.map((item) => (
-              <li class="border-borde border-b py-3 text-sm">{item}</li>
-            ))
-          }
-        </ul>
+        {datos.descripcion}
+      </p>
+      <div class="flex flex-col gap-0.5 lg:flex-row lg:gap-2.5">
         <a
           href="/contacto"
-          class="bg-tinta hover:bg-rojo mt-8 inline-block px-6 py-3 font-semibold text-white transition-colors"
+          class="boton bg-rojo text-hueso hover:bg-rojo-hondo min-h-[52px]"
         >
-          Pedir presupuesto
+          {datos.ctaPrincipal}
         </a>
-      </aside>
+        <a
+          href={datos.ctaSecundario.href}
+          class="boton border-hueso/45 hover:border-hueso hover:bg-hueso/10 min-h-[52px] border"
+        >
+          {datos.ctaSecundario.texto}
+        </a>
+      </div>
     </div>
 
+    <div
+      class:list={[
+        'border-hueso/20 relative hidden h-[330px] border-l lg:flex',
+        datos.visual.tipo === 'pendiente' && 'trama-oscura items-end p-4',
+        datos.visual.tipo === 'logo' && 'bg-carbon items-center justify-center',
+        datos.visual.tipo === 'rotulo' && 'bg-carbon flex-col justify-end p-[22px]',
+      ]}
+    >
+      {
+        datos.visual.tipo === 'pendiente' && (
+          <span class="rotulo text-niebla">{datos.visual.texto}</span>
+        )
+      }
+      {
+        datos.visual.tipo === 'logo' && (
+          <Image
+            src={datos.visual.imagen}
+            alt={datos.visual.alt}
+            width={460}
+            class="logo-sobre-negro w-[230px]"
+          />
+        )
+      }
+      {
+        datos.visual.tipo === 'rotulo' && (
+          <>
+            <span class="text-[44px] leading-none font-extrabold tracking-[-0.035em]">
+              {datos.visual.texto}
+            </span>
+            <span class="rotulo text-niebla mt-2.5">{datos.visual.detalle}</span>
+          </>
+        )
+      }
+    </div>
+  </section>
+
+  <section
+    class="bg-hueso border-rojo grid gap-[18px] border-t-2 px-4 pt-6 pb-6 lg:grid-cols-[0.8fr_1.2fr] lg:gap-[46px] lg:px-[34px] lg:pt-9 lg:pb-10"
+  >
+    <div>
+      <h2
+        class="mb-1 text-[26px] leading-[1.05] tracking-[-0.03em] lg:mb-3 lg:text-[30px]"
+      >
+        Qué incluye
+      </h2>
+      <p class="text-humo text-sm">{datos.notaIncluye}</p>
+    </div>
+    <ListaNumerada items={datos.incluye} />
+  </section>
+
+  <section
+    class="bg-hueso-hondo border-tinta border-t-2 px-4 pt-6 pb-7 lg:px-[34px] lg:pt-[34px] lg:pb-10"
+  >
+    <h2
+      class="mb-[18px] text-[26px] leading-[1.05] tracking-[-0.03em] lg:mb-[22px] lg:text-[30px]"
+    >
+      Cómo trabajamos
+    </h2>
+    <ol
+      class="bg-tinta border-tinta grid gap-0.5 border-2 sm:grid-cols-2 lg:grid-cols-4"
+    >
+      {
+        datos.pasos.map((paso, i) => (
+          <li class="bg-hueso p-4 lg:px-[18px] lg:pt-5 lg:pb-6">
+            <span class="text-rojo text-[28px] leading-none font-extrabold lg:text-[34px]">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <h3 class="mt-2 mb-[5px] text-lg leading-[1.1] lg:mt-3 lg:mb-[7px] lg:text-[19px]">
+              {paso.titulo}
+            </h3>
+            <p class="text-humo text-[13px] leading-[1.45]">{paso.detalle}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section
+    class="bg-hueso border-tinta border-t-2 px-4 pt-6 pb-7 lg:px-[34px] lg:pt-[34px] lg:pb-10"
+  >
+    <div class="mb-4 flex flex-wrap items-baseline justify-between gap-3 lg:mb-5">
+      <h2 class="text-[26px] leading-none tracking-[-0.03em] lg:text-[30px]">
+        {datos.nombre} que produjimos
+      </h2>
+      <a
+        href={`/trabajos/pilar/${servicio.id}`}
+        class="kicker border-rojo border-b-2 pb-1 tracking-[0.14em]"
+      >
+        Portfolio filtrado por {datos.nombre.toLowerCase()}
+      </a>
+    </div>
     {
-      relacionados.length > 0 && (
-        <section class="mt-20">
-          <h2 class="font-titulo text-2xl font-black">
-            Trabajos de {servicio.data.nombre.toLowerCase()}
-          </h2>
-          <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {relacionados.map((trabajo) => (
-              <TarjetaTrabajo trabajo={trabajo} />
-            ))}
-          </div>
-        </section>
+      trabajos.length > 0 ? (
+        <GrillaTrabajos trabajos={trabajos} alto={170} />
+      ) : (
+        <p class="border-tinta text-humo border-2 p-6">
+          Todavía no hay trabajos publicados de {datos.nombre.toLowerCase()}.
+        </p>
       )
     }
-  </article>
+  </section>
+
+  <CierreRojo frase={datos.cierre} />
 </Base>

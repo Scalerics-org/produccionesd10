@@ -1,49 +1,60 @@
 ---
 import Base from '../layouts/Base.astro';
 import FormularioContacto from '../componentes/FormularioContacto.astro';
-import { redes, sitio } from '../datos/sitio';
+import CanalDirecto from '../componentes/CanalDirecto.astro';
+import DatosDeContacto from '../componentes/DatosDeContacto.astro';
+import { textosDelFormulario } from '../datos/formulario';
+import { contacto } from '../datos/sitio';
+
+/* Contacto (2d en escritorio, 2e en celular): pensado para convertir. */
 ---
 
-<Base titulo="Contacto" descripcion="Contanos tu proyecto y te pasamos un presupuesto.">
-  <section class="mx-auto max-w-3xl px-4 py-16">
-    <h1 class="font-titulo text-4xl font-black sm:text-5xl">Contanos tu proyecto</h1>
-    <p class="text-grafito mt-4 max-w-2xl text-lg text-pretty">
-      Un evento, un institucional, un programa o un podcast. Escribinos qué necesitás y
-      te respondemos con una propuesta concreta.
-    </p>
+<Base titulo="Contacto" descripcion={contacto.bajadaCorta}>
+  <section
+    class="bg-tinta text-hueso border-rojo grid items-end gap-6 border-b-2 px-4 pt-[26px] pb-6 lg:grid-cols-[1.2fr_1fr] lg:gap-[46px] lg:px-[34px] lg:pt-10 lg:pb-[34px]"
+  >
+    <div>
+      <p class="kicker text-rojo-claro mb-3 text-[10px] lg:mb-4 lg:text-[11px]">
+        Contacto
+      </p>
+      <h1
+        class="titular mb-3 max-w-[18ch] text-[38px] leading-[0.96] lg:mb-4 lg:text-[62px] lg:leading-[0.95]"
+      >
+        {contacto.titular}
+      </h1>
+      <p class="text-ceniza max-w-[48ch] text-sm text-pretty lg:text-[17px]">
+        {contacto.bajada}
+      </p>
+    </div>
+    <CanalDirecto />
+  </section>
 
-    <FormularioContacto />
-
-    <aside class="border-borde mt-16 border-t pt-8">
-      <h2 class="text-plomo text-xs font-semibold tracking-widest uppercase">
-        También nos encontrás en
+  <section class="bg-hueso grid lg:grid-cols-[1.3fr_1fr]">
+    <div class="border-tinta px-4 pt-6 pb-7 lg:border-r-2 lg:p-[34px]">
+      <h2 class="mb-1.5 text-[28px] leading-none tracking-[-0.03em]">
+        {textosDelFormulario.titulo}
       </h2>
-      <ul class="mt-4 flex flex-wrap gap-x-6 gap-y-2">
-        {
-          redes.map((red) => (
-            <li>
-              <a
-                href={red.href}
-                rel="noopener"
-                target="_blank"
-                class="hover:text-rojo font-semibold underline-offset-4 hover:underline"
-              >
-                {red.nombre}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-      {
-        /* TODO: material pendiente del cliente. Teléfono, WhatsApp, mail y
-           dirección. Mientras no estén, las redes son la única vía verificable
-           que tenemos: no se inventa ninguna. */
-        !sitio.telefono && !sitio.email && (
-          <p class="text-plomo mt-6 text-sm">
-            Teléfono y mail directos: pendientes de que el cliente nos los pase.
-          </p>
-        )
-      }
-    </aside>
+      <p class="text-humo mb-6 text-sm">{textosDelFormulario.bajada}</p>
+      <FormularioContacto />
+    </div>
+
+    <div class="bg-hueso-hondo flex flex-col gap-6 px-4 py-7 lg:p-[34px]">
+      <div>
+        <h2 class="rotulo text-rojo mb-3.5 tracking-[0.16em]">Datos de la casa</h2>
+        <DatosDeContacto conRedesComoBotones />
+      </div>
+      <div class="border-tinta border-t-2 pt-5">
+        <h2 class="rotulo text-rojo mb-3 tracking-[0.16em]">Qué pasa después</h2>
+        <ol class="flex flex-col gap-3">
+          {
+            contacto.proceso.map((paso) => (
+              <li class="text-[13px] leading-normal">
+                <strong class="font-extrabold">{paso.titulo}</strong> {paso.texto}
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
   </section>
 </Base>
