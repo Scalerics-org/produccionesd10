@@ -14,20 +14,16 @@
   esbuild, así que importar el `.ts` desde acá no necesita nada más.
 */
 import { pilares } from '../src/datos/pilares.ts';
+import { campos } from '../src/datos/formulario.ts';
 
-/** Campo trampa. Si viene con algo, lo completó un bot. */
-const HONEYPOT = 'apellido2';
+/*
+  Los nombres y los límites de los campos también salen del dominio: son los
+  mismos que dibuja el formulario, así no hay dos listas que puedan divergir.
+*/
+const HONEYPOT = campos.honeypot;
 
-const LIMITES = {
-  nombre: 120,
-  empresa: 120,
-  email: 200,
-  tipo: 40,
-  mensaje: 4000,
-};
-
-/** Los cuatro pilares más el "otro" que ofrece el <select> del formulario. */
-const TIPOS_VALIDOS = new Set([...pilares, 'otro']);
+/** Los cuatro pilares. "Otro" ya no existe: el diseño ofrece sólo las cuatro líneas. */
+const TIPOS_VALIDOS = new Set(pilares);
 
 export default {
   async fetch(request, env) {
@@ -64,19 +60,22 @@ async function recibirConsulta(request, env) {
     return redirigir('/gracias', request);
   }
 
+  const campo = (definicion) =>
+    texto(formulario.get(definicion.nombre), definicion.maximo);
   const consulta = {
-    nombre: texto(formulario.get('nombre'), LIMITES.nombre),
-    empresa: texto(formulario.get('empresa'), LIMITES.empresa),
-    email: texto(formulario.get('email'), LIMITES.email),
-    tipo: texto(formulario.get('tipo'), LIMITES.tipo),
-    mensaje: texto(formulario.get('mensaje'), LIMITES.mensaje),
+    tipo: texto(formulario.get(campos.tipo.nombre), 40),
+    nombre: campo(campos.nombre),
+    empresa: campo(campos.empresa),
+    contacto: campo(campos.contacto),
+    fecha: campo(campos.fecha),
+    mensaje: campo(campos.mensaje),
   };
 
   const faltantes = [];
+  if (!TIPOS_VALIDOS.has(consulta.tipo)) faltantes.push('qué necesitás');
   if (consulta.nombre === '') faltantes.push('nombre');
-  if (!pareceEmail(consulta.email)) faltantes.push('email');
-  if (!TIPOS_VALIDOS.has(consulta.tipo)) faltantes.push('tipo de proyecto');
-  if (consulta.mensaje.length < 10) faltantes.push('mensaje');
+  if (!pareceMailOTelefono(consulta.contacto)) faltantes.push('mail o teléfono');
+  if (consulta.mensaje.length < campos.mensaje.minimo) faltantes.push('mensaje');
 
   if (faltantes.length > 0) {
     // La validación del navegador ya frena esto; acá se repite porque un POST
@@ -134,8 +133,10 @@ function texto(valor, largoMaximo = 1000) {
   return typeof valor === 'string' ? valor.trim().slice(0, largoMaximo) : '';
 }
 
-function pareceEmail(valor) {
-  return /^[^@\s]+@[^@\s.]+\.[^@\s]+$/.test(valor);
+/** Un mail con forma de mail, o un teléfono con al menos seis dígitos. */
+function pareceMailOTelefono(valor) {
+  if (/^[^@\s]+@[^@\s.]+\.[^@\s]+$/.test(valor)) return true;
+  return /^\+?[\d\s().-]+$/.test(valor) && valor.replace(/\D/g, '').length >= 6;
 }
 
 /** 303 para que el navegador vuelva a GET y el F5 no reenvíe el formulario. */
@@ -151,10 +152,10 @@ function respuestaDeError(estado, mensaje) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>No pudimos enviar tu consulta · Producciones D10</title>
 <style>
-  body { margin:0; background:#fff; color:#0b0b0c; font:16px/1.6 system-ui, sans-serif; }
+  body { margin:0; background:#f4f3ef; color:#0a0a0a; font:16px/1.6 Archivo, system-ui, sans-serif; }
   main { max-width:34rem; margin:0 auto; padding:6rem 1rem; }
   h1 { font-size:1.75rem; line-height:1.2; margin:0 0 1rem; }
-  p { color:#3f3f43; }
+  p { color:#2a2a2a; }
   a { color:#c8102e; }
 </style>
 </head>

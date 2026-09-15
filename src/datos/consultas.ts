@@ -64,3 +64,98 @@ export async function contarPorPilar(): Promise<Record<Pilar, number>> {
 export async function obtenerClientes() {
   return getCollection('clientes');
 }
+
+/** El nombre visible de un pilar: "radio-y-tv" → "Radio y TV". */
+export async function nombreDePilar(pilar: Pilar): Promise<string> {
+  return (await obtenerServicio(pilar))?.data.nombre ?? pilar;
+}
+
+/** La línea roja de arriba de cada tarjeta: "Radio y TV · 2010". */
+export async function kickerDeTrabajo(trabajo: Trabajo): Promise<string> {
+  const nombre = await nombreDePilar(trabajo.data.pilar);
+  return trabajo.data.fecha ? `${nombre} · ${trabajo.data.fecha}` : nombre;
+}
+
+export type VisualDeTrabajo =
+  | { tipo: 'logo'; imagen: ImageMetadata; alt: string }
+  | { tipo: 'rotulo'; texto: string }
+  | { tipo: 'foto'; imagen: ImageMetadata; alt: string }
+  | { tipo: 'pendiente'; texto: string };
+
+/**
+ * Qué se dibuja arriba de la tarjeta de un trabajo.
+ *
+ * Una foto provisoria no se muestra como si fuera del trabajo: el casillero
+ * dice que la foto falta. El orden es: foto real, logo o rótulo del caso, y si
+ * no hay nada, el aviso de pendiente.
+ */
+export function visualDeTrabajo(trabajo: Trabajo): VisualDeTrabajo {
+  const fotoReal = trabajo.data.galeria.find((foto) => !foto.esPlaceholder);
+  if (fotoReal) return { tipo: 'foto', imagen: fotoReal.imagen, alt: fotoReal.alt };
+  if (trabajo.data.portada) return trabajo.data.portada;
+  return { tipo: 'pendiente', texto: 'Foto 3:2 pendiente' };
+}
+
+/** El caso anterior y el siguiente, en el orden del portfolio. Dan la vuelta. */
+export async function vecinosDe(trabajo: Trabajo): Promise<[Trabajo, Trabajo]> {
+  const trabajos = await obtenerTrabajos();
+  const i = trabajos.findIndex((otro) => otro.id === trabajo.id);
+  const total = trabajos.length;
+  return [trabajos[(i - 1 + total) % total], trabajos[(i + 1) % total]];
+}
+
+/** El caso que protagoniza la franja oscura del home. */
+export async function obtenerCasoDestacado(): Promise<Trabajo | undefined> {
+  return (await obtenerTrabajos()).find((trabajo) => trabajo.data.cifras.length > 0);
+}
+
+export type FiltroDelPortfolio = {
+  texto: string;
+  href: string;
+  cantidad: number;
+  activo: boolean;
+};
+
+/**
+ * Los filtros del portfolio. Cada uno es un link a una página estática: así
+ * anda sin JavaScript, se comparte el link de "sólo eventos" y cada listado se
+ * indexa por separado.
+ */
+export async function filtrosDelPortfolio(
+  pilarActivo: Pilar | null,
+): Promise<FiltroDelPortfolio[]> {
+  const [trabajos, servicios, cuenta] = await Promise.all([
+    obtenerTrabajos(),
+    obtenerServicios(),
+    contarPorPilar(),
+  ]);
+  return [
+    {
+      texto: 'Todos',
+      href: '/trabajos',
+      cantidad: trabajos.length,
+      activo: pilarActivo === null,
+    },
+    ...servicios.map((servicio) => ({
+      texto: servicio.data.nombre,
+      href: `/trabajos/pilar/${servicio.id}`,
+      cantidad: cuenta[servicio.id as Pilar],
+      activo: servicio.id === pilarActivo,
+    })),
+  ];
+}
+
+/**
+ * La franja de datos de la ficha. Si el caso trae la suya, va ésa; si no, se
+ * arma con lo que hay seguro: cliente, tipo de producción y año.
+ */
+export async function fichaDeTrabajo(
+  trabajo: Trabajo,
+): Promise<{ rotulo: string; valor: string }[]> {
+  if (trabajo.data.ficha.length > 0) return trabajo.data.ficha;
+  return [
+    { rotulo: 'Cliente', valor: trabajo.data.cliente ?? 'Pendiente del cliente' },
+    { rotulo: 'Tipo', valor: await nombreDePilar(trabajo.data.pilar) },
+    { rotulo: 'Año', valor: trabajo.data.fecha ?? 'Pendiente del cliente' },
+  ];
+}

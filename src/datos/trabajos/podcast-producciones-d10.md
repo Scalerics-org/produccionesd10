@@ -7,6 +7,14 @@ resumen: >-
   Los programas radiales y las mejores entrevistas del archivo, editados y
   publicados como podcast en Spotify.
 resultado: null
+portada:
+  tipo: rotulo
+  texto: Spotify
+ficha:
+  - rotulo: Cliente
+    valor: Producción propia
+  - rotulo: Plataforma
+    valor: Spotify
 destacado: true
 esPlaceholder: false
 galeria:

@@ -12,16 +12,41 @@ import { pilares } from './datos/pilares';
   corresponde.
 */
 
+/** Un ítem con título y una línea de detalle: "Qué incluye", "Cómo trabajamos". */
+const itemConDetalle = z.object({ titulo: z.string(), detalle: z.string() });
+
 const servicios = defineCollection({
   loader: glob({ pattern: '*.md', base: './src/datos/servicios' }),
-  schema: z.object({
-    nombre: z.string(),
-    /** Una línea. Es lo que se lee en el menú y en la tarjeta del home. */
-    bajada: z.string(),
-    /** Orden en el que se muestran los pilares. El negocio manda, no el alfabeto. */
-    orden: z.number().int(),
-    incluye: z.array(z.string()).min(1),
-  }),
+  schema: ({ image }) =>
+    z.object({
+      nombre: z.string(),
+      /** Una línea. Es lo que se lee en el acordeón del home. */
+      bajada: z.string(),
+      /** Orden en el que se muestran los pilares. El negocio manda, no el alfabeto. */
+      orden: z.number().int(),
+      /** El título grande del hero del servicio. */
+      titular: z.string(),
+      /** El párrafo del hero y del acordeón del home. */
+      descripcion: z.string(),
+      /** La línea que acompaña a "Qué incluye". */
+      notaIncluye: z.string(),
+      incluye: z.array(itemConDetalle).min(1),
+      /** "Cómo trabajamos": el diseño lo resuelve en cuatro pasos. */
+      pasos: z.array(itemConDetalle).length(4),
+      /** La frase del cierre en rojo. */
+      cierre: z.string(),
+      ctaPrincipal: z.string(),
+      ctaSecundario: z.object({ texto: z.string(), href: z.string() }),
+      /**
+       * Lo que ocupa la columna derecha del hero. Mientras no haya foto, el
+       * casillero dice qué foto falta: un hueco explicado es mejor que un stock.
+       */
+      visual: z.discriminatedUnion('tipo', [
+        z.object({ tipo: z.literal('pendiente'), texto: z.string() }),
+        z.object({ tipo: z.literal('logo'), imagen: image(), alt: z.string() }),
+        z.object({ tipo: z.literal('rotulo'), texto: z.string(), detalle: z.string() }),
+      ]),
+    }),
 });
 
 const trabajos = defineCollection({
@@ -52,6 +77,24 @@ const trabajos = defineCollection({
             esPlaceholder: z.boolean().default(false),
           }),
         )
+        .default([]),
+      /**
+       * Qué va en la tarjeta cuando no hay foto real: el logo del trabajo (el
+       * escudo de Noche D10) o un rótulo tipográfico ("Spotify").
+       */
+      portada: z
+        .discriminatedUnion('tipo', [
+          z.object({ tipo: z.literal('logo'), imagen: image(), alt: z.string() }),
+          z.object({ tipo: z.literal('rotulo'), texto: z.string() }),
+        ])
+        .optional(),
+      /** La franja de datos del caso: Cliente, Rol, Emisión, Desde. */
+      ficha: z.array(z.object({ rotulo: z.string(), valor: z.string() })).default([]),
+      /** "Qué se hizo". */
+      hicimos: z.array(itemConDetalle).default([]),
+      /** Las cifras del resultado. El valor va como texto: "3.000", "+6.800". */
+      cifras: z
+        .array(z.object({ valor: z.string(), etiqueta: z.string(), corta: z.string() }))
         .default([]),
       /** Si es true, la ficha se publica con el cartel de "pendiente". */
       esPlaceholder: z.boolean().default(false),

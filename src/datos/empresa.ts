@@ -90,3 +90,51 @@ export const equipo = [
     foto: null,
   },
 ] as const;
+
+/**
+ * La historia de /nosotros, en cuatro tiempos.
+ *
+ * Sólo 2010 está respaldado (el arranque de Noche D10). El diseño proponía 2014
+ * para los eventos y 2019 para la televisión, pero él mismo los marcaba como
+ * tentativos: hasta que Luis los confirme, el año no se publica y el casillero
+ * lo dice. Un año inventado en una línea de tiempo se lee como un dato.
+ */
+export const historia = [
+  {
+    anio: '2010',
+    titulo: 'El programa',
+    texto:
+      'Noche D10 sale al aire por radio. Entrevistas, música y humor, una vez por semana.',
+  },
+  {
+    // TODO: material pendiente del cliente. Confirmar el año con Luis Betarte.
+    anio: null,
+    titulo: 'Los eventos',
+    texto:
+      'La agenda de artistas del programa se convierte en producción de espectáculos y eventos.',
+  },
+  {
+    // TODO: material pendiente del cliente. Confirmar el año con Luis Betarte.
+    anio: null,
+    titulo: 'La televisión',
+    texto:
+      'El programa pasa a TV y streaming. La productora suma piso, cámaras y posproducción.',
+  },
+  {
+    anio: 'Hoy',
+    titulo: 'La casa',
+    texto:
+      'Cuatro líneas: eventos, audiovisual, radio y TV, podcasts. Con clientes propios.',
+  },
+] as const satisfies readonly { anio: string | null; titulo: string; texto: string }[];
+
+/** Los tres datos que acompañan el título de /nosotros. */
+export const hitos = [
+  { valor: '2010', etiqueta: 'arranca Noche D10 en radio' },
+  // TODO: la nota de prensa atribuye los +1.800 a Luis Betarte, no a la empresa.
+  { valor: '+1.800', etiqueta: 'eventos y producciones artísticas' },
+  { valor: '4', etiqueta: 'líneas de negocio hoy' },
+] as const;
+
+/** Cuántos casilleros de equipo muestra /nosotros mientras faltan los nombres. */
+export const integrantesPendientes = 4;
