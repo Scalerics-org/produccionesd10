@@ -363,3 +363,185 @@
 @view-transition {
   navigation: auto;
 }
+
+/*
+  ─────────────────────────────────────────────────────────────────────────────
+  Movimiento.
+
+  Cinco gestos, todos de portfolio y ninguno de intro: la tarjeta que se
+  convierte en la ficha, el reel que se abre, la foto que se acerca, el pilar
+  que se desliza y el titular que se descubre. Reglas que valen para todos:
+
+  - Sólo se anima lo que resuelve el compositor: transform, opacity,
+    clip-path y mask. La única excepción es el `block-size` del acordeón, y es
+    una mejora progresiva.
+  - Con movimiento reducido no se mueve nada y todo queda en su estado final.
+  - Siempre longhands, nunca el shorthand `animation` al lado de
+    `animation-timeline`: el minificador los pliega en algo inválido (ver el
+    contador, más arriba). `animation-duration: auto` va escrito igual, por la
+    misma razón.
+  ─────────────────────────────────────────────────────────────────────────────
+*/
+
+/* La curva de todo el movimiento: sale rápido y se apoya suave. */
+@theme {
+  --ease-apoyo: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/*
+  1. La tarjeta se convierte en la ficha. La imagen de la tarjeta y la portada
+  de la ficha llevan el mismo `view-transition-name` (inline, lo reclama
+  `datos/transiciones.ts`) y la clase `trabajo`. El resto de la página sigue
+  con el fundido de siempre.
+
+  Las dos imágenes no tienen la misma proporción (la tarjeta es más apaisada),
+  así que las capturas se recortan como la foto, con `object-fit: cover`, en
+  vez de estirarse.
+*/
+::view-transition-group(.trabajo) {
+  animation-duration: 300ms;
+  animation-timing-function: var(--ease-apoyo);
+  overflow: clip;
+}
+
+::view-transition-old(.trabajo),
+::view-transition-new(.trabajo) {
+  block-size: 100%;
+  object-fit: cover;
+}
+
+/*
+  2. El reel del hero entra abriéndose. `--apertura` es el radio de la elipse
+  que deja ver el video; registrado, el navegador lo puede interpolar. El
+  script del hero pone `.reel-hero--abierto` cuando el video ya puede
+  reproducirse. La máscara va sólo en el `<video>`: el poster, que es el LCP,
+  no la lleva.
+*/
+@property --apertura {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 0%;
+}
+
+@keyframes revelar {
+  /* Los insets negativos dejan aire para los rasgos que bajan de la línea
+     (la g, la p): con `inset(0)` el titular quedaba con la cola cortada. */
+  from {
+    clip-path: inset(-0.3em 100% -0.3em -0.1em);
+  }
+  to {
+    clip-path: inset(-0.3em -0.1em -0.3em -0.1em);
+  }
+}
+
+@layer components {
+  .reel-hero {
+    mask-image: radial-gradient(
+      ellipse at 50% 55%,
+      #000 calc(var(--apertura) - 30%),
+      transparent var(--apertura)
+    );
+    transition-property: opacity, --apertura;
+    transition-duration: 1000ms, 1800ms;
+    transition-timing-function: ease-out, var(--ease-apoyo);
+  }
+
+  .reel-hero--abierto {
+    --apertura: 130%;
+  }
+
+  /*
+    Grano de película sobre el hero. Un ruido `feTurbulence` en gris (sin
+    color: el rojo sigue siendo el único), inline y estático. Va debajo del
+    degradado, así no le resta contraste al claim.
+  */
+  .grano {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+    background-size: 200px;
+    opacity: 0.09;
+    pointer-events: none;
+  }
+
+  /*
+    3. La foto de la tarjeta se acerca adentro de su marco, que ya tiene
+    `overflow: hidden`: la tarjeta no cambia de tamaño y nada se mueve bajo el
+    cursor. Responde al mouse y al foco del link (el link cubre la tarjeta).
+  */
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .tarjeta-trabajo .foto-acercable {
+      transition-property: transform;
+      transition-duration: 400ms;
+      transition-timing-function: var(--ease-apoyo);
+    }
+
+    .tarjeta-trabajo:hover .foto-acercable,
+    .tarjeta-trabajo:has(:focus-visible) .foto-acercable {
+      transform: scale(1.04);
+    }
+  }
+
+  /*
+    4. El pilar abre deslizando. `interpolate-size` deja animar hasta `auto`,
+    y `content-visibility` con `allow-discrete` mantiene el contenido a la
+    vista mientras se cierra. Donde no hay soporte, el `<details>` abre de
+    golpe como siempre.
+  */
+  @supports (interpolate-size: allow-keywords) {
+    @media (prefers-reduced-motion: no-preference) {
+      .pilar-acordeon {
+        interpolate-size: allow-keywords;
+      }
+
+      .pilar-acordeon::details-content {
+        block-size: 0;
+        overflow-y: clip;
+        transition-property: block-size, content-visibility;
+        transition-duration: 340ms;
+        transition-timing-function: var(--ease-apoyo);
+        transition-behavior: allow-discrete;
+      }
+
+      .pilar-acordeon[open]::details-content {
+        block-size: auto;
+      }
+    }
+  }
+
+  /*
+    5. Los titulares de sección se descubren de izquierda a derecha al entrar
+    en pantalla, el bloque entero. Atado al scroll, no a un reloj: lo que ya
+    está a la vista al cargar se pinta terminado.
+
+    El tramo es corto a propósito (`entry 0%` a `entry 60%`, unos 20 a 60 px
+    de scroll según el alto del titular): cuanto más largo, más alto queda en
+    pantalla un titular a medio descubrir al cargar la página. Probado con
+    `cover 30%`: el titular del acordeón del home quedaba cortado a la mitad en
+    una pantalla de 900 px. Por eso ese titular, que en pantallas altas asoma
+    en el primer viewport, no lleva `revela`.
+
+    `fit-content` para que el barrido recorra el texto y no el ancho entero
+    de la columna. No cambia nada a la vista: el texto ya va a la izquierda.
+  */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .revela {
+        inline-size: fit-content;
+        animation-name: revelar;
+        animation-timing-function: var(--ease-apoyo);
+        animation-fill-mode: both;
+        animation-duration: auto;
+        animation-timeline: view();
+        animation-range: entry 0% entry 60%;
+      }
+    }
+  }
+}
+
+/* Con movimiento reducido, sin vuelo: la navegación queda en el fundido (que
+   el bloque de más arriba ya deja instantáneo). Las demás piezas viven adentro
+   de `prefers-reduced-motion: no-preference` y acá no hace falta apagarlas. */
+@media (prefers-reduced-motion: reduce) {
+  [style*='view-transition-name'] {
+    view-transition-name: none !important;
+  }
+}

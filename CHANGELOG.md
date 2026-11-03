@@ -5,6 +5,17 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ## [No publicado]
 
+### Agregado (movimiento, noviembre de 2026)
+
+- La foto de la tarjeta se convierte en la portada de la ficha (view transition entre
+  páginas, nombres únicos por página desde `src/datos/transiciones.ts`).
+- El reel del hero se revela con una máscara y lleva grano encima; el poster no se
+  toca, así que el LCP no cambia.
+- Fotos que se acercan dentro de su marco al pasar el mouse o con el foco, acordeón de
+  servicios que desliza y titulares que se revelan al entrar.
+- Todo se apaga con movimiento reducido y donde no hay soporte queda quieto. El
+  contador del home no se tocó.
+
 ### Mejorado (pasada de pulido visual, noviembre de 2026)
 
 - `DESIGN.md` con los tokens por rol y el porqué de cada color, y `PRODUCT.md`.

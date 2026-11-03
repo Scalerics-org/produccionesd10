@@ -12,6 +12,9 @@ import { home } from '../datos/home';
 
   El diseño (1d) pinta el pilar abierto en negro con la trama y los cerrados en
   hueso: acá eso sale de `group-open`, así el color sigue al que abras.
+
+  Abre deslizando (`.pilar-acordeon` en global.css) donde el navegador sabe
+  animar hasta `auto`; donde no, abre de golpe como siempre.
 */
 const servicios = await obtenerServicios();
 ---
@@ -34,7 +37,7 @@ const servicios = await obtenerServicios();
         name="pilares"
         open={i === 0}
         class:list={[
-          'group border-tinta/35 open:border-tinta border-t-2',
+          'pilar-acordeon group border-tinta/35 open:border-tinta border-t-2',
           i === servicios.length - 1 && 'border-b-tinta border-b-2',
         ]}
       >

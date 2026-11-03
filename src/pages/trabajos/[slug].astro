@@ -12,6 +12,7 @@ import {
   vecinosDe,
   visualDeTrabajo,
 } from '../../datos/consultas';
+import { reclamarTransicion } from '../../datos/transiciones';
 
 /*
   Ficha de caso: el patrón de 2b (Noche D10) que el diseño aplica a todos los
@@ -36,6 +37,8 @@ const [kicker, nombrePilar, ficha, [anterior, siguiente]] = await Promise.all([
   vecinosDe(trabajo),
 ]);
 const visual = visualDeTrabajo(trabajo);
+/* La portada es el par de la imagen de la tarjeta: comparten nombre de transición. */
+const transicion = reclamarTransicion(Astro.request, trabajo.id);
 const faltanFotos = datos.galeria.some((foto) => foto.esPlaceholder);
 const hayResultado = datos.cifras.length > 0 || datos.resultado !== null;
 /* Con lista de "qué se hizo", el relato va a la izquierda en todos los anchos;
@@ -83,7 +86,7 @@ const tieneLista = datos.hicimos.length > 0;
       }
     </div>
     <div class="border-hueso/20 lg:border-l">
-      <VisualTrabajo visual={visual} alto={260} prioridad />
+      <VisualTrabajo visual={visual} alto={260} prioridad transicion={transicion} />
     </div>
   </section>
 
@@ -133,7 +136,7 @@ const tieneLista = datos.hicimos.length > 0;
     datos.galeria.length > 0 && (
       <section class="bg-hueso-hondo border-tinta lg:px-marco border-t-2 px-4 pt-[22px] pb-[26px] lg:pt-8 lg:pb-[38px]">
         <div class="mb-3.5 flex flex-wrap items-baseline justify-between gap-2 lg:mb-[18px]">
-          <h2 class="text-[26px] leading-none tracking-[-0.03em] lg:text-[30px]">
+          <h2 class="revela text-[26px] leading-none tracking-[-0.03em] lg:text-[30px]">
             Galería
           </h2>
           {faltanFotos && (

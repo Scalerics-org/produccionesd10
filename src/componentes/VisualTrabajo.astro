@@ -19,12 +19,24 @@ type Props = {
    * candidata a LCP. En las tarjetas de una grilla queda diferida.
    */
   prioridad?: boolean;
+  /**
+   * El `view-transition-name` que la une con su par en la otra página (la
+   * tarjeta con la portada de la ficha). Se reclama en `datos/transiciones.ts`,
+   * que garantiza que no se repita en la página.
+   */
+  transicion?: string | null;
 };
 
-const { visual, alto = 180, prioridad = false } = Astro.props;
+const { visual, alto = 180, prioridad = false, transicion = null } = Astro.props;
 const carga = prioridad
   ? ({ loading: 'eager', fetchpriority: 'high' } as const)
   : ({ loading: 'lazy' } as const);
+const estilo = [
+  `height:${alto}px`,
+  transicion && `view-transition-name:${transicion};view-transition-class:trabajo`,
+]
+  .filter(Boolean)
+  .join(';');
 ---
 
 <div
@@ -35,7 +47,7 @@ const carga = prioridad
       : 'trama-oscura',
     visual.tipo === 'rotulo' && '!items-end !justify-start p-[18px]',
   ]}
-  style={`height:${alto}px`}
+  style={estilo}
 >
   {
     visual.tipo === 'foto' && (
@@ -46,7 +58,7 @@ const carga = prioridad
         sizes="(min-width: 1024px) 460px, 100vw"
         quality={55}
         {...carga}
-        class="foto-byn absolute inset-0 h-full w-full object-cover"
+        class="foto-byn foto-acercable absolute inset-0 h-full w-full object-cover"
       />
     )
   }
@@ -64,7 +76,7 @@ const carga = prioridad
         alt={visual.alt}
         width={280}
         {...carga}
-        class="logo-sobre-negro foto-byn h-[72%] w-auto"
+        class="logo-sobre-negro foto-byn foto-acercable h-[72%] w-auto"
       />
     )
   }

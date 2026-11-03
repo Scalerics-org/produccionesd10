@@ -16,6 +16,9 @@ import { home } from '../datos/home';
      Tampoco lleva `poster`: medido, el navegador bajaba igual el JPEG aunque
      el video no tuviera `src`, y el `<img>` de atrás ya muestra esa imagen.
   3. Con movimiento reducido el video no arranca nunca y queda el poster.
+     Cuando sí arranca, entra abriéndose con una máscara (`.reel-hero` en
+     global.css). La máscara va sólo en el `<video>`: el poster se pinta igual
+     que siempre y el LCP no se entera.
   4. El alto se ajusta a la ventana (nunca más de 640 px): en una pantalla baja
      o con zoom, el claim tiene que verse sin scrollear.
 
@@ -49,7 +52,7 @@ const { hero } = home;
 
     <video
       id="video-hero"
-      class="foto-byn absolute inset-0 h-full w-full object-cover opacity-0 mix-blend-screen transition-opacity duration-1000"
+      class="reel-hero foto-byn absolute inset-0 h-full w-full object-cover opacity-0 mix-blend-screen"
       muted
       loop
       playsinline
@@ -60,6 +63,10 @@ const { hero } = home;
       <source data-fuente="/video/hero.webm" type="video/webm" />
       <source data-fuente="/video/hero.mp4" type="video/mp4" />
     </video>
+
+    <!-- Grano de película, quieto: un SVG estático, sin request. Va debajo del
+         degradado para que no le reste contraste al claim. -->
+    <div class="grano absolute inset-0" aria-hidden="true"></div>
 
     <!-- La trama y el degradado son los que hacen legible el claim sobre cualquier
          fotograma. En celular el degradado es más denso: el kicker rojo claro
@@ -153,6 +160,7 @@ const { hero } = home;
       'canplay',
       () => {
         video.style.opacity = '0.6';
+        video.classList.add('reel-hero--abierto');
         video.play().catch(() => {});
       },
       { once: true },

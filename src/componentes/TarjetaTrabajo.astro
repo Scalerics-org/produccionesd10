@@ -1,11 +1,17 @@
 ---
 import VisualTrabajo from './VisualTrabajo.astro';
 import { kickerDeTrabajo, visualDeTrabajo, type Trabajo } from '../datos/consultas';
+import { reclamarTransicion } from '../datos/transiciones';
 
 /*
   Tarjeta de trabajo: una celda de la grilla de reglas de 2 px del sistema.
   Las provisorias se ven apagadas y llevan el cartel rojo de "Falta material",
   para que en la demo nadie las confunda con un caso.
+
+  La imagen comparte `view-transition-name` con la portada de la ficha: al
+  entrar al caso, vuela de la grilla a la cabecera (y de vuelta al volver).
+  Al pasar el mouse o enfocar el link, la foto se acerca adentro de su marco
+  (`.tarjeta-trabajo` en global.css).
 */
 type Props = { trabajo: Trabajo; alto?: number };
 
@@ -13,10 +19,11 @@ const { trabajo, alto } = Astro.props;
 const { titulo, cliente, resumen, esPlaceholder } = trabajo.data;
 const kicker = await kickerDeTrabajo(trabajo);
 const visual = visualDeTrabajo(trabajo);
+const transicion = reclamarTransicion(Astro.request, trabajo.id);
 ---
 
-<article class="bg-hueso group relative">
-  <VisualTrabajo visual={visual} alto={alto} />
+<article class="tarjeta-trabajo bg-hueso group relative">
+  <VisualTrabajo visual={visual} alto={alto} transicion={transicion} />
   <div class="px-4 pt-3.5 pb-4 lg:px-[18px] lg:pt-4 lg:pb-5">
     <p class:list={['rotulo', esPlaceholder ? 'text-plomo' : 'text-rojo']}>{kicker}</p>
     <h3
