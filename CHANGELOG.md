@@ -5,6 +5,11 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ## [No publicado]
 
+### Cambiado (logo, noviembre de 2026)
+
+- El sello "Canal D10 Producciones" que mandó el cliente reemplaza al lockup
+  tipográfico provisorio en el cabezal y el pie, y genera el favicon y la imagen OG.
+
 ### Agregado (movimiento, noviembre de 2026)
 
 - La foto de la tarjeta se convierte en la portada de la ficha (view transition entre

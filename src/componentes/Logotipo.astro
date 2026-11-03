@@ -1,35 +1,29 @@
 ---
 /*
-  Lockup provisorio de la marca: "D10" con la bajada "DE DIEZ PRODUCCIONES",
-  como lo resuelve el diseño.
+  Logo de la marca: el sello circular "Canal D10 Producciones" que mandó el
+  cliente en noviembre de 2026 (PNG transparente de 8000 px; acá va una copia de
+  512 px y Astro genera los tamaños que se usan).
 
-  TODO: material pendiente del cliente. No es el logo: el oficial es el
-  monograma rojo metálico y todavía no lo tenemos en vectorial. Esto es texto
-  tipográfico a propósito, para no redibujar una marca que no es nuestra.
+  Es la marca del cliente tal cual, con su bisel y su metalizado: no se redibuja
+  ni se aplana para que combine con el sistema. El nombre accesible lo pone el
+  link que lo envuelve, así que la imagen va con alt vacío.
 */
-type Props = { invertido?: boolean; chico?: boolean };
+import { Image } from 'astro:assets';
+import selloCanalD10 from '../datos/marca/canal-d10.png';
 
-const { invertido = false, chico = false } = Astro.props;
+type Props = { grande?: boolean };
+
+/* 44 px en el cabezal, para no agrandar la barra fija; 72 px en el pie. */
+const { grande = false } = Astro.props;
+const lado = grande ? 72 : 44;
 ---
 
-<span
-  class:list={[
-    'inline-flex w-max flex-col gap-0.5 border',
-    chico ? 'px-2 py-1.5' : 'px-2.5 py-1.5',
-    invertido ? 'border-hueso/35 text-hueso' : 'border-tinta/35 text-tinta',
-  ]}
->
-  <span
-    class:list={[
-      'leading-none font-extrabold tracking-[-0.02em]',
-      chico ? 'text-[15px]' : 'text-lg',
-    ]}>D10</span
-  >
-  <span
-    class:list={[
-      'leading-none font-semibold tracking-[0.2em]',
-      chico ? 'text-[5px]' : 'text-[6px]',
-      invertido ? 'text-rojo-claro' : 'text-rojo',
-    ]}>DE DIEZ PRODUCCIONES</span
-  >
-</span>
+<Image
+  src={selloCanalD10}
+  alt=""
+  width={lado}
+  height={lado}
+  densities={[1, 2]}
+  loading="eager"
+  class="block shrink-0"
+/>

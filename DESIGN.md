@@ -88,6 +88,10 @@ Producciones D10 es la casa que hace Noche D10, y el sitio es la versión sobria
 portfolio de esa familia. Sale del diseño aprobado en Claude Design ("Producciones
 D10.dc.html", sistema Modernist). Su único trabajo es que entre una consulta.
 
+El logo es el sello circular "Canal D10 Producciones" que mandó el cliente en
+noviembre de 2026, con su metalizado y su bisel. Es marca del cliente y va tal cual,
+aunque el resto del sistema sea plano: no se redibuja ni se aplana.
+
 Comparte con Noche D10 (repo `noched10`) la grilla, las reglas de 2 px, el radio cero y
 Archivo. Lo que separa las marcas es el fondo y la cantidad de rojo: la productora vive
 sobre hueso con tinta negra y el rojo como acento; el programa se queda con el negro
