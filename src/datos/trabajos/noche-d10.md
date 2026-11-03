@@ -5,8 +5,8 @@ pilar: radio-y-tv
 fecha: '2010'
 resumen: >-
   Magazine semanal de entrevistas, música en vivo y humor. 16 años al aire, cerca
-  de 3.000 capítulos y más de 6.800 invitados, por CX30 Radio Nacional AM 1130,
-  VIVO TV, los cables del interior y YouTube.
+  de 3.000 capítulos y 6.802 invitados, por CX30 Radio Nacional AM 1130,
+  La 30 TV, los cables del interior y YouTube.
 resultado: >-
   16 temporadas ininterrumpidas y un archivo de casi 3.000 capítulos que hoy es
   el activo más grande de la productora.
@@ -20,7 +20,7 @@ ficha:
   - rotulo: Rol
     valor: Producción integral
   - rotulo: Emisión
-    valor: CX30 AM 1130 · VIVO TV · cables · YouTube
+    valor: CX30 AM 1130 · La 30 TV · cables · YouTube
   - rotulo: Desde
     valor: 2010 · 16 temporadas
 hicimos:
@@ -36,7 +36,7 @@ cifras:
   - valor: '3.000'
     etiqueta: capítulos producidos y emitidos
     corta: capítulos
-  - valor: '+6.800'
+  - valor: '6.802'
     etiqueta: invitados al aire
     corta: invitados
   - valor: '16'

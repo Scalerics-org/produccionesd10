@@ -5,6 +5,11 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ## [No publicado]
 
+### Corregido (pedidos de la reunión con el cliente, noviembre de 2026)
+
+- Caso Noche D10: "La 30 TV" en lugar de "VIVO TV" y 6.802 invitados, confirmados por
+  el cliente.
+
 ### Cambiado
 
 - Rediseño completo según `Producciones D10.dc.html` de Claude Design: fondo hueso,

@@ -38,7 +38,7 @@ export const home = {
     kicker: 'Caso destacado · producción propia',
     titulo: '16 años sosteniendo un programa semanal',
     texto:
-      'Noche D10 es un magazine de entrevistas, música en vivo y humor. Por CX30 Radio Nacional AM 1130, VIVO TV, los cables del interior y YouTube. Lo que hacemos para nosotros es lo que hacemos para un cliente.',
+      'Noche D10 es un magazine de entrevistas, música en vivo y humor. Por CX30 Radio Nacional AM 1130, La 30 TV, los cables del interior y YouTube. Lo que hacemos para nosotros es lo que hacemos para un cliente.',
     enlace: 'Ver la ficha del caso',
   },
   contacto: {
