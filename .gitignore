@@ -21,3 +21,10 @@ Thumbs.db
 
 # editores
 .idea/
+
+# Impeccable: al repo van solo la config, el sistema y las revisiones
+.impeccable/*
+!.impeccable/config.json
+!.impeccable/design.json
+!.impeccable/surfaces/
+!.impeccable/critique/

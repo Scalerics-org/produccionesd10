@@ -13,7 +13,8 @@ forma de contratarlo.
 
 ## Estado
 
-**Demo previa a reunión.** El sitio está entero y andando — las 22 rutas, el
+**Demo mostrada al cliente (noviembre de 2026).** Lo hablado y lo pendiente está en
+`../BITACORA.md`; el producto, en `PRODUCT.md`. El sitio está entero y andando — las 22 rutas, el
 formulario, el SEO y los presupuestos de performance medidos — pero el portfolio está
 lleno de placeholders porque el cliente todavía no nos pasó los trabajos. La lista
 completa de lo que falta está al final del README.

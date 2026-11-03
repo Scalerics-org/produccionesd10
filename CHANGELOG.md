@@ -5,6 +5,20 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ## [No publicado]
 
+### Mejorado (pasada de pulido visual, noviembre de 2026)
+
+- `DESIGN.md` con los tokens por rol y el porqué de cada color, y `PRODUCT.md`.
+- Si el envío falla, el Worker devuelve lo escrito para copiarlo y los links a
+  Instagram y Facebook, sin jerga interna. Aviso arriba del formulario mientras no
+  esté conectado (`formularioConectado`).
+- Un solo CTA por pantalla: sin número de WhatsApp no se pinta el canal directo
+  duplicado, sale "Presupuesto" del cabezal mobile y el botón flotante no aparece en
+  /contacto, en /gracias ni sobre el hero.
+- Foco visible sobre el cierre rojo (`foco-claro`) y en los campos; bordes de campo a
+  5:1; errores con texto, ✕ y `aria-describedby`; estado "Enviando consulta…".
+- Menú mobile con `inert` y cierre con Esc; h1 de las fichas sin desborde a 320 px;
+  texto del caso visible en mobile; áreas táctiles de 44 px; piso de 11 px.
+
 ### Corregido (pedidos de la reunión con el cliente, noviembre de 2026)
 
 - Caso Noche D10: "La 30 TV" en lugar de "VIVO TV" y 6.802 invitados, confirmados por

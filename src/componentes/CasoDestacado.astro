@@ -28,9 +28,7 @@ const portada = caso?.data.portada;
         )}
       </div>
       <div class="lg:px-marco px-4 pt-4 pb-[26px] lg:py-9">
-        <p class="kicker text-rojo-claro mb-2.5 text-[10px] lg:mb-3.5 lg:text-[11px]">
-          {kicker}
-        </p>
+        <p class="kicker text-rojo-claro mb-2.5 lg:mb-3.5">{kicker}</p>
         <h2 class="mb-3 text-[30px] leading-[1.02] tracking-[-0.03em] lg:mb-3.5 lg:text-[40px] lg:leading-none">
           {titulo}
         </h2>
@@ -40,9 +38,7 @@ const portada = caso?.data.portada;
         <dl class="border-hueso/25 mb-[18px] grid grid-cols-3 border-y lg:mb-[22px]">
           {caso.data.cifras.slice(0, 3).map((cifra) => (
             <div class="flex flex-col-reverse py-3.5 lg:py-4">
-              <dt class="rotulo text-niebla mt-1.5 text-[9px] lg:text-[10px]">
-                {cifra.corta}
-              </dt>
+              <dt class="rotulo text-niebla mt-1.5">{cifra.corta}</dt>
               <dd class="text-[22px] leading-none font-extrabold lg:text-[28px]">
                 {cifra.valor}
               </dd>

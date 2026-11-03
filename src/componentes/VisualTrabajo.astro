@@ -14,9 +14,17 @@ type Props = {
   visual: VisualDeTrabajo;
   /** Alto del casillero en px. El diseño usa 170–190 según la grilla. */
   alto?: number;
+  /**
+   * La imagen de arriba de la ficha: carga ya y con prioridad alta, porque es
+   * candidata a LCP. En las tarjetas de una grilla queda diferida.
+   */
+  prioridad?: boolean;
 };
 
-const { visual, alto = 180 } = Astro.props;
+const { visual, alto = 180, prioridad = false } = Astro.props;
+const carga = prioridad
+  ? ({ loading: 'eager', fetchpriority: 'high' } as const)
+  : ({ loading: 'lazy' } as const);
 ---
 
 <div
@@ -37,7 +45,7 @@ const { visual, alto = 180 } = Astro.props;
         widths={[400, 640]}
         sizes="(min-width: 1024px) 460px, 100vw"
         quality={55}
-        loading="lazy"
+        {...carga}
         class="foto-byn absolute inset-0 h-full w-full object-cover"
       />
     )
@@ -55,7 +63,7 @@ const { visual, alto = 180 } = Astro.props;
         src={visual.imagen}
         alt={visual.alt}
         width={280}
-        loading="lazy"
+        {...carga}
         class="logo-sobre-negro foto-byn h-[72%] w-auto"
       />
     )

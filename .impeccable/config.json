@@ -1,0 +1,14 @@
+{
+  "telemetry": false,
+  "detector": {
+    "ignoreRules": [
+      "all-caps-body",
+      "hero-eyebrow-chip",
+      "kicker-above-heading",
+      "tight-leading",
+      "repeating-stripes-gradient"
+    ],
+    "ignoreFiles": [],
+    "ignoreValues": []
+  }
+}

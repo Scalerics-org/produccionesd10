@@ -33,13 +33,13 @@ const anio = new Date().getFullYear();
 
     <div class="flex flex-col gap-4 lg:items-end">
       <nav aria-label="Secciones">
-        <ul class="flex flex-wrap gap-x-[18px] gap-y-2">
+        <ul class="flex flex-wrap gap-x-[18px]">
           {
             navegacionDelPie.map((item) => (
               <li>
                 <a
                   href={item.href}
-                  class="kicker text-niebla hover:text-hueso tracking-[0.12em]"
+                  class="kicker text-niebla hover:text-hueso inline-flex min-h-11 items-center tracking-[0.12em]"
                 >
                   {item.texto}
                 </a>
@@ -49,7 +49,7 @@ const anio = new Date().getFullYear();
         </ul>
       </nav>
       <nav aria-label="Redes">
-        <ul class="flex flex-wrap gap-x-[18px] gap-y-2">
+        <ul class="flex flex-wrap gap-x-[18px]">
           {
             redes.map((red) => (
               <li>
@@ -57,7 +57,7 @@ const anio = new Date().getFullYear();
                   href={red.href}
                   rel="noopener"
                   target="_blank"
-                  class="kicker text-hueso hover:text-rojo-claro tracking-[0.12em]"
+                  class="kicker text-hueso hover:text-rojo-claro inline-flex min-h-11 items-center tracking-[0.12em]"
                 >
                   {red.nombre}
                 </a>

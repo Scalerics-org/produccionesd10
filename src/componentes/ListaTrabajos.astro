@@ -39,7 +39,7 @@ const { trabajos, filtros, total } = Astro.props;
               ]}
             >
               {filtro.texto}
-              <span class="text-[9px] opacity-70">{filtro.cantidad}</span>
+              <span class="text-[11px] opacity-70">{filtro.cantidad}</span>
             </a>
           </li>
         ))
@@ -52,11 +52,20 @@ const { trabajos, filtros, total } = Astro.props;
 </div>
 
 <div class="lg:px-marco px-4 pb-6 lg:pb-10">
+  <h2 class="sr-only">Trabajos</h2>
   {
     trabajos.length === 0 ? (
-      <p class="border-tinta text-humo border-2 p-6">
-        Todavía no hay trabajos publicados en este tipo de producción.
-      </p>
+      <div class="border-tinta flex flex-col items-start gap-4 border-2 p-6">
+        <p class="text-humo">
+          Todavía no hay trabajos publicados en este tipo de producción.
+        </p>
+        <a
+          href="/trabajos"
+          class="kicker border-rojo hover:text-rojo inline-flex min-h-11 items-center border-b-2 tracking-[0.14em]"
+        >
+          Ver todos los trabajos
+        </a>
+      </div>
     ) : (
       <GrillaTrabajos trabajos={trabajos} alto={190} />
     )

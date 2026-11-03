@@ -80,8 +80,11 @@ export const botonFlotante = sitio.whatsapp
  */
 export const contacto = {
   titular: 'Contanos qué hay que producir.',
-  bajada:
-    'Respondemos el mismo día hábil con una propuesta y un rango de precio. Si la fecha está cerca, escribinos por WhatsApp.',
+  /* La frase de WhatsApp recién va cuando haya número: hoy sería una promesa
+     que lleva a ningún lado. */
+  bajada: sitio.whatsapp
+    ? 'Respondemos el mismo día hábil con una propuesta y un rango de precio. Si la fecha está cerca, escribinos por WhatsApp.'
+    : 'Respondemos el mismo día hábil con una propuesta y un rango de precio.',
   bajadaCorta: 'Respondemos el mismo día hábil con una propuesta y un rango de precio.',
   proceso: [
     {
@@ -117,8 +120,9 @@ export const datosDeContacto = [
  * El canal directo que el diseño llama "WhatsApp" en cada cierre.
  *
  * Mientras no haya número, el botón sigue estando — es la pieza que el cliente
- * tiene que ver en la demo — pero lleva al formulario y avisa que el número
- * está pendiente, en vez de abrir un wa.me roto.
+ * tiene que ver en la demo — pero lleva al formulario y dice lo que hace de
+ * verdad ("Escribir la consulta"): un rótulo de WhatsApp que abre un
+ * formulario es una promesa rota.
  */
 export const canalDirecto = sitio.whatsapp
   ? {
@@ -127,11 +131,35 @@ export const canalDirecto = sitio.whatsapp
       href: `https://wa.me/${sitio.whatsapp}`,
       externo: true,
       pendiente: false,
+      esOtroCanal: true,
     }
   : {
-      texto: 'WhatsApp',
-      detalle: 'Número pendiente del cliente',
+      texto: 'Escribir la consulta',
+      detalle: 'WhatsApp: número pendiente del cliente',
       href: '/contacto#formulario',
       externo: false,
       pendiente: true,
+      /*
+        Sin número, el "canal directo" lleva al mismo formulario que ya está en
+        pantalla: es un segundo CTA al mismo lugar. No se pinta hasta que haya
+        WhatsApp.
+      */
+      esOtroCanal: false,
     };
+
+/**
+ * La página de "consulta enviada". La promesa de WhatsApp y su botón sólo van
+ * cuando hay número: mientras tanto queda "Ver trabajos" y nada más.
+ *
+ * TODO: material pendiente del cliente. Confirmar la promesa de respuesta en el día.
+ */
+export const gracias = {
+  titulo: 'Recibimos tu consulta',
+  texto: canalDirecto.pendiente
+    ? 'Te contestamos el mismo día hábil.'
+    : 'Te contestamos el mismo día hábil. Si la fecha del evento está cerca, escribinos por WhatsApp y lo resolvemos hoy.',
+  canal: canalDirecto.pendiente
+    ? null
+    : { texto: 'Escribir por WhatsApp', href: canalDirecto.href },
+  trabajos: { texto: 'Ver trabajos', href: '/trabajos' },
+} as const;

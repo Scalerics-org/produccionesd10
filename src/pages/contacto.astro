@@ -4,19 +4,17 @@ import FormularioContacto from '../componentes/FormularioContacto.astro';
 import CanalDirecto from '../componentes/CanalDirecto.astro';
 import DatosDeContacto from '../componentes/DatosDeContacto.astro';
 import { textosDelFormulario } from '../datos/formulario';
-import { contacto } from '../datos/sitio';
+import { canalDirecto, contacto } from '../datos/sitio';
 
 /* Contacto (2d en escritorio, 2e en celular): pensado para convertir. */
 ---
 
-<Base titulo="Contacto" descripcion={contacto.bajadaCorta}>
+<Base titulo="Contacto" descripcion={contacto.bajadaCorta} sinBotonFlotante>
   <section
     class="bg-tinta text-hueso border-rojo lg:px-marco grid items-end gap-6 border-b-2 px-4 pt-[26px] pb-6 lg:grid-cols-[1.2fr_1fr] lg:gap-[46px] lg:pt-10 lg:pb-[34px]"
   >
     <div>
-      <p class="kicker text-rojo-claro mb-3 text-[10px] lg:mb-4 lg:text-[11px]">
-        Contacto
-      </p>
+      <p class="kicker text-rojo-claro mb-3 lg:mb-4">Contacto</p>
       <h1
         class="titular mb-3 max-w-[18ch] text-[38px] leading-[0.96] lg:mb-4 lg:text-[62px] lg:leading-[0.95]"
       >
@@ -26,7 +24,7 @@ import { contacto } from '../datos/sitio';
         {contacto.bajada}
       </p>
     </div>
-    <CanalDirecto />
+    {canalDirecto.esOtroCanal && <CanalDirecto />}
   </section>
 
   <section class="bg-hueso fondo-partido lg:px-lienzo grid lg:grid-cols-[1.3fr_1fr]">

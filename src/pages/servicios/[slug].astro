@@ -23,6 +23,14 @@ export async function getStaticPaths() {
 const { servicio, numero, servicios } = Astro.props;
 const datos = servicio.data;
 const trabajos = await obtenerTrabajosDePilar(servicio.id as Pilar);
+
+/*
+  La foto del hero sólo se ve en escritorio y ahí es candidata a LCP: va eager
+  y con prioridad alta. Para que el celular, donde la columna está oculta, no
+  la baje igual, el <picture> le da en ese ancho un GIF de 1 px embebido.
+*/
+const PIXEL_VACIO =
+  'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 ---
 
 <Base titulo={datos.nombre} descripcion={datos.descripcion}>
@@ -32,7 +40,7 @@ const trabajos = await obtenerTrabajosDePilar(servicio.id as Pilar);
     class="trama-oscura text-hueso lg:px-marco grid items-end lg:grid-cols-[1.25fr_1fr] lg:gap-[46px] lg:pt-11"
   >
     <div class="px-4 pt-[26px] pb-7 lg:px-0 lg:pt-0 lg:pb-9">
-      <p class="kicker text-rojo-claro mb-3 text-[10px] lg:mb-4 lg:text-[11px]">
+      <p class="kicker text-rojo-claro mb-3 lg:mb-4">
         Servicio {numero} · {datos.nombre}
       </p>
       <h1 class="titular mb-3.5 text-[44px] leading-[0.94] lg:mb-[18px] lg:text-[68px]">
@@ -76,13 +84,18 @@ const trabajos = await obtenerTrabajosDePilar(servicio.id as Pilar);
       {
         datos.visual.tipo === 'foto' && (
           <>
-            <Image
-              src={datos.visual.imagen}
-              alt={datos.visual.alt}
-              widths={[480, 900]}
-              sizes="(min-width: 1024px) 45vw, 100vw"
-              class="foto-byn absolute inset-0 h-full w-full object-cover"
-            />
+            <picture>
+              <source media="(max-width: 1023.98px)" srcset={PIXEL_VACIO} />
+              <Image
+                src={datos.visual.imagen}
+                alt={datos.visual.alt}
+                widths={[480, 900]}
+                sizes="45vw"
+                loading="eager"
+                fetchpriority="high"
+                class="foto-byn absolute inset-0 h-full w-full object-cover"
+              />
+            </picture>
             <span class="rotulo bg-tinta text-hueso absolute top-3 left-3 px-2 py-1">
               Foto provisoria
             </span>
@@ -171,9 +184,17 @@ const trabajos = await obtenerTrabajosDePilar(servicio.id as Pilar);
       trabajos.length > 0 ? (
         <GrillaTrabajos trabajos={trabajos} alto={170} />
       ) : (
-        <p class="border-tinta text-humo border-2 p-6">
-          Todavía no hay trabajos publicados de {datos.nombre.toLowerCase()}.
-        </p>
+        <div class="border-tinta flex flex-col items-start gap-4 border-2 p-6">
+          <p class="text-humo">
+            Todavía no hay trabajos publicados de {datos.nombre.toLowerCase()}.
+          </p>
+          <a
+            href="/trabajos"
+            class="kicker border-rojo hover:text-rojo inline-flex min-h-11 items-center border-b-2 tracking-[0.14em]"
+          >
+            Ver todos los trabajos
+          </a>
+        </div>
       )
     }
   </section>

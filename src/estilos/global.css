@@ -94,9 +94,13 @@
   text-transform: uppercase;
 }
 
-/* Rótulo de dato: "Cliente", "Emisión", etiquetas de formulario. */
+/*
+  Rótulo de dato: "Cliente", "Emisión", etiquetas de formulario. 11 px es el
+  piso del sitio para texto que hay que leer: a 9–10 px las versalitas se
+  empastaban en celular.
+*/
 @utility rotulo {
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.2;
   font-weight: 600;
   letter-spacing: 0.14em;
@@ -146,6 +150,17 @@
     rgb(10 10 10 / 0.07) 0 1px,
     transparent 1px 9px
   );
+}
+
+/*
+  El anillo de foco global es rojo, y sobre un campo rojo da 1:1: no se ve.
+  Adentro de los cierres rojos el anillo va en hueso — 5,30:1 sobre el rojo y
+  17,83:1 sobre tinta, así sirve igual si el botón enfocado es negro.
+*/
+@utility foco-claro {
+  & :focus-visible {
+    outline-color: var(--color-hueso);
+  }
 }
 
 @utility foto-byn {

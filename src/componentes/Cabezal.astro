@@ -11,7 +11,13 @@ import { canalDirecto, navegacion, redes } from '../datos/sitio';
 
   El menú de celular es un `<details>`: abre y cierra sin JS, con teclado y con
   el estado expandido anunciado por el navegador. El `<summary>` queda por
-  encima del panel para que el mismo botón sirva de cerrar.
+  encima del panel para que el mismo botón sirva de cerrar. Un script mínimo
+  suma lo que `<details>` no trae: con el menú abierto el resto de la página
+  queda `inert` (el foco no se escapa por detrás del panel) y Esc lo cierra.
+
+  Un solo CTA por pantalla: en celular el cabezal no lleva "Presupuesto" (el
+  botón flotante y los cierres ya lo ofrecen), y en el home invertido el de
+  escritorio va en contorno porque el hero tiene el rojo.
 */
 type Props = { invertido?: boolean };
 
@@ -33,7 +39,7 @@ const estaActivo = (href: string) =>
   ]}
 >
   <div class="lg:px-marco flex items-center justify-between gap-6 px-4 py-3 lg:py-4">
-    <a href="/" aria-label="D10 De Diez Producciones — inicio">
+    <a href="/" aria-label="D10 De Diez Producciones — inicio" data-fuera-del-menu>
       <Logotipo invertido={invertido} />
     </a>
 
@@ -58,10 +64,10 @@ const estaActivo = (href: string) =>
       <a
         href="/contacto"
         class:list={[
-          'kicker px-4 py-3 tracking-[0.09em] transition-colors',
+          'kicker border px-4 py-3 tracking-[0.09em] transition-colors',
           invertido
-            ? 'bg-rojo text-hueso hover:bg-rojo-hondo'
-            : 'bg-tinta text-hueso hover:bg-rojo',
+            ? 'border-hueso/40 text-hueso hover:border-hueso hover:bg-hueso/10'
+            : 'bg-tinta border-tinta text-hueso hover:bg-rojo hover:border-rojo',
         ]}
       >
         Pedir presupuesto
@@ -69,14 +75,7 @@ const estaActivo = (href: string) =>
     </nav>
 
     <div class="flex items-center gap-2.5 lg:hidden">
-      <a
-        href="/contacto"
-        class="bg-rojo text-hueso hover:bg-rojo-hondo kicker px-3 py-[14px] text-[10px] tracking-[0.08em]"
-      >
-        Presupuesto
-      </a>
-
-      <details class="menu-movil group">
+      <details class="menu-movil group" id="menu-movil">
         <summary
           class:list={[
             'relative z-50 flex size-11 cursor-pointer list-none flex-col items-center justify-center gap-[5px] border [&::-webkit-details-marker]:hidden',
@@ -106,22 +105,18 @@ const estaActivo = (href: string) =>
               href="/"
               class="border-hueso/20 flex items-baseline gap-3 border-b px-4 py-5"
             >
-              <span class="text-rojo-claro text-[10px] font-semibold">01</span>
               <span class="text-[34px] leading-none font-extrabold tracking-[-0.03em]">
                 Inicio
               </span>
             </a>
             {
-              navegacion.map((item, i) => (
+              navegacion.map((item) => (
                 <>
                   <a
                     href={item.href}
                     aria-current={estaActivo(item.href) ? 'page' : undefined}
                     class="border-hueso/20 aria-[current=page]:text-rojo-claro flex items-baseline gap-3 border-b px-4 py-5"
                   >
-                    <span class="text-rojo-claro text-[10px] font-semibold">
-                      {String(i + 2).padStart(2, '0')}
-                    </span>
                     <span class="text-[34px] leading-none font-extrabold tracking-[-0.03em]">
                       {item.texto}
                     </span>
@@ -161,13 +156,13 @@ const estaActivo = (href: string) =>
                 <p class="rotulo text-niebla mt-3">{canalDirecto.detalle}</p>
               )
             }
-            <ul class="text-niebla mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs">
+            <ul class="text-niebla mt-3 flex flex-wrap gap-x-4 text-xs">
               {
                 redes.map((red) => (
                   <li>
                     <a
                       href={red.href}
-                      class="hover:text-hueso"
+                      class="hover:text-hueso inline-flex min-h-11 items-center"
                       rel="noopener"
                       target="_blank"
                     >
@@ -183,3 +178,29 @@ const estaActivo = (href: string) =>
     </div>
   </div>
 </header>
+
+<script is:inline>
+  // Lo que el details no trae: inert detrás del panel, Esc y volver al botón.
+  (() => {
+    const menu = document.getElementById('menu-movil');
+    if (!menu) return;
+    const boton = menu.querySelector('summary');
+    const fuera = () => [
+      ...[...document.body.children].filter((el) => !el.contains(menu)),
+      ...document.querySelectorAll('[data-fuera-del-menu]'),
+    ];
+    menu.addEventListener('toggle', () => {
+      for (const el of fuera()) el.inert = menu.open;
+    });
+    menu.addEventListener('keydown', (evento) => {
+      if (evento.key !== 'Escape' || !menu.open) return;
+      menu.open = false;
+      boton.focus();
+    });
+    // Si la ventana pasa a escritorio con el menú abierto, el panel se esconde
+    // pero el inert quedaría puesto: se cierra.
+    matchMedia('(min-width: 1024px)').addEventListener('change', (cambio) => {
+      if (cambio.matches) menu.open = false;
+    });
+  })();
+</script>

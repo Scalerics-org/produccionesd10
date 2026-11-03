@@ -11,7 +11,7 @@ import CanalDirecto from '../componentes/CanalDirecto.astro';
 import DatosDeContacto from '../componentes/DatosDeContacto.astro';
 import { obtenerDestacados } from '../datos/consultas';
 import { home } from '../datos/home';
-import { contacto } from '../datos/sitio';
+import { canalDirecto, contacto } from '../datos/sitio';
 
 /* El orden de las secciones es el de la pantalla 1d del diseño. */
 const destacados = await obtenerDestacados(6);
@@ -70,8 +70,14 @@ const destacados = await obtenerDestacados(6);
     </div>
 
     <div class="bg-hueso-hondo lg:px-marco flex flex-col gap-5 px-4 py-[26px] lg:py-9">
-      <p class="kicker text-rojo">{home.contacto.directo}</p>
-      <CanalDirecto tono="tinta" />
+      {
+        canalDirecto.esOtroCanal && (
+          <>
+            <p class="kicker text-rojo">{home.contacto.directo}</p>
+            <CanalDirecto tono="tinta" />
+          </>
+        )
+      }
       <div class="border-tinta/35 border-t-2 pt-[18px]">
         <DatosDeContacto />
       </div>

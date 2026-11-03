@@ -4,11 +4,16 @@ import { botonFlotante } from '../datos/sitio';
 /*
   Botón flotante. Mientras no tengamos el número de WhatsApp lleva al
   formulario: la decisión está en `src/datos/sitio.ts`, acá sólo se dibuja.
+
+  Un solo CTA por pantalla: mientras el hero del home está a la vista, su barra
+  roja ya ofrece lo mismo y el botón se esconde. Base no lo pinta en /contacto
+  ni en /gracias.
 */
 const { href, texto, esWhatsapp, externo } = botonFlotante;
 ---
 
 <a
+  id="boton-flotante"
   href={href}
   class:list={[
     'fixed right-4 bottom-4 z-20 flex min-h-12 items-center gap-2 px-4 py-3 lg:hidden',
@@ -34,3 +39,23 @@ const { href, texto, esWhatsapp, externo } = botonFlotante;
   }
   {texto}
 </a>
+
+<script is:inline>
+  // Una sección con data-oculta-boton-flotante lo esconde mientras se ve.
+  // Sin JS el botón queda siempre a la vista: es el comportamiento seguro.
+  (() => {
+    const boton = document.getElementById('boton-flotante');
+    const tapas = document.querySelectorAll('[data-oculta-boton-flotante]');
+    if (!boton || tapas.length === 0 || !('IntersectionObserver' in window)) return;
+    const visibles = new Set(tapas);
+    boton.hidden = true;
+    const observador = new IntersectionObserver((entradas) => {
+      for (const entrada of entradas) {
+        if (entrada.isIntersecting) visibles.add(entrada.target);
+        else visibles.delete(entrada.target);
+      }
+      boton.hidden = visibles.size > 0;
+    });
+    for (const tapa of tapas) observador.observe(tapa);
+  })();
+</script>

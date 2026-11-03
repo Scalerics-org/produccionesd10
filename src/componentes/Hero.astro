@@ -29,7 +29,10 @@ import { home } from '../datos/home';
 const { hero } = home;
 ---
 
-<section class="bg-tinta text-hueso relative isolate overflow-hidden">
+<section
+  class="bg-tinta text-hueso relative isolate overflow-hidden"
+  data-oculta-boton-flotante
+>
   <div class="relative h-[430px] lg:h-[min(640px,calc(100svh-77px))] lg:min-h-[460px]">
     <picture>
       <source srcset="/video/hero-poster.avif" type="image/avif" />
@@ -58,10 +61,12 @@ const { hero } = home;
       <source data-fuente="/video/hero.mp4" type="video/mp4" />
     </video>
 
-    <!-- La trama y el degradado son los que hacen legible el claim sobre cualquier fotograma. -->
+    <!-- La trama y el degradado son los que hacen legible el claim sobre cualquier
+         fotograma. En celular el degradado es más denso: el kicker rojo claro
+         queda a mitad de altura y con el 70% daba 3,97:1. -->
     <div class="trama-oscura absolute inset-0 !bg-transparent" aria-hidden="true"></div>
     <div
-      class="from-tinta via-tinta/70 to-tinta/10 absolute inset-0 bg-gradient-to-t"
+      class="from-tinta via-tinta/80 lg:via-tinta/70 to-tinta/10 absolute inset-0 bg-gradient-to-t"
       aria-hidden="true"
     >
     </div>
@@ -76,7 +81,7 @@ const { hero } = home;
       <div class="bg-hueso/20 mb-[26px] hidden h-0.5 lg:block"></div>
       <div class="grid items-end gap-4 lg:grid-cols-[1.35fr_0.65fr] lg:gap-[46px]">
         <div>
-          <p class="kicker text-rojo-claro mb-3 text-[10px] lg:mb-4 lg:text-[11px]">
+          <p class="kicker text-rojo-claro mb-3 lg:mb-4">
             {hero.kicker}
           </p>
           <h1 class="titular text-[44px] lg:text-[72px]">
@@ -114,8 +119,12 @@ const { hero } = home;
     </div>
   </div>
 
-  <!-- En celular los botones salen del hero y forman una barra de dos celdas (1e). -->
-  <div class="border-rojo grid grid-cols-2 border-t-2 lg:hidden">
+  <!-- En celular los botones salen del hero y forman una barra de dos celdas (1e).
+       El anillo de foco va por dentro y en hueso: por fuera lo recortaba el
+       overflow-hidden de la sección, y rojo sobre la celda roja no se veía. -->
+  <div
+    class="border-rojo foco-claro grid grid-cols-2 border-t-2 lg:hidden [&_:focus-visible]:-outline-offset-4"
+  >
     <a
       href={hero.ctaPrincipal.href}
       class="boton bg-rojo text-hueso hover:bg-rojo-hondo min-h-14"

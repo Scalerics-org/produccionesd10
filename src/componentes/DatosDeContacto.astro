@@ -31,12 +31,7 @@ const { conRedesComoBotones = false } = Astro.props;
   <div>
     <dt class="rotulo text-plomo mb-2">Redes</dt>
     <dd>
-      <ul
-        class:list={[
-          'flex flex-wrap',
-          conRedesComoBotones ? 'gap-2' : 'gap-x-3 gap-y-1',
-        ]}
-      >
+      <ul class:list={['flex flex-wrap', conRedesComoBotones ? 'gap-2' : 'gap-x-3']}>
         {
           redes.map((red) => (
             <li>
@@ -48,7 +43,7 @@ const { conRedesComoBotones = false } = Astro.props;
                   'text-tinta text-[11px] font-semibold tracking-[0.06em]',
                   conRedesComoBotones
                     ? 'border-tinta/45 hover:border-tinta hover:bg-hueso inline-flex min-h-11 items-center border px-[11px]'
-                    : 'hover:text-rojo text-[13px] font-normal tracking-normal',
+                    : 'hover:text-rojo inline-flex min-h-11 items-center text-[13px] font-normal tracking-normal',
                 ]}
               >
                 {red.nombre}

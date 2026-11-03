@@ -15,6 +15,11 @@ type Props = {
   precargar?: { href: string; tipo: string };
   /** El home apoya el cabezal sobre el reel: va invertido, en negro. */
   cabezalInvertido?: boolean;
+  /**
+   * Sin botón flotante: en /contacto el formulario ya está en pantalla y el
+   * botón sería un segundo CTA que lleva al mismo lugar.
+   */
+  sinBotonFlotante?: boolean;
 };
 
 const {
@@ -23,6 +28,7 @@ const {
   imagenOg = '/og-por-defecto.jpg',
   precargar,
   cabezalInvertido = false,
+  sinBotonFlotante = false,
 } = Astro.props;
 
 const base = Astro.site ?? new URL(sitio.url);
@@ -98,6 +104,6 @@ const tituloCompleto = `${titulo} · ${sitio.nombre}`;
       <slot />
     </main>
     <PieDePagina />
-    <BotonWhatsapp />
+    {!sinBotonFlotante && <BotonWhatsapp />}
   </body>
 </html>
